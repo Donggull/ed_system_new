@@ -28,7 +28,9 @@
       "Bash(find:*)",
       "Bash(true)",
       "Bash(timeout 30 npm run build)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "mcp__supabase-mcp__list_tables",
+      "mcp__supabase-mcp__execute_sql"
     ],
     "deny": [],
     "ask": []

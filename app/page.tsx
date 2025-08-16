@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { signOut } from '@/lib/supabase/auth'
 import { useRouter } from 'next/navigation'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import SupabaseStatus from '@/components/SupabaseStatus'
 
 export default function Home() {
   const [themeTemplates, setThemeTemplates] = useState<Theme[]>([])
@@ -235,7 +236,7 @@ export default function Home() {
           </div>
           
           <div className="mt-4 pt-3 border-t border-gray-100">
-            <div className="flex items-center justify-between text-xs text-gray-500">
+            <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
               {loading ? (
                 <span>⏳ Loading templates...</span>
               ) : error ? (
@@ -245,6 +246,7 @@ export default function Home() {
               )}
               <span>{componentTemplates.length} templates loaded</span>
             </div>
+            <SupabaseStatus />
           </div>
         </div>
       </div>
