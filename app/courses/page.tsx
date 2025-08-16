@@ -5,138 +5,139 @@ import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import Link from 'next/link'
 
-interface Course {
+interface ComponentTemplate {
   id: number
-  title: string
+  name: string
   description: string
-  instructor: string
+  framework: string
   category: string
-  duration: string
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  complexity: string
+  complexity_level: 'basic' | 'intermediate' | 'advanced'
   status: 'active' | 'draft' | 'archived'
-  enrolledStudents: number
+  usageCount: number
   rating: number
-  price: number
-  thumbnail: string
+  size: string
+  preview: string
   createdDate: string
 }
 
-export default function Courses() {
+export default function Components() {
   const { user } = useAuth()
-  const [courses, setCourses] = useState<Course[]>([])
+  const [components, setComponents] = useState<ComponentTemplate[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
+  const [filterComplexity, setFilterComplexity] = useState<string>('all')
   const [filterDifficulty, setFilterDifficulty] = useState<string>('all')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 가상의 강의 데이터
-    const mockCourses: Course[] = [
+    // 가상의 컴포넌트 템플릿 데이터
+    const mockComponents: ComponentTemplate[] = [
       {
         id: 1,
-        title: '웹 개발 기초',
-        description: 'HTML, CSS, JavaScript를 활용한 기본적인 웹 개발을 배우는 강의입니다.',
-        instructor: '김개발',
-        category: '웹 개발',
-        duration: '8주',
-        difficulty: 'beginner',
+        name: '기본 버튼',
+        description: '다양한 스타일과 크기를 지원하는 재사용 가능한 버튼 컴포넌트입니다.',
+        framework: 'React',
+        category: 'UI 요소',
+        complexity: '기본적인 프롭스와 이벤트 핸들링',
+        complexity_level: 'basic',
         status: 'active',
-        enrolledStudents: 245,
+        usageCount: 245,
         rating: 4.8,
-        price: 150000,
-        thumbnail: '/images/web-basics.jpg',
+        size: '2.5KB',
+        preview: '/previews/button.png',
         createdDate: '2024-01-15'
       },
       {
         id: 2,
-        title: '리액트 마스터클래스',
-        description: 'React를 사용한 현대적인 웹 애플리케이션 개발을 심화 학습합니다.',
-        instructor: '이리액트',
-        category: '웹 개발',
-        duration: '12주',
-        difficulty: 'intermediate',
+        name: '네비게이션 바',
+        description: '반응형 디자인을 지원하는 모던한 네비게이션 바 컴포넌트입니다.',
+        framework: 'React',
+        category: '내비게이션',
+        complexity: '복잡한 상태 관리와 반응형 로직',
+        complexity_level: 'intermediate',
         status: 'active',
-        enrolledStudents: 198,
+        usageCount: 198,
         rating: 4.9,
-        price: 250000,
-        thumbnail: '/images/react-master.jpg',
+        size: '8.2KB',
+        preview: '/previews/navbar.png',
         createdDate: '2024-02-01'
       },
       {
         id: 3,
-        title: '파이썬 데이터 분석',
-        description: 'Pandas, NumPy, Matplotlib을 활용한 데이터 분석 기법을 학습합니다.',
-        instructor: '박데이터',
-        category: '데이터 사이언스',
-        duration: '10주',
-        difficulty: 'intermediate',
+        name: '데이터 테이블',
+        description: '정렬, 필터링, 페이지네이션을 지원하는 고급 데이터 테이블 컴포넌트입니다.',
+        framework: 'React',
+        category: '데이터 표시',
+        complexity: '고급 상태 관리와 성능 최적화',
+        complexity_level: 'advanced',
         status: 'active',
-        enrolledStudents: 176,
+        usageCount: 176,
         rating: 4.6,
-        price: 200000,
-        thumbnail: '/images/python-data.jpg',
+        size: '15.7KB',
+        preview: '/previews/datatable.png',
         createdDate: '2024-01-20'
       },
       {
         id: 4,
-        title: '모바일 앱 개발 (Flutter)',
-        description: 'Flutter를 사용한 크로스 플랫폼 모바일 앱 개발을 배웁니다.',
-        instructor: '최모바일',
-        category: '모바일 개발',
-        duration: '14주',
-        difficulty: 'advanced',
+        name: '폼 입력 필드',
+        description: '유효성 검사와 에러 표시 기능을 포함한 폼 입력 필드 컴포넌트입니다.',
+        framework: 'Vue',
+        category: '폼 요소',
+        complexity: '폼 유효성 검사와 에러 핸들링',
+        complexity_level: 'intermediate',
         status: 'active',
-        enrolledStudents: 154,
+        usageCount: 154,
         rating: 4.5,
-        price: 300000,
-        thumbnail: '/images/flutter-app.jpg',
+        size: '6.3KB',
+        preview: '/previews/input.png',
         createdDate: '2024-02-15'
       },
       {
         id: 5,
-        title: 'AI 머신러닝 입문',
-        description: '머신러닝의 기본 개념부터 실제 모델 구축까지 단계별로 학습합니다.',
-        instructor: '정인공지능',
-        category: '인공지능',
-        duration: '16주',
-        difficulty: 'advanced',
+        name: '모달 다이얼로그',
+        description: '접근성을 고려한 모달 다이얼로그 컴포넌트입니다.',
+        framework: 'Angular',
+        category: '오버레이',
+        complexity: '접근성과 포커스 관리',
+        complexity_level: 'advanced',
         status: 'draft',
-        enrolledStudents: 0,
+        usageCount: 0,
         rating: 0,
-        price: 350000,
-        thumbnail: '/images/ai-ml.jpg',
+        size: '12.1KB',
+        preview: '/previews/modal.png',
         createdDate: '2024-03-01'
       },
       {
         id: 6,
-        title: '클라우드 컴퓨팅 기초',
-        description: 'AWS, GCP를 활용한 클라우드 서비스 구축 및 운영을 학습합니다.',
-        instructor: '한클라우드',
-        category: '클라우드',
-        duration: '12주',
-        difficulty: 'intermediate',
+        name: '카드 컴포넌트',
+        description: '다양한 레이아웃을 지원하는 유연한 카드 컴포넌트입니다.',
+        framework: 'React',
+        category: '레이아웃',
+        complexity: '기본적인 슬롯과 스타일링',
+        complexity_level: 'basic',
         status: 'archived',
-        enrolledStudents: 132,
+        usageCount: 132,
         rating: 4.4,
-        price: 220000,
-        thumbnail: '/images/cloud-computing.jpg',
+        size: '4.8KB',
+        preview: '/previews/card.png',
         createdDate: '2023-12-01'
       }
     ]
 
     setTimeout(() => {
-      setCourses(mockCourses)
+      setComponents(mockComponents)
       setLoading(false)
     }, 1000)
   }, [])
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.instructor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = filterCategory === 'all' || course.category === filterCategory
-    const matchesDifficulty = filterDifficulty === 'all' || course.difficulty === filterDifficulty
-    return matchesSearch && matchesCategory && matchesDifficulty
+  const filteredComponents = components.filter(component => {
+    const matchesSearch = component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         component.framework.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         component.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = filterCategory === 'all' || component.category === filterCategory
+    const matchesComplexity = filterComplexity === 'all' || component.complexity_level === filterComplexity
+    return matchesSearch && matchesCategory && matchesComplexity
   })
 
   const getStatusColor = (status: string) => {
@@ -165,9 +166,9 @@ export default function Courses() {
     }
   }
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner':
+  const getComplexityColor = (complexity: string) => {
+    switch (complexity) {
+      case 'basic':
         return 'bg-blue-100 text-blue-800'
       case 'intermediate':
         return 'bg-purple-100 text-purple-800'
@@ -178,10 +179,10 @@ export default function Courses() {
     }
   }
 
-  const getDifficultyText = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner':
-        return '초급'
+  const getComplexityText = (complexity: string) => {
+    switch (complexity) {
+      case 'basic':
+        return '기본'
       case 'intermediate':
         return '중급'
       case 'advanced':
@@ -191,7 +192,11 @@ export default function Courses() {
     }
   }
 
-  const categories = [...new Set(courses.map(course => course.category))]
+  const categories = [...new Set(components.map(component => component.category))]
+
+  // Alias for compatibility with existing display code
+  const courses = components
+  const filteredCourses = filteredComponents
 
   return (
     <ProtectedRoute>
@@ -205,8 +210,8 @@ export default function Courses() {
                   <span className="text-white text-sm font-bold">ED</span>
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold text-gray-900">교육 시스템</h1>
-                  <p className="text-xs text-gray-500">Education Management</p>
+                  <h1 className="text-lg font-bold text-gray-900">디자인 시스템</h1>
+                  <p className="text-xs text-gray-500">Design System Generator</p>
                 </div>
               </div>
 
@@ -217,24 +222,24 @@ export default function Courses() {
                   </svg>
                   대시보드
                 </Link>
-                <Link href="/students" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                <Link href="/themes" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                    <path fillRule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4z" clipRule="evenodd" />
+                    <path d="M10.5 2A1.5 1.5 0 009 3.5v11A3.5 3.5 0 1012.5 11V3.5A1.5 1.5 0 0010.5 2z" />
                   </svg>
-                  학생 관리
+                  테마 관리
                 </Link>
-                <Link href="/courses" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">
+                <Link href="/components" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 112 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 110 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 110-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z" clipRule="evenodd" />
                   </svg>
-                  강의 관리
+                  컴포넌트
                 </Link>
-                <Link href="/reports" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                <Link href="/analytics" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 002 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clipRule="evenodd" />
+                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                   </svg>
-                  리포트
+                  생성 분석
                 </Link>
               </nav>
             </div>
@@ -246,8 +251,8 @@ export default function Courses() {
             <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-8 py-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">강의 관리</h2>
-                  <p className="text-sm text-gray-600">등록된 강의들을 관리하고 새로운 강의를 만들어보세요</p>
+                  <h2 className="text-2xl font-bold text-gray-900">컴포넌트 템플릿</h2>
+                  <p className="text-sm text-gray-600">디자인 시스템의 컴포넌트 템플릿을 관리하고 새로운 컴포넌트를 생성하세요</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-sm text-gray-600">
@@ -269,7 +274,7 @@ export default function Courses() {
                     <div className="relative">
                       <input
                         type="text"
-                        placeholder="강의명, 강사명으로 검색..."
+                        placeholder="컴포넌트명, 프레임워크로 검색..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -289,29 +294,29 @@ export default function Courses() {
                       ))}
                     </select>
                     <select
-                      value={filterDifficulty}
-                      onChange={(e) => setFilterDifficulty(e.target.value)}
+                      value={filterComplexity}
+                      onChange={(e) => setFilterComplexity(e.target.value)}
                       className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
-                      <option value="all">모든 난이도</option>
-                      <option value="beginner">초급</option>
+                      <option value="all">모든 복잡도</option>
+                      <option value="basic">기본</option>
                       <option value="intermediate">중급</option>
                       <option value="advanced">고급</option>
                     </select>
                   </div>
                   <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium shadow-lg transition-all">
-                    새 강의 추가
+                    새 컴포넌트 추가
                   </button>
                 </div>
               </div>
 
-              {/* Course Statistics */}
+              {/* Component Statistics */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">전체 강의</p>
-                      <p className="text-2xl font-bold text-gray-900">{courses.length}개</p>
+                      <p className="text-sm font-medium text-gray-600">전체 컴포넌트</p>
+                      <p className="text-2xl font-bold text-gray-900">{components.length}개</p>
                     </div>
                     <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                       <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -324,9 +329,9 @@ export default function Courses() {
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">진행중</p>
+                      <p className="text-sm font-medium text-gray-600">활성</p>
                       <p className="text-2xl font-bold text-green-600">
-                        {courses.filter(c => c.status === 'active').length}개
+                        {components.filter(c => c.status === 'active').length}개
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -340,9 +345,9 @@ export default function Courses() {
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">총 수강생</p>
+                      <p className="text-sm font-medium text-gray-600">총 사용 횟수</p>
                       <p className="text-2xl font-bold text-purple-600">
-                        {courses.reduce((acc, c) => acc + c.enrolledStudents, 0).toLocaleString()}명
+                        {components.reduce((acc, c) => acc + c.usageCount, 0).toLocaleString()}회
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
@@ -358,7 +363,7 @@ export default function Courses() {
                     <div>
                       <p className="text-sm font-medium text-gray-600">평균 평점</p>
                       <p className="text-2xl font-bold text-yellow-600">
-                        {(courses.filter(c => c.rating > 0).reduce((acc, c) => acc + c.rating, 0) / courses.filter(c => c.rating > 0).length).toFixed(1)}
+                        {(components.filter(c => c.rating > 0).reduce((acc, c) => acc + c.rating, 0) / components.filter(c => c.rating > 0).length).toFixed(1)}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
@@ -370,21 +375,21 @@ export default function Courses() {
                 </div>
               </div>
 
-              {/* Courses Grid */}
+              {/* Components Grid */}
               {loading ? (
                 <div className="text-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-gray-600">강의 정보를 불러오는 중...</p>
+                  <p className="text-gray-600">컴포넌트 정보를 불러오는 중...</p>
                 </div>
               ) : filteredCourses.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600">검색 조건에 맞는 강의가 없습니다.</p>
+                  <p className="text-gray-600">검색 조건에 맞는 컴포넌트가 없습니다.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredCourses.map((course) => (
-                    <div key={course.id} className="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 overflow-hidden">
-                      {/* Course Thumbnail */}
+                  {filteredComponents.map((component) => (
+                    <div key={component.id} className="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 overflow-hidden">
+                      {/* Component Thumbnail */}
                       <div className="h-48 bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center">
                         <div className="text-center">
                           <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -392,67 +397,67 @@ export default function Courses() {
                               <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>
-                          <p className="text-sm font-medium text-gray-700">{course.category}</p>
+                          <p className="text-sm font-medium text-gray-700">{component.category}</p>
                         </div>
                       </div>
 
-                      {/* Course Content */}
+                      {/* Component Content */}
                       <div className="p-6">
                         <div className="flex items-start justify-between mb-3">
-                          <h3 className="text-lg font-bold text-gray-900 flex-1 mr-2">{course.title}</h3>
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(course.status)}`}>
-                            {getStatusText(course.status)}
+                          <h3 className="text-lg font-bold text-gray-900 flex-1 mr-2">{component.name}</h3>
+                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(component.status)}`}>
+                            {getStatusText(component.status)}
                           </span>
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">{course.description}</p>
+                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">{component.description}</p>
 
                         <div className="flex items-center gap-4 mb-4">
                           <div className="flex items-center gap-1">
                             <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                               <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
                             </svg>
-                            <span className="text-sm text-gray-600">{course.instructor}</span>
+                            <span className="text-sm text-gray-600">{component.framework}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-sm text-gray-600">{course.duration}</span>
+                            <span className="text-sm text-gray-600">{component.size}</span>
                           </div>
                         </div>
 
                         <div className="flex items-center justify-between mb-4">
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getDifficultyColor(course.difficulty)}`}>
-                            {getDifficultyText(course.difficulty)}
+                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getComplexityColor(component.complexity_level)}`}>
+                            {getComplexityText(component.complexity_level)}
                           </span>
-                          {course.rating > 0 && (
+                          {component.rating > 0 && (
                             <div className="flex items-center gap-1">
                               <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
-                              <span className="text-sm font-medium text-gray-900">{course.rating}</span>
+                              <span className="text-sm font-medium text-gray-900">{component.rating}</span>
                             </div>
                           )}
                         </div>
 
                         <div className="flex items-center justify-between mb-4">
                           <div>
-                            <p className="text-sm text-gray-600">수강생</p>
-                            <p className="text-lg font-bold text-gray-900">{course.enrolledStudents}명</p>
+                            <p className="text-sm text-gray-600">사용 횟수</p>
+                            <p className="text-lg font-bold text-gray-900">{component.usageCount}회</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm text-gray-600">가격</p>
-                            <p className="text-lg font-bold text-blue-600">₩{course.price.toLocaleString()}</p>
+                            <p className="text-sm text-gray-600">생성일</p>
+                            <p className="text-lg font-bold text-blue-600">{new Date(component.createdDate).toLocaleDateString('ko-KR')}</p>
                           </div>
                         </div>
 
                         <div className="flex gap-2">
                           <button className="flex-1 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-                            수정
+                            편집
                           </button>
                           <button className="flex-1 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                            상세보기
+                            미리보기
                           </button>
                         </div>
                       </div>
