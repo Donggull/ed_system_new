@@ -13,7 +13,7 @@ export async function testSupabaseConnection() {
     // Test basic connection
     const { data, error } = await supabase
       .from('themes')
-      .select('count(*)')
+      .select('id')
       .limit(1)
 
     if (error) {
@@ -33,7 +33,7 @@ export async function testSupabaseConnection() {
       details: {
         database: 'Connected',
         auth: authError ? 'Not authenticated (normal)' : 'Authenticated',
-        tablesFound: data ? 'Yes' : 'No'
+        tablesFound: data && data.length >= 0 ? 'Yes' : 'No'
       }
     }
   } catch (error: any) {
@@ -52,15 +52,15 @@ export async function getProjectInfo() {
 
   try {
     const [themes, components, projects] = await Promise.all([
-      supabase.from('themes').select('count(*)').single(),
-      supabase.from('component_templates').select('count(*)').single(),
-      supabase.from('projects').select('count(*)').single()
+      supabase.from('themes').select('*', { count: 'exact', head: true }),
+      supabase.from('component_templates').select('*', { count: 'exact', head: true }),
+      supabase.from('projects').select('*', { count: 'exact', head: true })
     ])
 
     return {
-      themes: themes.data?.count || 0,
-      componentTemplates: components.data?.count || 0,
-      projects: projects.data?.count || 0
+      themes: themes.count || 0,
+      componentTemplates: components.count || 0,
+      projects: projects.count || 0
     }
   } catch {
     return null
