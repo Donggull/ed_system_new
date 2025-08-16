@@ -38,8 +38,19 @@ export default function AuthForm({ mode = 'signin', onModeChange }: AuthFormProp
         if (password !== confirmPassword) {
           throw new Error('비밀번호가 일치하지 않습니다.')
         }
-        await signUp({ email, password })
-        setMessage('회원가입 완료! 이메일을 확인해주세요.')
+        const result = await signUp({ email, password })
+        if (result.user) {
+          if (result.user.email_confirmed_at) {
+            // 이메일 확인이 비활성화된 경우 즉시 로그인 성공
+            setMessage('회원가입 완료! 로그인되었습니다.')
+            setTimeout(() => router.push('/'), 2000)
+          } else {
+            // 이메일 확인이 필요한 경우
+            setMessage('회원가입 완료! 이메일을 확인해주세요.')
+          }
+        } else {
+          setMessage('회원가입이 처리되었습니다. 잠시 후 다시 시도해주세요.')
+        }
       } else if (mode === 'reset') {
         await resetPassword(email)
         setMessage('비밀번호 재설정 이메일을 발송했습니다.')

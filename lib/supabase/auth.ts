@@ -24,15 +24,37 @@ export async function signUp({ email, password }: SignUpData) {
     throw new Error('Supabase가 설정되지 않았습니다. .env.local 파일에서 NEXT_PUBLIC_SUPABASE_URL과 NEXT_PUBLIC_SUPABASE_ANON_KEY를 설정해주세요.')
   }
 
+  console.log('🔄 회원가입 시작:', email)
+  
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${window.location.origin}/auth/callback`
+      emailRedirectTo: `${window.location.origin}/auth/callback`,
+      data: {
+        email: email,
+        full_name: email.split('@')[0] // 기본 이름으로 이메일 앞부분 사용
+      }
     }
   })
 
-  if (error) throw error
+  console.log('🔍 회원가입 결과:', { data, error })
+
+  if (error) {
+    console.error('❌ 회원가입 오류:', error)
+    throw error
+  }
+
+  // 성공적으로 가입된 경우 사용자 정보 확인
+  if (data.user) {
+    console.log('✅ 사용자 생성됨:', {
+      id: data.user.id,
+      email: data.user.email,
+      emailConfirmed: data.user.email_confirmed_at,
+      needsConfirmation: !data.user.email_confirmed_at
+    })
+  }
+
   return data
 }
 
