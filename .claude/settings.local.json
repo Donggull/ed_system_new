@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__playwright-stealth__playwright_navigate",
+      "Bash(npm run dev:*)",
+      "mcp__playwright-stealth__playwright_screenshot",
+      "mcp__playwright-stealth__playwright_close",
+      "Bash(rm:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx kill-port:*)",
+      "mcp__supabase-mcp__apply_migration",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(mkdir:*)",
+      "mcp__github-mcp__git-init",
+      "mcp__github-mcp__git-add-all"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
