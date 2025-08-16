@@ -36,10 +36,10 @@ vercel --prod
    - 다음 3개 변수를 추가:
 
 ```bash
-# Production, Preview, Development 모든 환경에 추가
-NEXT_PUBLIC_SUPABASE_URL=https://nktjoldoylvwtkzboyaf.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rdGpvbGRveWx2d3RremJveWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDUyODUsImV4cCI6MjA3MDcyMTI4NX0.ZGX25pgubs4PD8H8zY5wUi5cEKL500fiLjp1TY5PPyo
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rdGpvbGRveWx2d3RremJveWFmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE0NTI4NSwiZXhwIjoyMDcwNzIxMjg1fQ.RKNTdZq2OIZX2Gq3fVIUP-hrj3IKvIne52i-gHUgC_g
+# Production, Preview, Development 모든 환경에 추가 (정정된 올바른 값)
+NEXT_PUBLIC_SUPABASE_URL=https://yzfxwxbopoeuinvbxuvj.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6Znh3eGJvcG9ldWludmJ4dXZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyOTExOTgsImV4cCI6MjA3MDg2NzE5OH0.hEIFJcE5yZN4nvUWJOIpYM7cIJ6m_pkhHfE0pKNvfF4
+SUPABASE_SERVICE_ROLE_KEY=(서비스 역할 키 - 필요시 추가)
 ```
 
 3. **배포 재실행**

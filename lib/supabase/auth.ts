@@ -20,42 +20,88 @@ export interface SignInData {
 
 // Sign up with email and password
 export async function signUp({ email, password }: SignUpData) {
-  if (!supabase) {
-    throw new Error('Supabase가 설정되지 않았습니다. .env.local 파일에서 NEXT_PUBLIC_SUPABASE_URL과 NEXT_PUBLIC_SUPABASE_ANON_KEY를 설정해주세요.')
-  }
-
-  console.log('🔄 회원가입 시작:', email)
-  
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${window.location.origin}/auth/callback`,
-      data: {
-        email: email,
-        full_name: email.split('@')[0] // 기본 이름으로 이메일 앞부분 사용
-      }
-    }
+  console.log('🚀 signUp 함수 호출됨:', email)
+  console.log('🔧 Supabase 클라이언트 상태:', {
+    exists: !!supabase,
+    type: typeof supabase
   })
-
-  console.log('🔍 회원가입 결과:', { data, error })
-
-  if (error) {
-    console.error('❌ 회원가입 오류:', error)
-    throw error
+  
+  if (!supabase) {
+    const errorMsg = 'Supabase가 설정되지 않았습니다. .env.local 파일에서 NEXT_PUBLIC_SUPABASE_URL과 NEXT_PUBLIC_SUPABASE_ANON_KEY를 설정해주세요.'
+    console.error('❌', errorMsg)
+    throw new Error(errorMsg)
   }
 
-  // 성공적으로 가입된 경우 사용자 정보 확인
-  if (data.user) {
-    console.log('✅ 사용자 생성됨:', {
-      id: data.user.id,
-      email: data.user.email,
-      emailConfirmed: data.user.email_confirmed_at,
-      needsConfirmation: !data.user.email_confirmed_at
+  // 환경변수 재확인
+  console.log('🔍 클라이언트 사이드 환경변수:')
+  console.log('  URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET')
+  console.log('  Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'NOT SET')
+
+  console.log('🔄 Supabase Auth 회원가입 시작:', email)
+  
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: {
+          email: email,
+          full_name: email.split('@')[0] // 기본 이름으로 이메일 앞부분 사용
+        }
+      }
     })
-  }
 
-  return data
+    console.log('📊 상세 회원가입 결과:')
+    console.log('  전체 응답:', { data, error })
+    console.log('  사용자 데이터:', data?.user)
+    console.log('  세션 데이터:', data?.session)
+    console.log('  오류 데이터:', error)
+
+    if (error) {
+      console.error('❌ 회원가입 API 오류:', {
+        message: error.message,
+        status: error.status,
+        details: error
+      })
+      throw error
+    }
+
+    // 성공적으로 가입된 경우 사용자 정보 확인
+    if (data.user) {
+      console.log('✅ 사용자 생성 성공:', {
+        id: data.user.id,
+        email: data.user.email,
+        emailConfirmed: data.user.email_confirmed_at,
+        confirmationSentAt: data.user.confirmation_sent_at,
+        needsConfirmation: !data.user.email_confirmed_at,
+        createdAt: data.user.created_at
+      })
+      
+      // 세션 상태도 확인
+      if (data.session) {
+        console.log('🔑 세션 생성됨:', {
+          accessToken: data.session.access_token ? 'EXISTS' : 'NO TOKEN',
+          refreshToken: data.session.refresh_token ? 'EXISTS' : 'NO TOKEN',
+          expiresAt: data.session.expires_at
+        })
+      } else {
+        console.log('⚠️ 세션이 생성되지 않음 (이메일 확인 필요할 수 있음)')
+      }
+    } else {
+      console.log('⚠️ 사용자 객체가 없음 - 응답 구조 확인 필요')
+    }
+
+    return data
+    
+  } catch (apiError: any) {
+    console.error('🚨 회원가입 API 호출 중 예외 발생:', {
+      message: apiError.message,
+      stack: apiError.stack,
+      name: apiError.name
+    })
+    throw apiError
+  }
 }
 
 // Sign in with email and password
