@@ -13,7 +13,15 @@
       "Bash(npm uninstall:*)",
       "Bash(mkdir:*)",
       "mcp__github-mcp__git-init",
-      "mcp__github-mcp__git-add-all"
+      "mcp__github-mcp__git-add-all",
+      "mcp__github-mcp__git-commit",
+      "Bash(gh repo create:*)",
+      "mcp__github-mcp__git-remote-add",
+      "mcp__github-mcp__git-remote-set-url",
+      "mcp__github-mcp__git-push",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "mcp__github-mcp__git-status"
     ],
     "deny": [],
     "ask": []
