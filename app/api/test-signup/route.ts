@@ -36,7 +36,19 @@ export async function POST(request: NextRequest) {
     }
 
     // 결과 확인
-    const result = {
+    const result: {
+      success: boolean;
+      user: {
+        id: string;
+        email: string | undefined;
+        email_confirmed_at: string | undefined;
+        created_at: string;
+        needs_confirmation: boolean;
+      } | null;
+      session: string;
+      profile?: string;
+      profile_error?: string;
+    } = {
       success: true,
       user: data.user ? {
         id: data.user.id,
@@ -89,9 +101,8 @@ export async function GET() {
       .from('user_profiles')
       .select('*', { count: 'exact', head: true })
 
-    const { count: authCount } = await supabase
-      .rpc('get_auth_users_count')
-      .single()
+    // auth.users는 직접 접근할 수 없으므로 제거
+    const authCount = 'Unable to access from client'
 
     return NextResponse.json({
       success: true,
