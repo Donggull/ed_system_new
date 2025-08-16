@@ -47,9 +47,9 @@ export class CSSVariablesGenerator {
     Object.entries(colors).forEach(([colorName, palette]) => {
       if (typeof palette === 'object' && palette !== null) {
         // 팔레트 색상 처리
-        Object.entries(palette as Record<string, string>).forEach(([shade, value]) => {
+        Object.entries(palette).forEach(([shade, value]) => {
           const cssVar = `--color-${colorName}-${shade}`
-          variables[cssVar] = this.convertToHSL(value)
+          variables[cssVar] = this.convertToHSL(value as string)
           
           // RGB 값도 함께 생성 (필요한 경우를 위해)
           variables[`${cssVar}-rgb`] = this.convertToRGB(value)
@@ -304,7 +304,7 @@ module.exports = {
 
     Object.entries(colors).forEach(([colorName, palette]) => {
       if (typeof palette === 'object' && palette !== null) {
-        const shades = Object.keys(palette as Record<string, string>)
+        const shades = Object.keys(palette)
           .map(shade => `          "${shade}": "hsl(var(--color-${colorName}-${shade}))"`)
           .join(',\n')
         

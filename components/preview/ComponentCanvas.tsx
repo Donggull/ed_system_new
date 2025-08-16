@@ -239,7 +239,7 @@ const ComponentPreview: React.FC<{
     switch (componentName.toLowerCase()) {
       case 'button':
       case 'enhanced button':
-        const buttonVariants = {
+        const buttonVariants: Record<string, string> = {
           primary: 'bg-blue-600 text-white hover:bg-blue-700',
           secondary: 'bg-gray-600 text-white hover:bg-gray-700',
           outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
@@ -247,7 +247,7 @@ const ComponentPreview: React.FC<{
           destructive: 'bg-red-600 text-white hover:bg-red-700'
         }
         
-        const buttonSize = {
+        const buttonSize: Record<string, string> = {
           xs: 'px-2 py-1 text-xs',
           sm: 'px-3 py-1.5 text-sm',
           md: 'px-4 py-2 text-base',
@@ -255,12 +255,20 @@ const ComponentPreview: React.FC<{
           xl: 'px-8 py-4 text-xl'
         }
         
+        const getButtonVariant = (variant: any) => {
+          return buttonVariants[variant] || buttonVariants.primary
+        }
+        
+        const getButtonSize = (size: any) => {
+          return buttonSize[size] || buttonSize.md
+        }
+        
         return (
           <button
             className={`
               ${baseClasses} 
-              ${buttonVariants[props.variant] || buttonVariants.primary}
-              ${buttonSize[props.size] || buttonSize.md}
+              ${getButtonVariant(props.variant)}
+              ${getButtonSize(props.size)}
               ${props.loading ? 'opacity-70 cursor-wait' : ''}
               ${props.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}
               ${props.fullWidth ? 'w-full' : ''}
@@ -279,11 +287,15 @@ const ComponentPreview: React.FC<{
 
       case 'input':
       case 'enhanced input':
-        const inputVariants = {
+        const inputVariants: Record<string, string> = {
           default: 'border-2 border-gray-300 focus:border-blue-500',
           filled: 'bg-gray-100 border-2 border-transparent focus:bg-white focus:border-blue-500',
           flushed: 'border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500',
           outline: 'border-2 border-blue-300 focus:border-blue-500'
+        }
+
+        const getInputVariant = (variant: any) => {
+          return inputVariants[variant] || inputVariants.default
         }
 
         return (
@@ -306,7 +318,7 @@ const ComponentPreview: React.FC<{
                 disabled={props.disabled}
                 className={`
                   ${baseClasses}
-                  ${inputVariants[props.variant] || inputVariants.default}
+                  ${getInputVariant(props.variant)}
                   ${props.leftIcon ? 'pl-10' : 'pl-3'}
                   ${props.clearable ? 'pr-10' : 'pr-3'}
                   w-full py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
@@ -333,16 +345,20 @@ const ComponentPreview: React.FC<{
         )
 
       case 'card':
-        const cardVariants = {
+        const cardVariants: Record<string, string> = {
           default: 'bg-white',
           outlined: 'bg-white border-2 border-gray-200',
           elevated: 'bg-white shadow-lg'
         }
 
+        const getCardVariant = (variant: any) => {
+          return cardVariants[variant] || cardVariants.default
+        }
+
         return (
           <div className={`
             ${baseClasses}
-            ${cardVariants[props.variant] || cardVariants.default}
+            ${getCardVariant(props.variant)}
             p-4 rounded-lg min-h-[100px] flex items-center justify-center
           `}>
             {props.children}

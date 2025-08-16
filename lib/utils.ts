@@ -114,7 +114,7 @@ export const Playground: Story = {
  * 컴포넌트 코드에서 Props 인터페이스를 추출하는 함수
  */
 function extractPropsInterface(componentCode: string): Record<string, any> {
-  const interfaceMatch = componentCode.match(/interface\s+\w*Props[^{]*\{([^}]+)\}/s)
+  const interfaceMatch = componentCode.match(/interface\s+\w*Props[^{]*\{([^}]+)\}/)
   if (!interfaceMatch) return {}
   
   const propsText = interfaceMatch[1]
