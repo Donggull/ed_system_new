@@ -2,6 +2,11 @@ import { supabase } from './client'
 import { Theme, ThemeData } from '@/types/database'
 
 export async function getThemes() {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return []
+  }
+  
   const { data, error } = await supabase
     .from('themes')
     .select('*')
@@ -12,6 +17,11 @@ export async function getThemes() {
 }
 
 export async function getThemeTemplates() {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return []
+  }
+  
   const { data, error } = await supabase
     .from('themes')
     .select('*')
@@ -23,6 +33,11 @@ export async function getThemeTemplates() {
 }
 
 export async function getThemeById(id: string) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return null
+  }
+  
   const { data, error } = await supabase
     .from('themes')
     .select('*')
@@ -34,6 +49,11 @@ export async function getThemeById(id: string) {
 }
 
 export async function createTheme(theme: Partial<Theme>) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return null
+  }
+  
   const { data, error } = await supabase
     .from('themes')
     .insert(theme)
@@ -45,6 +65,11 @@ export async function createTheme(theme: Partial<Theme>) {
 }
 
 export async function updateTheme(id: string, updates: Partial<Theme>) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return null
+  }
+  
   const { data, error } = await supabase
     .from('themes')
     .update(updates)
@@ -57,6 +82,11 @@ export async function updateTheme(id: string, updates: Partial<Theme>) {
 }
 
 export async function deleteTheme(id: string) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return
+  }
+  
   const { error } = await supabase
     .from('themes')
     .delete()
@@ -66,6 +96,11 @@ export async function deleteTheme(id: string) {
 }
 
 export async function getUserThemes(userId: string) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return []
+  }
+  
   const { data, error } = await supabase
     .from('themes')
     .select('*')
@@ -77,6 +112,11 @@ export async function getUserThemes(userId: string) {
 }
 
 export async function getProjectThemes(projectId: string) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return []
+  }
+  
   const { data, error } = await supabase
     .from('themes')
     .select('*')

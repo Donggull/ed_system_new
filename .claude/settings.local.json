@@ -21,7 +21,13 @@
       "mcp__github-mcp__git-push",
       "Bash(git branch:*)",
       "Bash(git push:*)",
-      "mcp__github-mcp__git-status"
+      "mcp__github-mcp__git-status",
+      "Bash(npm run build:*)",
+      "Bash(rimraf:*)",
+      "Bash(rd:*)",
+      "Bash(find:*)",
+      "Bash(true)",
+      "Bash(timeout 30 npm run build)"
     ],
     "deny": [],
     "ask": []

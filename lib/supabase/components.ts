@@ -2,6 +2,11 @@ import { supabase } from './client'
 import { ComponentTemplate, GeneratedComponent } from '@/types/database'
 
 export async function getComponentTemplates() {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return []
+  }
+  
   const { data, error } = await supabase
     .from('component_templates')
     .select('*')
@@ -13,6 +18,11 @@ export async function getComponentTemplates() {
 }
 
 export async function getComponentTemplatesByCategory(category: string) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return []
+  }
+  
   const { data, error } = await supabase
     .from('component_templates')
     .select('*')
@@ -25,6 +35,11 @@ export async function getComponentTemplatesByCategory(category: string) {
 }
 
 export async function getGeneratedComponents(themeId: string) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return []
+  }
+  
   const { data, error } = await supabase
     .from('generated_components')
     .select('*')
@@ -36,6 +51,11 @@ export async function getGeneratedComponents(themeId: string) {
 }
 
 export async function createGeneratedComponent(component: Partial<GeneratedComponent>) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return null
+  }
+  
   const { data, error } = await supabase
     .from('generated_components')
     .insert(component)
@@ -47,6 +67,11 @@ export async function createGeneratedComponent(component: Partial<GeneratedCompo
 }
 
 export async function updateGeneratedComponent(id: string, updates: Partial<GeneratedComponent>) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return null
+  }
+  
   const { data, error } = await supabase
     .from('generated_components')
     .update(updates)
@@ -59,6 +84,11 @@ export async function updateGeneratedComponent(id: string, updates: Partial<Gene
 }
 
 export async function deleteGeneratedComponent(id: string) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return
+  }
+  
   const { error } = await supabase
     .from('generated_components')
     .delete()
@@ -68,6 +98,11 @@ export async function deleteGeneratedComponent(id: string) {
 }
 
 export async function bulkCreateGeneratedComponents(components: Partial<GeneratedComponent>[]) {
+  if (!supabase) {
+    console.warn('Supabase client not available')
+    return []
+  }
+  
   const { data, error } = await supabase
     .from('generated_components')
     .insert(components)
