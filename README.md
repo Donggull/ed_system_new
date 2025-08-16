@@ -88,6 +88,28 @@ npm run build
 npm start
 ```
 
+## 🚀 Vercel 배포
+
+### 빠른 배포
+1. GitHub에 코드 푸시
+2. [Vercel Dashboard](https://vercel.com)에서 저장소 연결
+3. 환경변수 설정 ([가이드 참조](./VERCEL_DEPLOYMENT.md))
+4. 배포 완료
+
+### 자동 환경변수 설정
+```bash
+# Vercel CLI 설치
+npm i -g vercel
+
+# 환경변수 자동 설정
+./vercel-env-setup.sh
+
+# 배포
+vercel --prod
+```
+
+📖 **상세 가이드**: [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+
 ## 프로젝트 구조
 
 ```
