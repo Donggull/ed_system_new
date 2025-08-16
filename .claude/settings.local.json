@@ -30,7 +30,9 @@
       "Bash(timeout 30 npm run build)",
       "Bash(npx tsc:*)",
       "mcp__supabase-mcp__list_tables",
-      "mcp__supabase-mcp__execute_sql"
+      "mcp__supabase-mcp__execute_sql",
+      "Bash(node:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
