@@ -278,7 +278,7 @@ export default function Dashboard() {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">"리액트 고급" 강의가 추가되었습니다</p>
+                      <p className="font-medium text-gray-900">&quot;리액트 고급&quot; 강의가 추가되었습니다</p>
                       <p className="text-sm text-gray-600">4시간 전</p>
                     </div>
                   </div>
