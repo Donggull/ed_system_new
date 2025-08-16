@@ -27,7 +27,8 @@
       "Bash(rd:*)",
       "Bash(find:*)",
       "Bash(true)",
-      "Bash(timeout 30 npm run build)"
+      "Bash(timeout 30 npm run build)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

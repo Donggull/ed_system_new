@@ -4,12 +4,27 @@ import { useEffect, useState } from 'react'
 import { getThemeTemplates } from '@/lib/supabase/themes'
 import { getComponentTemplates } from '@/lib/supabase/components'
 import { Theme, ComponentTemplate } from '@/types/database'
+import { useAuth } from '@/contexts/AuthContext'
+import { signOut } from '@/lib/supabase/auth'
+import { useRouter } from 'next/navigation'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 export default function Home() {
   const [themeTemplates, setThemeTemplates] = useState<Theme[]>([])
   const [componentTemplates, setComponentTemplates] = useState<ComponentTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { user } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      router.push('/auth/signin')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,18 +46,35 @@ export default function Home() {
     loadData()
   }, [])
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
+    <ProtectedRoute>
+      <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
       {/* Left Sidebar */}
       <div className="w-80 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 overflow-y-auto shadow-sm">
         {/* Header */}
         <div className="p-6 border-b border-gray-200/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-sm font-bold">DS</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white text-sm font-bold">DS</span>
+              </div>
+              <div>
+                <h1 className="text-base font-bold text-gray-900">DesignSystem</h1>
+                <p className="text-xs text-gray-500 font-medium">Projects → Ecommerce Theme</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-base font-bold text-gray-900">DesignSystem</h1>
-              <p className="text-xs text-gray-500 font-medium">Projects → Ecommerce Theme</p>
+            <div className="flex items-center gap-2">
+              <div className="text-xs text-gray-600">
+                {user?.email}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                title="로그아웃"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -781,5 +813,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   )
 }
