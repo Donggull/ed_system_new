@@ -47,7 +47,10 @@
       "WebFetch(domain:ed-system-new.vercel.app)",
       "mcp__github-mcp__git-log",
       "Bash(npm run lint)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(cat:*)",
+      "Bash(cp:*)",
+      "Bash(touch:*)"
     ],
     "deny": [],
     "ask": []
