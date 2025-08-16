@@ -3,6 +3,9 @@
 /**
  * Vercel 환경변수 자동 설정 스크립트
  * 사용법: node scripts/setup-vercel-env.js
+ * 
+ * 이 스크립트는 모든 Vercel 환경(Production, Preview, Development)에
+ * Supabase 환경변수를 자동으로 설정합니다.
  */
 
 const { execSync } = require('child_process');
@@ -39,85 +42,85 @@ if (!fs.existsSync(packageJsonPath)) {
 
 console.log('✅ 프로젝트 루트 확인됨\n');
 
-// 환경변수 설정
-for (const env of ENVIRONMENTS) {
-  console.log(`🔧 ${env} 환경 설정 중...`);
-  
-  for (const [key, value] of Object.entries(ENV_VARS)) {
-    try {
-      // 기존 환경변수 제거 (무시해도 됨)
+// 비동기 함수로 환경변수 설정
+async function setupEnvironments() {
+  for (const env of ENVIRONMENTS) {
+    console.log(`🔧 ${env} 환경 설정 중...`);
+    
+    for (const [key, value] of Object.entries(ENV_VARS)) {
       try {
-        execSync(`vercel env rm ${key} ${env} --yes`, { stdio: 'pipe' });
-      } catch (e) {
-        // 환경변수가 없으면 무시
+        // 기존 환경변수 제거 (무시해도 됨)
+        try {
+          execSync(`vercel env rm ${key} ${env} --yes`, { stdio: 'pipe' });
+          console.log(`  🗑️ 기존 ${key} 제거됨`);
+        } catch (e) {
+          // 환경변수가 없으면 무시
+        }
+        
+        // 새 환경변수 추가 - 더 안정적인 방법 사용
+        await promiseifySpawn('vercel', ['env', 'add', key, env], value);
+        console.log(`  ✅ ${key} 설정 완료`);
+        
+      } catch (error) {
+        console.log(`  ⚠️ ${key} 설정 중 오류: ${error.message}`);
+        
+        // 대안 방법 시도
+        try {
+          console.log(`  🔄 ${key} 대안 방법으로 재시도...`);
+          execSync(`echo "${value}" | vercel env add ${key} ${env}`, { stdio: 'inherit' });
+          console.log(`  ✅ ${key} 대안 방법으로 설정 완료`);
+        } catch (altError) {
+          console.log(`  ❌ ${key} 대안 방법도 실패: ${altError.message}`);
+        }
       }
-      
-      // 새 환경변수 추가
-      const command = `vercel env add ${key} ${env}`;
-      const process = require('child_process').spawn('vercel', ['env', 'add', key, env], {
-        stdio: ['pipe', 'pipe', 'pipe']
-      });
-      
-      process.stdin.write(value + '\n');
-      process.stdin.end();
-      
-      await new Promise((resolve, reject) => {
-        process.on('close', (code) => {
-          if (code === 0) {
-            console.log(`  ✅ ${key} 설정 완료`);
-            resolve();
-          } else {
-            console.log(`  ⚠️ ${key} 설정 실패 (이미 존재할 수 있음)`);
-            resolve(); // 실패해도 계속 진행
-          }
-        });
-        process.on('error', reject);
-      });
-      
-    } catch (error) {
-      console.log(`  ⚠️ ${key} 설정 중 오류: ${error.message}`);
     }
+    
+    console.log(`✅ ${env} 환경 설정 완료\n`);
   }
-  
-  console.log(`✅ ${env} 환경 설정 완료\n`);
 }
 
-console.log('🎉 모든 환경변수 설정 완료!');
-console.log('\n📋 설정된 환경변수:');
-Object.keys(ENV_VARS).forEach(key => {
-  console.log(`  - ${key}`);
+// 환경변수 설정 실행
+setupEnvironments().then(() => {
+  console.log('🎉 모든 환경변수 설정 완료!');
+  console.log('\n📋 설정된 환경변수:');
+  Object.keys(ENV_VARS).forEach(key => {
+    console.log(`  - ${key}`);
+  });
+  
+  console.log('\n🔄 다음 단계:');
+  console.log('1. vercel --prod 명령으로 배포');
+  console.log('2. 배포 완료 후 https://your-app.vercel.app/debug 페이지 확인');
+  console.log('3. Supabase Dashboard에서 Site URL 업데이트');
+  console.log('   - Site URL: https://your-app.vercel.app');
+  console.log('   - Redirect URL: https://your-app.vercel.app/auth/callback');
+}).catch(error => {
+  console.error('❌ 환경변수 설정 중 오류 발생:', error);
+  process.exit(1);
 });
-
-console.log('\n🔄 다음 단계:');
-console.log('1. vercel --prod 명령으로 배포');
-console.log('2. 배포 완료 후 https://your-app.vercel.app/debug 페이지 확인');
-console.log('3. Supabase Dashboard에서 Site URL 업데이트');
-console.log('   - Site URL: https://your-app.vercel.app');
-console.log('   - Redirect URL: https://your-app.vercel.app/auth/callback');
 
 function promiseifySpawn(command, args, input) {
   return new Promise((resolve, reject) => {
-    const process = require('child_process').spawn(command, args, {
+    const childProcess = require('child_process').spawn(command, args, {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     
     if (input) {
-      process.stdin.write(input + '\n');
-      process.stdin.end();
+      childProcess.stdin.write(input + '\n');
+      childProcess.stdin.end();
     }
     
     let stdout = '';
     let stderr = '';
     
-    process.stdout.on('data', (data) => {
+    childProcess.stdout.on('data', (data) => {
       stdout += data.toString();
     });
     
-    process.stderr.on('data', (data) => {
+    childProcess.stderr.on('data', (data) => {
       stderr += data.toString();
     });
     
-    process.on('close', (code) => {
+    childProcess.on('close', (code) => {
       if (code === 0) {
         resolve(stdout);
       } else {
@@ -125,6 +128,6 @@ function promiseifySpawn(command, args, input) {
       }
     });
     
-    process.on('error', reject);
+    childProcess.on('error', reject);
   });
 }

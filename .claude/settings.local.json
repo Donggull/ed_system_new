@@ -32,7 +32,9 @@
       "mcp__supabase-mcp__list_tables",
       "mcp__supabase-mcp__execute_sql",
       "Bash(node:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(vercel env:*)",
+      "Bash(vercel:*)"
     ],
     "deny": [],
     "ask": []

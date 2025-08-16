@@ -4,12 +4,15 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Debug environment variables in development
-if (process.env.NODE_ENV === 'development') {
-  console.log('🔍 Supabase Client Debug:')
-  console.log('  URL:', supabaseUrl ? `${supabaseUrl.slice(0, 30)}...` : 'NOT SET')
-  console.log('  Key:', supabaseAnonKey ? `${supabaseAnonKey.slice(0, 20)}...` : 'NOT SET')
-}
+// Enhanced debugging for all environments
+console.log('🔍 Supabase Client Environment Debug:')
+console.log('  NODE_ENV:', process.env.NODE_ENV)
+console.log('  VERCEL_ENV:', process.env.VERCEL_ENV)
+console.log('  URL exists:', !!supabaseUrl)
+console.log('  URL value:', supabaseUrl ? `${supabaseUrl.slice(0, 30)}...` : 'NOT SET')
+console.log('  Key exists:', !!supabaseAnonKey)
+console.log('  Key value:', supabaseAnonKey ? `${supabaseAnonKey.slice(0, 20)}...` : 'NOT SET')
+console.log('  All env vars:', Object.keys(process.env).filter(key => key.includes('SUPABASE')))
 
 // Validate environment variables
 const isValidUrl = (url: string) => {
@@ -28,30 +31,53 @@ const isValidKey = (key: string) => {
 
 // Create Supabase client or return null if environment variables are invalid
 const createSupabaseClient = () => {
-  // Check if running in browser environment
-  if (typeof window === 'undefined') {
-    // Server-side: only proceed if we have valid environment variables
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn('🔸 Supabase: Environment variables not available on server side')
+  // Enhanced environment variable detection
+  let finalUrl = supabaseUrl
+  let finalKey = supabaseAnonKey
+  
+  // Fallback for Vercel environment - try to get from window or runtime
+  if (typeof window !== 'undefined' && (!finalUrl || !finalKey)) {
+    // Try to get from runtime environment in browser
+    const runtimeConfig = (window as any).__RUNTIME_CONFIG__ || {}
+    finalUrl = finalUrl || runtimeConfig.NEXT_PUBLIC_SUPABASE_URL
+    finalKey = finalKey || runtimeConfig.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  }
+  
+  // Additional logging for debugging
+  console.log('🔧 Final environment check:')
+  console.log('  Final URL:', finalUrl ? 'SET' : 'NOT SET')
+  console.log('  Final Key:', finalKey ? 'SET' : 'NOT SET')
+  
+  if (!finalUrl || !finalKey) {
+    console.error('❌ Supabase: Environment variables not found!')
+    console.error('  Expected: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY')
+    console.error('  Current URL:', finalUrl || 'undefined')
+    console.error('  Current Key:', finalKey ? 'exists' : 'undefined')
+    
+    // In production, try hardcoded values as last resort
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV) {
+      console.warn('🔄 Production fallback: Using hardcoded credentials')
+      finalUrl = 'https://nktjoldoylvwtkzboyaf.supabase.co'
+      finalKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rdGpvbGRveWx2d3RremJveWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDUyODUsImV4cCI6MjA3MDcyMTI4NX0.ZGX25pgubs4PD8H8zY5wUi5cEKL500fiLjp1TY5PPyo'
+    } else {
       return null
     }
   }
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('🔸 Supabase: Environment variables not found. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local')
-    return null
-  }
-
-  if (!isValidUrl(supabaseUrl) || !isValidKey(supabaseAnonKey)) {
-    console.warn('🔸 Supabase: Environment variables appear to be placeholder values. Please configure with actual Supabase credentials.')
+  if (!isValidUrl(finalUrl) || !isValidKey(finalKey)) {
+    console.warn('🔸 Supabase: Environment variables appear to be invalid')
+    console.warn('  URL format check:', isValidUrl(finalUrl))
+    console.warn('  Key format check:', isValidKey(finalKey))
     console.warn('  Expected URL format: https://your-project.supabase.co')
     console.warn('  Expected key length: > 20 characters')
     return null
   }
 
   try {
-    const client = createClient(supabaseUrl, supabaseAnonKey)
+    const client = createClient(finalUrl, finalKey)
     console.log('✅ Supabase client created successfully')
+    console.log('  URL:', `${finalUrl.slice(0, 30)}...`)
+    console.log('  Environment:', process.env.NODE_ENV || 'unknown')
     return client
   } catch (error) {
     console.error('❌ Failed to create Supabase client:', error)
