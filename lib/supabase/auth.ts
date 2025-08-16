@@ -44,7 +44,7 @@ export async function signUp({ email, password }: SignUpData) {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`,
         data: {
           email: email,
           full_name: email.split('@')[0] // 기본 이름으로 이메일 앞부분 사용

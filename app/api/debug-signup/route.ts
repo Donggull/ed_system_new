@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       email,
       password,
       options: {
-        emailRedirectTo: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'}/auth/callback`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/auth/callback`,
         data: {
           email: email,
           full_name: email.split('@')[0]

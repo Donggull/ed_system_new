@@ -39,7 +39,7 @@ vercel --prod
 # Production, Preview, Development 모든 환경에 추가 (정정된 올바른 값)
 NEXT_PUBLIC_SUPABASE_URL=https://yzfxwxbopoeuinvbxuvj.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6Znh3eGJvcG9ldWludmJ4dXZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyOTExOTgsImV4cCI6MjA3MDg2NzE5OH0.hEIFJcE5yZN4nvUWJOIpYM7cIJ6m_pkhHfE0pKNvfF4
-SUPABASE_SERVICE_ROLE_KEY=(서비스 역할 키 - 필요시 추가)
+NEXT_PUBLIC_SITE_URL=https://ed-system-new.vercel.app
 ```
 
 3. **배포 재실행**

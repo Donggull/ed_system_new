@@ -16,7 +16,7 @@ const path = require('path');
 const ENV_VARS = {
   NEXT_PUBLIC_SUPABASE_URL: 'https://yzfxwxbopoeuinvbxuvj.supabase.co',
   NEXT_PUBLIC_SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6Znh3eGJvcG9ldWludmJ4dXZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyOTExOTgsImV4cCI6MjA3MDg2NzE5OH0.hEIFJcE5yZN4nvUWJOIpYM7cIJ6m_pkhHfE0pKNvfF4',
-  SUPABASE_SERVICE_ROLE_KEY: ''
+  NEXT_PUBLIC_SITE_URL: 'https://ed-system-new.vercel.app'
 };
 
 const ENVIRONMENTS = ['production', 'preview', 'development'];
