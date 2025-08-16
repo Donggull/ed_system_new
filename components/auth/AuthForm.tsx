@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn, signUp, resetPassword } from '@/lib/supabase/auth'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase/client'
 
 interface AuthFormProps {
   mode?: 'signin' | 'signup' | 'reset'
@@ -16,7 +17,12 @@ export default function AuthForm({ mode = 'signin', onModeChange }: AuthFormProp
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  const [isSupabaseConfigured, setIsSupabaseConfigured] = useState(true)
   const router = useRouter()
+
+  useEffect(() => {
+    setIsSupabaseConfigured(!!supabase)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,6 +77,18 @@ export default function AuthForm({ mode = 'signin', onModeChange }: AuthFormProp
           <h1 className="text-2xl font-bold text-gray-900">{getTitle()}</h1>
           <p className="text-sm text-gray-600 mt-2">DesignSystem에 오신 것을 환영합니다</p>
         </div>
+
+        {!isSupabaseConfigured && (
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
+            <div className="font-semibold mb-2">⚠️ Supabase 설정이 필요합니다</div>
+            <div className="text-xs space-y-1">
+              <div>1. <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Supabase</a>에서 프로젝트를 생성하세요</div>
+              <div>2. Settings → API에서 URL과 anon key를 복사하세요</div>
+              <div>3. .env.local 파일에 환경변수를 설정하세요</div>
+              <div>4. Authentication → Settings에서 Email Auth를 활성화하세요</div>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">

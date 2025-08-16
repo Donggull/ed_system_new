@@ -3,13 +3,38 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Create a mock client if environment variables are not available
+// Validate environment variables
+const isValidUrl = (url: string) => {
+  try {
+    new URL(url)
+    return url.includes('supabase.co') || url.includes('localhost')
+  } catch {
+    return false
+  }
+}
+
+const isValidKey = (key: string) => {
+  return key && key.length > 20 && !key.includes('your_') && !key.includes('your-')
+}
+
+// Create Supabase client or return null if environment variables are invalid
 const createSupabaseClient = () => {
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase environment variables not found. Using mock client.')
+    console.warn('Supabase environment variables not found. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local')
     return null
   }
-  return createClient(supabaseUrl, supabaseAnonKey)
+
+  if (!isValidUrl(supabaseUrl) || !isValidKey(supabaseAnonKey)) {
+    console.warn('Supabase environment variables appear to be placeholder values. Please configure with actual Supabase credentials.')
+    return null
+  }
+
+  try {
+    return createClient(supabaseUrl, supabaseAnonKey)
+  } catch (error) {
+    console.error('Failed to create Supabase client:', error)
+    return null
+  }
 }
 
 export const supabase = createSupabaseClient()
