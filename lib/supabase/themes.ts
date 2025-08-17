@@ -64,6 +64,52 @@ export async function createTheme(theme: Partial<Theme>) {
   return data as Theme
 }
 
+export async function saveTheme(theme: {
+  name: string
+  theme_data: ThemeData
+  user_id?: string
+  project_id?: string
+  is_template?: boolean
+}): Promise<{ data: Theme | null; error: string | null }> {
+  try {
+    if (!supabase) {
+      return { data: null, error: 'Supabase client not available' }
+    }
+
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      return { data: null, error: '사용자 인증이 필요합니다.' }
+    }
+
+    const themeToSave = {
+      name: theme.name,
+      theme_data: theme.theme_data,
+      user_id: user.id,
+      project_id: theme.project_id || null,
+      is_template: theme.is_template || false,
+      is_active: true,
+      version: 1
+    }
+
+    const { data, error } = await supabase
+      .from('themes')
+      .insert([themeToSave])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error saving theme:', error)
+      return { data: null, error: error.message }
+    }
+
+    return { data, error: null }
+  } catch (err) {
+    console.error('Error in saveTheme:', err)
+    return { data: null, error: '테마 저장 중 오류가 발생했습니다.' }
+  }
+}
+
 export async function updateTheme(id: string, updates: Partial<Theme>) {
   if (!supabase) {
     console.warn('Supabase client not available')

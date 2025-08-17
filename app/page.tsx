@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getThemeTemplates } from '@/lib/supabase/themes'
+import { getThemeTemplates, saveTheme, getUserThemes } from '@/lib/supabase/themes'
 import { getComponentTemplates } from '@/lib/supabase/components'
 import { Theme, ComponentTemplate, ComponentSettings } from '@/types/database'
 import { useAuth } from '@/contexts/AuthContext'
@@ -9,6 +9,7 @@ import { signOut } from '@/lib/supabase/auth'
 import { useRouter } from 'next/navigation'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import SupabaseStatus from '@/components/SupabaseStatus'
+import Navigation from '@/components/Navigation'
 import { 
   parseThemeJson, 
   generateCssVariables, 
@@ -29,6 +30,10 @@ export default function Home() {
   const [currentTheme, setCurrentTheme] = useState(defaultTheme)
   const [jsonInput, setJsonInput] = useState(JSON.stringify(sampleThemes.modern, null, 2))
   const [jsonError, setJsonError] = useState<string | null>(null)
+  const [userThemes, setUserThemes] = useState<Theme[]>([])
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null)
+  const [showUserThemes, setShowUserThemes] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
 
@@ -67,6 +72,12 @@ export default function Home() {
           defaultSettings[template.id] = settings
         })
         setComponentSettings(defaultSettings)
+        
+        // 사용자 테마 불러오기
+        if (user) {
+          const userThemesData = await getUserThemes(user.id)
+          setUserThemes(userThemesData)
+        }
       } catch (err) {
         console.error('Failed to load data:', err)
         setError('Failed to load data from database')
@@ -76,7 +87,7 @@ export default function Home() {
     }
 
     loadData()
-  }, [])
+  }, [user])
 
   // JSON 입력 핸들러
   const handleJsonChange = (value: string) => {
@@ -161,38 +172,115 @@ export default function Home() {
     return componentSettings[componentId]?.[propKey] ?? defaultValue
   }
 
+  // 테마 저장 함수
+  const handleSaveTheme = async () => {
+    if (!user) {
+      alert('로그인이 필요합니다.')
+      return
+    }
+
+    const themeName = prompt('테마 이름을 입력하세요:', currentTheme.name || 'My Theme')
+    if (!themeName) return
+
+    setSaveLoading(true)
+    setSaveSuccess(null)
+
+    try {
+      const { data, error } = await saveTheme({
+        name: themeName,
+        theme_data: currentTheme,
+        is_template: false
+      })
+
+      if (error) {
+        alert(`저장 실패: ${error}`)
+      } else {
+        setSaveSuccess('테마가 성공적으로 저장되었습니다!')
+        // 사용자 테마 목록 새로고침
+        const updatedUserThemes = await getUserThemes(user.id)
+        setUserThemes(updatedUserThemes)
+        
+        setTimeout(() => setSaveSuccess(null), 3000)
+      }
+    } catch (err) {
+      console.error('Save error:', err)
+      alert('저장 중 오류가 발생했습니다.')
+    } finally {
+      setSaveLoading(false)
+    }
+  }
+
+  // 저장된 테마 불러오기
+  const handleLoadTheme = (theme: Theme) => {
+    setCurrentTheme(theme.theme_data)
+    setJsonInput(JSON.stringify(theme.theme_data, null, 2))
+    
+    // CSS 변수 적용
+    const cssVars = generateCssVariables(theme.theme_data)
+    applyCssVariables(cssVars)
+  }
+
   return (
     <ProtectedRoute>
-      <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
+        {/* Navigation */}
+        <Navigation />
+        
+        <div className="flex h-[calc(100vh-80px)] bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
         {/* Left Sidebar - JSON Editor & Component Selection */}
         <div className="w-96 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 overflow-y-auto shadow-sm">
           {/* Header */}
-          <div className="p-6 border-b border-gray-200/50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white text-sm font-bold">DS</span>
-                </div>
-                <div>
-                  <h1 className="text-base font-bold text-gray-900">DesignSystem</h1>
-                  <p className="text-xs text-gray-500 font-medium">테마 기반 컴포넌트 생성기</p>
-                </div>
+          <div className="p-4 border-b border-gray-200/50">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-lg font-bold text-gray-900">테마 생성기</h1>
+                <p className="text-xs text-gray-500">JSON 테마로 컴포넌트 생성</p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="text-xs text-gray-600">
-                  {user?.email}
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                  title="로그아웃"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                </button>
+              <div className="text-xs text-gray-600">
+                {user?.email}
               </div>
             </div>
+            
+            {/* Save/Load Controls */}
+            <div className="flex items-center gap-2 mb-3">
+              <button
+                onClick={handleSaveTheme}
+                disabled={saveLoading}
+                className="flex-1 px-3 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-lg transition-colors"
+              >
+                {saveLoading ? '저장 중...' : '테마 저장'}
+              </button>
+              <button
+                onClick={() => setShowUserThemes(!showUserThemes)}
+                className="px-3 py-2 text-xs font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              >
+                내 테마
+              </button>
+            </div>
+            
+            {saveSuccess && (
+              <div className="text-xs text-green-600 mb-3">
+                ✅ {saveSuccess}
+              </div>
+            )}
+            
+            {/* User Themes List */}
+            {showUserThemes && userThemes.length > 0 && (
+              <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+                <h4 className="text-xs font-semibold text-gray-700 mb-2">저장된 테마</h4>
+                <div className="space-y-1 max-h-32 overflow-y-auto">
+                  {userThemes.map((theme) => (
+                    <button
+                      key={theme.id}
+                      onClick={() => handleLoadTheme(theme)}
+                      className="w-full text-left px-2 py-1 text-xs text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                    >
+                      {theme.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 샘플 테마 버튼 */}
@@ -954,6 +1042,7 @@ export default function Home() {
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
     </ProtectedRoute>
