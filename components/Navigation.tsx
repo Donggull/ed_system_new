@@ -7,12 +7,9 @@ import { useAuth } from '@/contexts/AuthContext'
 import { signOut } from '@/lib/supabase/auth'
 
 const navigationItems = [
-  { href: '/', label: '디자인 시스템 생성기', icon: '🎨' },
-  { href: '/dashboard', label: '대시보드', icon: '📊' },
-  { href: '/design-system', label: '디자인 시스템', icon: '🎨' },
-  { href: '/courses', label: '코스', icon: '📚' },
-  { href: '/students', label: '학생', icon: '👥' },
-  { href: '/reports', label: '리포트', icon: '📈' },
+  { href: '/', label: '메인페이지', icon: '🏠' },
+  { href: '/design-system', label: '디자인 시스템 v1', icon: '🎨' },
+  { href: '/design-system-v2', label: '디자인 시스템 v2', icon: '✨' },
 ]
 
 export default function Navigation() {
