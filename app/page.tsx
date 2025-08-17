@@ -28,7 +28,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentTheme, setCurrentTheme] = useState(defaultTheme)
-  const [jsonInput, setJsonInput] = useState(JSON.stringify(sampleThemes.modern, null, 2))
+  const [jsonInput, setJsonInput] = useState(JSON.stringify(sampleThemes.flat, null, 2))
   const [jsonError, setJsonError] = useState<string | null>(null)
   const [userThemes, setUserThemes] = useState<Theme[]>([])
   const [saveLoading, setSaveLoading] = useState(false)
@@ -286,7 +286,7 @@ export default function Home() {
           {/* 샘플 테마 버튼 */}
           <div className="p-4 border-b border-gray-200/50">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">빠른 테마 적용</h3>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 mb-3">
               <button
                 onClick={() => loadSampleTheme('modern')}
                 className="p-2 text-xs rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
@@ -305,6 +305,15 @@ export default function Home() {
               >
                 미니멀
               </button>
+              <button
+                onClick={() => loadSampleTheme('flat')}
+                className="p-2 text-xs rounded-lg border border-gray-200 hover:border-teal-300 hover:bg-teal-50 transition-colors font-medium"
+              >
+                🆕 Flat JSON
+              </button>
+            </div>
+            <div className="text-xs text-gray-500">
+              <strong>Flat JSON:</strong> 단순화된 색상 + 타이포그래피 형태
             </div>
           </div>
 

@@ -118,7 +118,165 @@ export function mergeThemeWithDefaults(partialTheme: Partial<ThemeData>): ThemeD
   }
 }
 
-// JSON 문자열을 ThemeData로 파싱하고 검증
+// Flat JSON 형태 인터페이스 정의
+interface FlatThemeJSON {
+  colors?: {
+    primary?: string
+    primaryDark?: string
+    secondary?: string
+    secondaryMedium?: string
+    accent?: string
+    background?: string
+    foreground?: string
+    muted?: string
+    mutedForeground?: string
+    border?: string
+    input?: string
+    ring?: string
+    destructive?: string
+    destructiveForeground?: string
+    [key: string]: string | undefined
+  }
+  typography?: {
+    fontFamily?: {
+      primary?: string
+      heading?: string
+      accent?: string
+      display?: string
+      [key: string]: string | undefined
+    }
+    fontSize?: {
+      xs?: string
+      sm?: string
+      base?: string
+      lg?: string
+      xl?: string
+      '2xl'?: string
+      '3xl'?: string
+      '4xl'?: string
+      [key: string]: string | undefined
+    }
+    fontWeight?: {
+      light?: string
+      normal?: string
+      medium?: string
+      semibold?: string
+      bold?: string
+      [key: string]: string | undefined
+    }
+  }
+  [key: string]: any
+}
+
+// Flat 색상을 TailwindCSS palette로 변환
+function flatColorToPalette(color: string): ColorPalette {
+  const base = hexToRgb(color)
+  if (!base) {
+    return {
+      '50': '#f8fafc',
+      '100': '#f1f5f9', 
+      '200': '#e2e8f0',
+      '300': '#cbd5e1',
+      '400': '#94a3b8',
+      '500': color,
+      '600': color,
+      '700': color,
+      '800': '#1e293b',
+      '900': '#0f172a'
+    }
+  }
+
+  // 색상 변형 생성 (간단한 밝기 조절)
+  const generateShade = (factor: number) => {
+    const r = Math.round(Math.min(255, Math.max(0, base.r + (255 - base.r) * factor)))
+    const g = Math.round(Math.min(255, Math.max(0, base.g + (255 - base.g) * factor)))
+    const b = Math.round(Math.min(255, Math.max(0, base.b + (255 - base.b) * factor)))
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  }
+
+  const generateDarkShade = (factor: number) => {
+    const r = Math.round(Math.max(0, base.r * factor))
+    const g = Math.round(Math.max(0, base.g * factor))
+    const b = Math.round(Math.max(0, base.b * factor))
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  }
+
+  return {
+    '50': generateShade(0.95),
+    '100': generateShade(0.9),
+    '200': generateShade(0.8),
+    '300': generateShade(0.6),
+    '400': generateShade(0.3),
+    '500': color,
+    '600': generateDarkShade(0.8),
+    '700': generateDarkShade(0.6),
+    '800': generateDarkShade(0.4),
+    '900': generateDarkShade(0.2)
+  }
+}
+
+// Flat JSON을 기존 ThemeData 구조로 변환
+function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
+  const colors: any = {}
+
+  if (flatTheme.colors) {
+    // Primary 색상 설정
+    if (flatTheme.colors.primary) {
+      colors.primary = flatColorToPalette(flatTheme.colors.primary)
+    }
+
+    // Secondary 색상 설정
+    if (flatTheme.colors.secondary) {
+      colors.secondary = flatColorToPalette(flatTheme.colors.secondary)
+    }
+
+    // 추가 색상들
+    if (flatTheme.colors.destructive) {
+      colors.error = flatColorToPalette(flatTheme.colors.destructive)
+    }
+
+    if (flatTheme.colors.accent) {
+      colors.success = flatColorToPalette(flatTheme.colors.accent)
+    }
+  }
+
+  const typography: any = {
+    ...defaultTheme.typography
+  }
+
+  if (flatTheme.typography) {
+    if (flatTheme.typography.fontFamily) {
+      typography.fontFamily = {
+        sans: flatTheme.typography.fontFamily.primary ? 
+          [flatTheme.typography.fontFamily.primary, 'ui-sans-serif', 'system-ui', 'sans-serif'] :
+          defaultTheme.typography.fontFamily.sans,
+        mono: flatTheme.typography.fontFamily.accent ? 
+          [flatTheme.typography.fontFamily.accent, 'ui-monospace', 'monospace'] :
+          defaultTheme.typography.fontFamily.mono
+      }
+    }
+
+    if (flatTheme.typography.fontSize) {
+      typography.fontSize = {
+        ...defaultTheme.typography.fontSize,
+        ...flatTheme.typography.fontSize
+      }
+    }
+  }
+
+  return {
+    name: "Custom Theme",
+    colors: {
+      ...defaultTheme.colors,
+      ...colors
+    },
+    typography,
+    spacing: defaultTheme.spacing,
+    borderRadius: defaultTheme.borderRadius
+  }
+}
+
+// JSON 문자열을 ThemeData로 파싱하고 검증 (기존 + 새로운 flat 형태 지원)
 export function parseThemeJson(jsonString: string): { theme: ThemeData | null, error: string | null } {
   try {
     const parsed = JSON.parse(jsonString)
@@ -127,8 +285,22 @@ export function parseThemeJson(jsonString: string): { theme: ThemeData | null, e
     if (!parsed || typeof parsed !== 'object') {
       return { theme: null, error: '유효하지 않은 JSON 객체입니다.' }
     }
+
+    // Flat 형태인지 확인 (colors 객체에 직접 색상 값이 있는 경우)
+    if (parsed.colors && typeof parsed.colors === 'object') {
+      const colorValues = Object.values(parsed.colors)
+      const hasDirectColorValues = colorValues.some(value => 
+        typeof value === 'string' && (value.startsWith('#') || value.startsWith('rgb'))
+      )
+
+      if (hasDirectColorValues) {
+        // Flat 형태로 처리
+        const theme = convertFlatToThemeData(parsed as FlatThemeJSON)
+        return { theme, error: null }
+      }
+    }
     
-    // 필수 속성 검증
+    // 기존 복잡한 형태 처리
     if (!parsed.colors || typeof parsed.colors !== 'object') {
       return { theme: null, error: 'colors 속성이 필요합니다.' }
     }
@@ -297,6 +469,50 @@ export const sampleThemes = {
         "50": "#f3f4f6",
         "500": "#9ca3af", 
         "900": "#1f2937"
+      }
+    }
+  },
+  // 새로운 Flat 형태 샘플 테마들
+  flat: {
+    colors: {
+      primary: "#04bcb4",
+      primaryDark: "#02938c", 
+      secondary: "#e2f6f5",
+      secondaryMedium: "#b8ede8",
+      accent: "#FF6B35",
+      background: "#FAFBFB",
+      foreground: "#1A202C",
+      muted: "#F5F7F7",
+      mutedForeground: "#8B9898",
+      border: "#e2e8f0",
+      input: "#e2e8f0",
+      ring: "#04bcb4",
+      destructive: "#ef4444",
+      destructiveForeground: "#ffffff"
+    },
+    typography: {
+      fontFamily: {
+        primary: "Pretendard Variable, sans-serif",
+        heading: "Manrope, sans-serif", 
+        accent: "Noto Serif KR, serif",
+        display: "Custom Brutalist, sans-serif"
+      },
+      fontSize: {
+        xs: "0.75rem",
+        sm: "0.875rem",
+        base: "1rem",
+        lg: "1.125rem",
+        xl: "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem"
+      },
+      fontWeight: {
+        light: "300",
+        normal: "400", 
+        medium: "500",
+        semibold: "600",
+        bold: "700"
       }
     }
   }
