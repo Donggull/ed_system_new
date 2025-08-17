@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { getThemeTemplates } from '@/lib/supabase/themes'
 import { getComponentTemplates } from '@/lib/supabase/components'
-import { Theme, ComponentTemplate } from '@/types/database'
+import { Theme, ComponentTemplate, ComponentSettings } from '@/types/database'
 import { useAuth } from '@/contexts/AuthContext'
 import { signOut } from '@/lib/supabase/auth'
 import { useRouter } from 'next/navigation'
@@ -22,6 +22,8 @@ export default function Home() {
   const [themeTemplates, setThemeTemplates] = useState<Theme[]>([])
   const [componentTemplates, setComponentTemplates] = useState<ComponentTemplate[]>([])
   const [selectedComponents, setSelectedComponents] = useState<string[]>([])
+  const [componentSettings, setComponentSettings] = useState<ComponentSettings>({})
+  const [expandedSettings, setExpandedSettings] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentTheme, setCurrentTheme] = useState(defaultTheme)
@@ -54,6 +56,17 @@ export default function Home() {
           .filter(template => template.category === 'essential')
           .map(template => template.id)
         setSelectedComponents(essentialComponents)
+        
+        // 컴포넌트 기본 설정 초기화
+        const defaultSettings: ComponentSettings = {}
+        allComponentTemplates.forEach(template => {
+          const settings: { [key: string]: any } = {}
+          Object.entries(template.props_schema).forEach(([propKey, propSchema]) => {
+            settings[propKey] = propSchema.default
+          })
+          defaultSettings[template.id] = settings
+        })
+        setComponentSettings(defaultSettings)
       } catch (err) {
         console.error('Failed to load data:', err)
         setError('Failed to load data from database')
@@ -91,6 +104,45 @@ export default function Home() {
     )
   }
 
+  // 전체 선택
+  const selectAllComponents = () => {
+    const allIds = allComponentTemplates.map(template => template.id)
+    setSelectedComponents(allIds)
+  }
+
+  // 전체 해제
+  const deselectAllComponents = () => {
+    setSelectedComponents([])
+  }
+
+  // 필수 컴포넌트만 선택
+  const selectEssentialOnly = () => {
+    const essentialIds = allComponentTemplates
+      .filter(template => template.category === 'essential')
+      .map(template => template.id)
+    setSelectedComponents(essentialIds)
+  }
+
+  // 컴포넌트 설정 업데이트
+  const updateComponentSetting = (componentId: string, propKey: string, value: any) => {
+    setComponentSettings(prev => ({
+      ...prev,
+      [componentId]: {
+        ...prev[componentId],
+        [propKey]: value
+      }
+    }))
+  }
+
+  // 설정 패널 토글
+  const toggleSettingsExpanded = (componentId: string) => {
+    setExpandedSettings(prev => 
+      prev.includes(componentId)
+        ? prev.filter(id => id !== componentId)
+        : [...prev, componentId]
+    )
+  }
+
   // 템플릿 로드
   const loadSampleTheme = (themeName: keyof typeof sampleThemes) => {
     const themeJson = JSON.stringify(sampleThemes[themeName], null, 2)
@@ -102,6 +154,11 @@ export default function Home() {
     return allComponentTemplates.filter(template => 
       selectedComponents.includes(template.id)
     )
+  }
+
+  // 컴포넌트 설정값 가져오기
+  const getComponentSetting = (componentId: string, propKey: string, defaultValue?: any) => {
+    return componentSettings[componentId]?.[propKey] ?? defaultValue
   }
 
   return (
@@ -188,7 +245,32 @@ export default function Home() {
 
           {/* 컴포넌트 선택 */}
           <div className="p-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-4">컴포넌트 선택</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-gray-900">컴포넌트 선택</h3>
+              <div className="flex gap-1">
+                <button
+                  onClick={selectAllComponents}
+                  className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                  title="전체 선택"
+                >
+                  전체
+                </button>
+                <button
+                  onClick={selectEssentialOnly}
+                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                  title="필수만"
+                >
+                  필수
+                </button>
+                <button
+                  onClick={deselectAllComponents}
+                  className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                  title="전체 해제"
+                >
+                  해제
+                </button>
+              </div>
+            </div>
             
             {/* 필수 컴포넌트 */}
             <div className="mb-6">
@@ -201,20 +283,79 @@ export default function Home() {
                 {allComponentTemplates
                   .filter(template => template.category === 'essential')
                   .map(template => (
-                    <div key={template.id} className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        id={template.id}
-                        checked={selectedComponents.includes(template.id)}
-                        onChange={() => toggleComponent(template.id)}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <label 
-                        htmlFor={template.id}
-                        className="text-sm text-gray-700 cursor-pointer flex-1"
-                      >
-                        {template.name}
-                      </label>
+                    <div key={template.id} className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id={template.id}
+                          checked={selectedComponents.includes(template.id)}
+                          onChange={() => toggleComponent(template.id)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <label 
+                          htmlFor={template.id}
+                          className="text-sm text-gray-700 cursor-pointer flex-1"
+                        >
+                          {template.name}
+                        </label>
+                        {selectedComponents.includes(template.id) && Object.keys(template.props_schema).length > 0 && (
+                          <button
+                            onClick={() => toggleSettingsExpanded(template.id)}
+                            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                            title="설정"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                      
+                      {/* 설정 패널 */}
+                      {selectedComponents.includes(template.id) && 
+                       expandedSettings.includes(template.id) && 
+                       Object.keys(template.props_schema).length > 0 && (
+                        <div className="ml-7 p-3 bg-gray-50 rounded-lg space-y-3">
+                          {Object.entries(template.props_schema).map(([propKey, propSchema]) => (
+                            <div key={propKey} className="space-y-1">
+                              <label className="text-xs font-medium text-gray-600">
+                                {propSchema.description || propKey}
+                              </label>
+                              
+                              {propSchema.options ? (
+                                <select
+                                  value={componentSettings[template.id]?.[propKey] || propSchema.default}
+                                  onChange={(e) => updateComponentSetting(template.id, propKey, e.target.value)}
+                                  className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                >
+                                  {propSchema.options.map(option => (
+                                    <option key={option} value={option}>{option}</option>
+                                  ))}
+                                </select>
+                              ) : propSchema.type === 'boolean' ? (
+                                <label className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={componentSettings[template.id]?.[propKey] || propSchema.default || false}
+                                    onChange={(e) => updateComponentSetting(template.id, propKey, e.target.checked)}
+                                    className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                  />
+                                  <span className="text-xs text-gray-600">활성화</span>
+                                </label>
+                              ) : (
+                                <input
+                                  type={propSchema.type === 'number' ? 'number' : 'text'}
+                                  value={componentSettings[template.id]?.[propKey] || propSchema.default || ''}
+                                  onChange={(e) => updateComponentSetting(template.id, propKey, e.target.value)}
+                                  className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  placeholder={propSchema.default}
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))
                 }
@@ -232,20 +373,79 @@ export default function Home() {
                 {allComponentTemplates
                   .filter(template => template.category === 'optional')
                   .map(template => (
-                    <div key={template.id} className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        id={template.id}
-                        checked={selectedComponents.includes(template.id)}
-                        onChange={() => toggleComponent(template.id)}
-                        className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                      />
-                      <label 
-                        htmlFor={template.id}
-                        className="text-sm text-gray-700 cursor-pointer flex-1"
-                      >
-                        {template.name}
-                      </label>
+                    <div key={template.id} className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id={template.id}
+                          checked={selectedComponents.includes(template.id)}
+                          onChange={() => toggleComponent(template.id)}
+                          className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        />
+                        <label 
+                          htmlFor={template.id}
+                          className="text-sm text-gray-700 cursor-pointer flex-1"
+                        >
+                          {template.name}
+                        </label>
+                        {selectedComponents.includes(template.id) && Object.keys(template.props_schema).length > 0 && (
+                          <button
+                            onClick={() => toggleSettingsExpanded(template.id)}
+                            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                            title="설정"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                      
+                      {/* 설정 패널 */}
+                      {selectedComponents.includes(template.id) && 
+                       expandedSettings.includes(template.id) && 
+                       Object.keys(template.props_schema).length > 0 && (
+                        <div className="ml-7 p-3 bg-gray-50 rounded-lg space-y-3">
+                          {Object.entries(template.props_schema).map(([propKey, propSchema]) => (
+                            <div key={propKey} className="space-y-1">
+                              <label className="text-xs font-medium text-gray-600">
+                                {propSchema.description || propKey}
+                              </label>
+                              
+                              {propSchema.options ? (
+                                <select
+                                  value={componentSettings[template.id]?.[propKey] || propSchema.default}
+                                  onChange={(e) => updateComponentSetting(template.id, propKey, e.target.value)}
+                                  className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                >
+                                  {propSchema.options.map(option => (
+                                    <option key={option} value={option}>{option}</option>
+                                  ))}
+                                </select>
+                              ) : propSchema.type === 'boolean' ? (
+                                <label className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={componentSettings[template.id]?.[propKey] || propSchema.default || false}
+                                    onChange={(e) => updateComponentSetting(template.id, propKey, e.target.checked)}
+                                    className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                  />
+                                  <span className="text-xs text-gray-600">활성화</span>
+                                </label>
+                              ) : (
+                                <input
+                                  type={propSchema.type === 'number' ? 'number' : 'text'}
+                                  value={componentSettings[template.id]?.[propKey] || propSchema.default || ''}
+                                  onChange={(e) => updateComponentSetting(template.id, propKey, e.target.value)}
+                                  className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  placeholder={propSchema.default}
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))
                 }
@@ -308,63 +508,129 @@ export default function Home() {
                 
                 {/* 컴포넌트별 미리보기 렌더링 */}
                 <div className="space-y-6">
-                  {template.id === 'button' && (
-                    <div className="flex flex-wrap gap-4">
-                      <button className="px-6 py-3 bg-[hsl(var(--color-primary-500))] text-white rounded-xl hover:bg-[hsl(var(--color-primary-600))] text-sm font-semibold shadow-lg transition-all transform hover:-translate-y-0.5">
-                        Primary Button
-                      </button>
-                      <button className="px-6 py-3 bg-[hsl(var(--color-secondary-500))] text-white rounded-xl hover:bg-[hsl(var(--color-secondary-600))] text-sm font-semibold shadow-lg transition-all transform hover:-translate-y-0.5">
-                        Secondary Button
-                      </button>
-                      <button className="px-6 py-3 border-2 border-[hsl(var(--color-primary-500))] text-[hsl(var(--color-primary-500))] rounded-xl hover:bg-[hsl(var(--color-primary-50))] text-sm font-semibold transition-all transform hover:-translate-y-0.5">
-                        Outline Button
-                      </button>
-                    </div>
-                  )}
-                  
-                  {template.id === 'input' && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">텍스트 입력</label>
-                        <input 
-                          type="text" 
-                          placeholder="텍스트를 입력하세요" 
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] text-sm transition-all"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">이메일 입력</label>
-                        <input 
-                          type="email" 
-                          placeholder="name@example.com" 
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] text-sm transition-all"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {template.id === 'card' && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-                        <h4 className="font-bold text-gray-900 mb-3">기본 카드</h4>
-                        <p className="text-sm text-gray-600 leading-relaxed">테마가 적용된 기본 카드 컴포넌트입니다.</p>
-                      </div>
-                      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-                        <div className="h-32 bg-[hsl(var(--color-primary-100))]"></div>
-                        <div className="p-6">
-                          <h4 className="font-bold text-gray-900 mb-3">이미지 카드</h4>
-                          <p className="text-sm text-gray-600 leading-relaxed">헤더 이미지가 포함된 카드입니다.</p>
+                  {template.id === 'button' && (() => {
+                    const variant = getComponentSetting('button', 'variant', 'primary')
+                    const size = getComponentSetting('button', 'size', 'md')
+                    
+                    const sizeClasses = {
+                      sm: 'px-4 py-2 text-xs',
+                      md: 'px-6 py-3 text-sm',
+                      lg: 'px-8 py-4 text-base'
+                    }
+                    
+                    const variantClasses = {
+                      primary: 'bg-[hsl(var(--color-primary-500))] text-white hover:bg-[hsl(var(--color-primary-600))]',
+                      secondary: 'bg-[hsl(var(--color-secondary-500))] text-white hover:bg-[hsl(var(--color-secondary-600))]',
+                      outline: 'border-2 border-[hsl(var(--color-primary-500))] text-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))]',
+                      ghost: 'text-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))]'
+                    }
+                    
+                    return (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
+                          <span className="text-xs font-medium text-blue-700">현재 설정:</span>
+                          <span className="text-xs text-blue-600">변형: {variant}</span>
+                          <span className="text-xs text-blue-600">크기: {size}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                          <button className={`${sizeClasses[size as keyof typeof sizeClasses]} ${variantClasses[variant as keyof typeof variantClasses]} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
+                            {variant.charAt(0).toUpperCase() + variant.slice(1)} Button
+                          </button>
+                          {variant !== 'primary' && (
+                            <button className={`${sizeClasses[size as keyof typeof sizeClasses]} ${variantClasses.primary} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
+                              Primary (비교용)
+                            </button>
+                          )}
+                          {variant !== 'outline' && (
+                            <button className={`${sizeClasses[size as keyof typeof sizeClasses]} ${variantClasses.outline} rounded-xl font-semibold transition-all transform hover:-translate-y-0.5`}>
+                              Outline (비교용)
+                            </button>
+                          )}
                         </div>
                       </div>
-                      <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-                        <h4 className="font-bold text-gray-900 mb-3">액션 카드</h4>
-                        <p className="text-sm text-gray-600 leading-relaxed mb-4">버튼이 포함된 카드입니다.</p>
-                        <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm font-medium hover:bg-[hsl(var(--color-primary-600))] transition-colors">
-                          액션
-                        </button>
+                    )
+                  })()}
+                  
+                  {template.id === 'input' && (() => {
+                    const variant = getComponentSetting('input', 'variant', 'default')
+                    const inputSize = getComponentSetting('input', 'inputSize', 'md')
+                    
+                    const sizeClasses = {
+                      sm: 'px-3 py-2 text-xs',
+                      md: 'px-4 py-3 text-sm', 
+                      lg: 'px-5 py-4 text-base'
+                    }
+                    
+                    const variantClasses = {
+                      default: 'border-2 border-gray-200 bg-white focus:border-[hsl(var(--color-primary-500))]',
+                      filled: 'border-transparent bg-[hsl(var(--color-secondary-100))] focus:bg-white focus:border-[hsl(var(--color-primary-500))]'
+                    }
+                    
+                    return (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
+                          <span className="text-xs font-medium text-blue-700">현재 설정:</span>
+                          <span className="text-xs text-blue-600">변형: {variant}</span>
+                          <span className="text-xs text-blue-600">크기: {inputSize}</span>
+                        </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">텍스트 입력</label>
+                            <input 
+                              type="text" 
+                              placeholder="텍스트를 입력하세요" 
+                              className={`w-full ${sizeClasses[inputSize as keyof typeof sizeClasses]} ${variantClasses[variant as keyof typeof variantClasses]} rounded-xl focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] transition-all`}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">이메일 입력</label>
+                            <input 
+                              type="email" 
+                              placeholder="name@example.com" 
+                              className={`w-full ${sizeClasses[inputSize as keyof typeof sizeClasses]} ${variantClasses[variant as keyof typeof variantClasses]} rounded-xl focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] transition-all`}
+                            />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )
+                  })()}
+                  
+                  {template.id === 'card' && (() => {
+                    const variant = getComponentSetting('card', 'variant', 'default')
+                    
+                    const variantClasses = {
+                      default: 'bg-white',
+                      outlined: 'bg-white border border-[hsl(var(--color-secondary-300))]',
+                      elevated: 'bg-white shadow-xl'
+                    }
+                    
+                    return (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
+                          <span className="text-xs font-medium text-blue-700">현재 설정:</span>
+                          <span className="text-xs text-blue-600">변형: {variant}</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <div className={`${variantClasses[variant as keyof typeof variantClasses]} rounded-2xl p-6 hover:shadow-xl transition-all transform hover:-translate-y-1`}>
+                            <h4 className="font-bold text-gray-900 mb-3">선택된 변형</h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">{variant} 스타일의 카드입니다.</p>
+                          </div>
+                          {variant !== 'outlined' && (
+                            <div className={`${variantClasses.outlined} rounded-2xl p-6 hover:shadow-xl transition-all transform hover:-translate-y-1`}>
+                              <h4 className="font-bold text-gray-900 mb-3">테두리 카드</h4>
+                              <p className="text-sm text-gray-600 leading-relaxed">비교용 outlined 카드입니다.</p>
+                            </div>
+                          )}
+                          {variant !== 'elevated' && (
+                            <div className={`${variantClasses.elevated} rounded-2xl p-6 hover:shadow-2xl transition-all transform hover:-translate-y-1`}>
+                              <h4 className="font-bold text-gray-900 mb-3">그림자 카드</h4>
+                              <p className="text-sm text-gray-600 leading-relaxed">비교용 elevated 카드입니다.</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })()}
                   
                   {template.id === 'modal' && (
                     <div className="relative bg-white rounded-2xl border border-gray-200 p-6 shadow-xl max-w-md mx-auto">

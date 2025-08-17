@@ -107,6 +107,12 @@ export interface ComponentPropsSchema {
   }
 }
 
+export interface ComponentSettings {
+  [componentId: string]: {
+    [propKey: string]: any
+  }
+}
+
 export interface GeneratedComponent {
   id: string
   theme_id: string
