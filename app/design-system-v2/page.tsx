@@ -109,11 +109,14 @@ export default function DesignSystemV2() {
 
   // 컴포넌트 선택 토글
   const toggleComponent = (componentId: string) => {
-    setSelectedComponents(prev => 
-      prev.includes(componentId)
+    console.log('Toggling component:', componentId)
+    setSelectedComponents(prev => {
+      const newSelection = prev.includes(componentId)
         ? prev.filter(id => id !== componentId)
         : [...prev, componentId]
-    )
+      console.log('New selectedComponents:', newSelection)
+      return newSelection
+    })
   }
 
   // 선택된 컴포넌트 템플릿 필터링
@@ -121,108 +124,117 @@ export default function DesignSystemV2() {
     selectedComponents.includes(template.id)
   )
 
-  // 미리보기 컴포넌트 렌더링
-  const renderPreviewComponents = () => (
-    <div className="space-y-6" key={`components-${selectedComponents.join(',')}-${themeState.currentTheme.name}-${themeState.isValid}`}>
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">실시간 테마 미리보기</h3>
-        
-        {/* 버튼 컴포넌트들 */}
-        {selectedComponents.includes('button') && (
-          <div className="space-y-3">
-            <h4 className="font-medium text-gray-700">Button 컴포넌트</h4>
-            <div className="flex flex-wrap gap-2">
-              <PreviewComponents.Button variant="primary" size="sm">Primary</PreviewComponents.Button>
-              <PreviewComponents.Button variant="secondary" size="sm">Secondary</PreviewComponents.Button>
-              <PreviewComponents.Button variant="outline" size="sm">Outline</PreviewComponents.Button>
-              <PreviewComponents.Button variant="ghost" size="sm">Ghost</PreviewComponents.Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <PreviewComponents.Button variant="primary" size="md">Medium</PreviewComponents.Button>
-              <PreviewComponents.Button variant="primary" size="lg">Large</PreviewComponents.Button>
-            </div>
+  // 미리보기 컴포넌트 렌더링 (useMemo로 의존성 관리)
+  const previewContent = React.useMemo(() => {
+    console.log('Rendering preview content with selectedComponents:', selectedComponents)
+    
+    return (
+      <div className="space-y-6" key={`preview-content-${selectedComponents.join(',')}`}>
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">실시간 테마 미리보기</h3>
+          
+          {/* 선택된 컴포넌트 상태 표시 */}
+          <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
+            선택된 컴포넌트: {selectedComponents.length > 0 ? selectedComponents.join(', ') : '없음'}
           </div>
-        )}
-
-        {/* 카드 컴포넌트들 */}
-        {selectedComponents.includes('card') && (
-          <div className="space-y-3">
-            <h4 className="font-medium text-gray-700">Card 컴포넌트</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <PreviewComponents.Card variant="default">
-                <h5 className="font-semibold mb-2">Default Card</h5>
-                <p className="text-sm text-gray-600">This is a default card with basic styling.</p>
-              </PreviewComponents.Card>
-              <PreviewComponents.Card variant="outlined">
-                <h5 className="font-semibold mb-2">Outlined Card</h5>
-                <p className="text-sm text-gray-600">This card has a border outline.</p>
-              </PreviewComponents.Card>
-              <PreviewComponents.Card variant="elevated">
-                <h5 className="font-semibold mb-2">Elevated Card</h5>
-                <p className="text-sm text-gray-600">This card has shadow elevation.</p>
-              </PreviewComponents.Card>
+          
+          {/* 버튼 컴포넌트들 */}
+          {selectedComponents.includes('button') && (
+            <div className="space-y-3">
+              <h4 className="font-medium text-gray-700">Button 컴포넌트</h4>
+              <div className="flex flex-wrap gap-2">
+                <PreviewComponents.Button variant="primary" size="sm">Primary</PreviewComponents.Button>
+                <PreviewComponents.Button variant="secondary" size="sm">Secondary</PreviewComponents.Button>
+                <PreviewComponents.Button variant="outline" size="sm">Outline</PreviewComponents.Button>
+                <PreviewComponents.Button variant="ghost" size="sm">Ghost</PreviewComponents.Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <PreviewComponents.Button variant="primary" size="md">Medium</PreviewComponents.Button>
+                <PreviewComponents.Button variant="primary" size="lg">Large</PreviewComponents.Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 입력 컴포넌트들 */}
-        {selectedComponents.includes('input') && (
-          <div className="space-y-3">
-            <h4 className="font-medium text-gray-700">Input 컴포넌트</h4>
-            <div className="space-y-2 max-w-md">
-              <PreviewComponents.Input placeholder="Default input" variant="default" />
-              <PreviewComponents.Input placeholder="Filled input" variant="filled" />
+          {/* 카드 컴포넌트들 */}
+          {selectedComponents.includes('card') && (
+            <div className="space-y-3">
+              <h4 className="font-medium text-gray-700">Card 컴포넌트</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <PreviewComponents.Card variant="default">
+                  <h5 className="font-semibold mb-2">Default Card</h5>
+                  <p className="text-sm text-gray-600">This is a default card with basic styling.</p>
+                </PreviewComponents.Card>
+                <PreviewComponents.Card variant="outlined">
+                  <h5 className="font-semibold mb-2">Outlined Card</h5>
+                  <p className="text-sm text-gray-600">This card has a border outline.</p>
+                </PreviewComponents.Card>
+                <PreviewComponents.Card variant="elevated">
+                  <h5 className="font-semibold mb-2">Elevated Card</h5>
+                  <p className="text-sm text-gray-600">This card has shadow elevation.</p>
+                </PreviewComponents.Card>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
 
-      {/* 타이포그래피 미리보기 */}
-      <div className="space-y-3">
-        <h4 className="font-medium text-gray-700">Typography</h4>
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900">Heading 1</h1>
-          <h2 className="text-3xl font-bold text-gray-800">Heading 2</h2>
-          <h3 className="text-2xl font-semibold text-gray-700">Heading 3</h3>
-          <p className="text-base text-gray-600">Body text with normal weight and standard line height.</p>
-          <p className="text-sm text-gray-500">Small text for captions and secondary information.</p>
+          {/* 입력 컴포넌트들 */}
+          {selectedComponents.includes('input') && (
+            <div className="space-y-3">
+              <h4 className="font-medium text-gray-700">Input 컴포넌트</h4>
+              <div className="space-y-2 max-w-md">
+                <PreviewComponents.Input placeholder="Default input" variant="default" />
+                <PreviewComponents.Input placeholder="Filled input" variant="filled" />
+              </div>
+            </div>
+          )}
         </div>
-      </div>
 
-      {/* 색상 팔레트 */}
-      <div className="space-y-3">
-        <h4 className="font-medium text-gray-700">Color Palette</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* 타이포그래피 미리보기 */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-gray-700">Typography</h4>
           <div className="space-y-2">
-            <div className="text-sm font-medium">Primary</div>
-            <div className="grid grid-cols-5 gap-1">
-              {['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'].map(shade => (
-                <div
-                  key={shade}
-                  className="aspect-square rounded"
-                  style={{ backgroundColor: `hsl(var(--color-primary-${shade}))` }}
-                  title={`Primary ${shade}`}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="text-sm font-medium">Secondary</div>
-            <div className="grid grid-cols-5 gap-1">
-              {['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'].map(shade => (
-                <div
-                  key={shade}
-                  className="aspect-square rounded"
-                  style={{ backgroundColor: `hsl(var(--color-secondary-${shade}))` }}
-                  title={`Secondary ${shade}`}
-                />
-              ))}
-            </div>
+            <h1 className="text-4xl font-bold text-gray-900">Heading 1</h1>
+            <h2 className="text-3xl font-bold text-gray-800">Heading 2</h2>
+            <h3 className="text-2xl font-semibold text-gray-700">Heading 3</h3>
+            <p className="text-base text-gray-600">Body text with normal weight and standard line height.</p>
+            <p className="text-sm text-gray-500">Small text for captions and secondary information.</p>
           </div>
         </div>
+
+        {/* 색상 팔레트 */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-gray-700">Color Palette</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="space-y-2">
+              <div className="text-sm font-medium">Primary</div>
+              <div className="grid grid-cols-5 gap-1">
+                {['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'].map(shade => (
+                  <div
+                    key={shade}
+                    className="aspect-square rounded"
+                    style={{ backgroundColor: `hsl(var(--color-primary-${shade}))` }}
+                    title={`Primary ${shade}`}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-sm font-medium">Secondary</div>
+              <div className="grid grid-cols-5 gap-1">
+                {['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'].map(shade => (
+                  <div
+                    key={shade}
+                    className="aspect-square rounded"
+                    style={{ backgroundColor: `hsl(var(--color-secondary-${shade}))` }}
+                    title={`Secondary ${shade}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }, [selectedComponents, themeState.currentTheme.name, themeState.isValid])
 
   // 초기화 중일 때 로딩 표시
   if (!isInitialized) {
@@ -371,11 +383,11 @@ export default function DesignSystemV2() {
               <div className="flex-1" key={`preview-${selectedComponents.join(',')}-${themeState.currentTheme.name}`}>
                 {viewMode === 'enhanced' ? (
                   <EnhancedPreview componentName="Design System">
-                    {renderPreviewComponents()}
+                    {previewContent}
                   </EnhancedPreview>
                 ) : (
                   <ResponsivePreview>
-                    {renderPreviewComponents()}
+                    {previewContent}
                   </ResponsivePreview>
                 )}
               </div>
