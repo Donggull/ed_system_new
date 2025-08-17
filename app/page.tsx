@@ -2626,12 +2626,492 @@ export default function Home() {
                     </div>
                   )}
 
+                  {/* Profile Card 미리보기 */}
+                  {template.id === 'profile-card' && (
+                    <div className="space-y-6">
+                      {/* Compact Profile Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">컴팩트 프로필 카드</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 max-w-sm hover:shadow-md transition-shadow">
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <img
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
+                                alt="John Doe"
+                                className="w-12 h-12 rounded-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/john/400/400'
+                                }}
+                              />
+                              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-gray-900 truncate">John Doe</h3>
+                              <p className="text-sm text-gray-600 truncate">Frontend Developer</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Default Profile Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 프로필 카드</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6 max-w-md hover:shadow-md transition-shadow">
+                          <div className="flex items-start gap-4">
+                            <div className="relative">
+                              <img
+                                src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face"
+                                alt="Sarah Wilson"
+                                className="w-16 h-16 rounded-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/sarah/400/400'
+                                }}
+                              />
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-lg font-semibold text-gray-900">Sarah Wilson</h3>
+                              <p className="text-gray-600 mb-2">UX/UI Designer</p>
+                              <p className="text-sm text-gray-600">5년차 디자이너로 사용자 중심의 인터페이스 설계를 전문으로 합니다.</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-around pt-4 mt-4 border-t border-gray-100">
+                            <div className="text-center">
+                              <div className="text-lg font-bold text-gray-900">128</div>
+                              <div className="text-xs text-gray-500">프로젝트</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-lg font-bold text-gray-900">2.4K</div>
+                              <div className="text-xs text-gray-500">팔로워</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-lg font-bold text-gray-900">4.8</div>
+                              <div className="text-xs text-gray-500">평점</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Detailed Profile Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">상세 프로필 카드</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden hover:shadow-lg transition-shadow max-w-sm">
+                          {/* Cover Image */}
+                          <div className="relative h-32 bg-gradient-to-r from-[hsl(var(--color-primary-500))] to-[hsl(var(--color-primary-600))]">
+                            <img
+                              src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=200&fit=crop"
+                              alt="Cover"
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/cover/800/200'
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black/20"></div>
+                          </div>
+                          
+                          {/* Profile Info */}
+                          <div className="relative px-6 pb-6">
+                            {/* Avatar */}
+                            <div className="flex justify-center -mt-8 mb-4">
+                              <div className="relative">
+                                <img
+                                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
+                                  alt="Alex Chen"
+                                  className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/alex/400/400'
+                                  }}
+                                />
+                                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
+                              </div>
+                            </div>
+                            
+                            {/* Name & Title */}
+                            <div className="text-center mb-4">
+                              <h3 className="text-xl font-bold text-gray-900">Alex Chen</h3>
+                              <p className="text-gray-600">Full Stack Developer</p>
+                            </div>
+                            
+                            {/* Bio */}
+                            <p className="text-sm text-gray-600 text-center mb-4 leading-relaxed">
+                              10년 경력의 풀스택 개발자입니다. React, Node.js, Python을 주로 사용합니다.
+                            </p>
+                            
+                            {/* Stats */}
+                            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+                              <div className="text-center">
+                                <div className="text-lg font-bold text-gray-900">45</div>
+                                <div className="text-xs text-gray-500">프로젝트</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-lg font-bold text-gray-900">1.2K</div>
+                                <div className="text-xs text-gray-500">팔로워</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-lg font-bold text-gray-900">4.9</div>
+                                <div className="text-xs text-gray-500">평점</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Product Card 미리보기 */}
+                  {template.id === 'product-card' && (
+                    <div className="space-y-6">
+                      {/* Compact Product Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">컴팩트 제품 카드</h4>
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden hover:shadow-md transition-shadow max-w-xs">
+                          <div className="flex">
+                            <div className="relative w-24 h-24 flex-shrink-0">
+                              <img
+                                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop"
+                                alt="Wireless Headphones"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/headphones/400/300'
+                                }}
+                              />
+                              <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded">
+                                15%
+                              </div>
+                            </div>
+                            <div className="p-3 flex-1">
+                              <h3 className="font-medium text-gray-900 text-sm line-clamp-2">무선 블루투스 헤드폰</h3>
+                              <div className="flex items-center gap-1 mt-1">
+                                <span className="text-lg font-bold text-[hsl(var(--color-primary-600))]">₩89,000</span>
+                                <span className="text-sm text-gray-500 line-through">₩105,000</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Default Product Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 제품 카드</h4>
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden hover:shadow-md transition-shadow max-w-sm">
+                          <div className="relative">
+                            <div className="relative h-48 bg-gray-100">
+                              <img
+                                src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop"
+                                alt="Running Shoes"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/shoes/400/300'
+                                }}
+                              />
+                              <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                                20% 할인
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="p-4">
+                            <span className="text-xs text-[hsl(var(--color-primary-600))] font-medium">
+                              스포츠
+                            </span>
+                            <h3 className="font-semibold text-gray-900 mt-1 mb-2">프리미엄 러닝화</h3>
+                            
+                            <div className="flex items-center gap-1 mb-2">
+                              <div className="flex items-center">
+                                {[1,2,3,4,5].map((star) => (
+                                  <svg
+                                    key={star}
+                                    className={`w-4 h-4 ${star <= 4 ? 'text-yellow-400' : 'text-gray-300'}`}
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                  </svg>
+                                ))}
+                              </div>
+                              <span className="text-sm text-gray-600">(128)</span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg font-bold text-[hsl(var(--color-primary-600))]">₩159,000</span>
+                                <span className="text-sm text-gray-500 line-through">₩199,000</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Featured Product Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">프리미엄 제품 카드</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02] max-w-sm">
+                          <div className="relative">
+                            <div className="relative h-64 bg-gray-100">
+                              <img
+                                src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop"
+                                alt="Laptop"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/laptop/400/300'
+                                }}
+                              />
+                              <div className="absolute top-3 left-3 bg-red-500 text-white text-sm px-2 py-1 rounded-lg font-medium">
+                                신제품
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="p-6">
+                            <span className="text-xs text-[hsl(var(--color-primary-600))] font-medium uppercase tracking-wide">
+                              컴퓨터
+                            </span>
+                            <h3 className="text-xl font-bold text-gray-900 mt-2 mb-3">MacBook Pro 16인치</h3>
+                            
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="flex items-center">
+                                {[1,2,3,4,5].map((star) => (
+                                  <svg
+                                    key={star}
+                                    className="w-4 h-4 text-yellow-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                  </svg>
+                                ))}
+                              </div>
+                              <span className="text-sm text-gray-600">(42)</span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-2xl font-bold text-[hsl(var(--color-primary-600))]">₩3,590,000</span>
+                              </div>
+                              <button className="bg-[hsl(var(--color-primary-500))] text-white px-4 py-2 rounded-lg hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                                구매하기
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Blog Card 미리보기 */}
+                  {template.id === 'blog-card' && (
+                    <div className="space-y-6">
+                      {/* Horizontal Blog Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">가로형 블로그 카드</h4>
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden hover:shadow-md transition-shadow max-w-md">
+                          <div className="flex">
+                            <div className="relative w-48 h-32 flex-shrink-0">
+                              <img
+                                src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=600&h=400&fit=crop"
+                                alt="React Development"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/react/600/400'
+                                }}
+                              />
+                              <div className="absolute top-2 left-2 bg-[hsl(var(--color-primary-500))] text-white text-xs px-2 py-1 rounded">
+                                개발
+                              </div>
+                            </div>
+                            <div className="p-4 flex-1">
+                              <h3 className="font-bold text-gray-900 text-lg line-clamp-2 mb-2">React 18의 새로운 기능들</h3>
+                              <p className="text-gray-600 text-sm line-clamp-2 mb-3">Concurrent Features와 Suspense의 개선된 기능을 살펴봅니다.</p>
+                              
+                              <div className="flex items-center justify-between text-sm text-gray-500">
+                                <div className="flex items-center gap-2">
+                                  <img
+                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
+                                    alt="김개발"
+                                    className="w-6 h-6 rounded-full object-cover"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/kim/100/100'
+                                    }}
+                                  />
+                                  <span>김개발</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span>2024.01.15</span>
+                                  <span>• 5분 읽기</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Default Blog Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 블로그 카드</h4>
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden hover:shadow-md transition-shadow max-w-sm">
+                          <div className="relative">
+                            <div className="relative h-48 bg-gray-100">
+                              <img
+                                src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop"
+                                alt="Web Design"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/design/600/400'
+                                }}
+                              />
+                              <div className="absolute top-3 left-3 bg-[hsl(var(--color-primary-500))] text-white text-sm px-3 py-1 rounded-full">
+                                디자인
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="p-6">
+                            <h3 className="font-bold text-gray-900 text-lg mb-2">2024 웹 디자인 트렌드</h3>
+                            <p className="text-gray-600 mb-4 leading-relaxed">올해 주목해야 할 웹 디자인 트렌드와 실무에 적용하는 방법을 알아봅시다.</p>
+                            
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              <span className="text-xs bg-[hsl(var(--color-secondary-100))] text-[hsl(var(--color-secondary-700))] px-2 py-1 rounded">
+                                #웹디자인
+                              </span>
+                              <span className="text-xs bg-[hsl(var(--color-secondary-100))] text-[hsl(var(--color-secondary-700))] px-2 py-1 rounded">
+                                #트렌드
+                              </span>
+                              <span className="text-xs bg-[hsl(var(--color-secondary-100))] text-[hsl(var(--color-secondary-700))] px-2 py-1 rounded">
+                                #2024
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face"
+                                  alt="이디자인"
+                                  className="w-10 h-10 rounded-full object-cover"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/lee/100/100'
+                                  }}
+                                />
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">이디자인</div>
+                                  <div className="text-xs text-gray-500">2024.01.10</div>
+                                </div>
+                              </div>
+                              <span className="text-sm text-gray-500">8분 읽기</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Minimal Blog Card */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">미니멀 블로그 카드</h4>
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-6 hover:shadow-md transition-shadow max-w-md">
+                          <span className="text-xs text-[hsl(var(--color-primary-600))] font-medium uppercase tracking-wide">
+                            기술
+                          </span>
+                          <h3 className="font-bold text-gray-900 text-xl mt-2 mb-3">TypeScript 5.0 마이그레이션 가이드</h3>
+                          <p className="text-gray-600 mb-4 leading-relaxed">기존 프로젝트를 TypeScript 5.0으로 업그레이드하는 방법과 주의사항을 상세히 설명합니다.</p>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
+                                alt="박타입"
+                                className="w-8 h-8 rounded-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/park/100/100'
+                                }}
+                              />
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">박타입</div>
+                                <div className="text-xs text-gray-500">2024.01.05</div>
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-500">12분 읽기</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Gallery 미리보기 */}
+                  {template.id === 'gallery' && (
+                    <div className="space-y-6">
+                      {/* Grid Gallery */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">그리드 갤러리</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-lg">
+                          <div className="grid grid-cols-3 gap-4">
+                            {[
+                              { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop', title: '산의 풍경' },
+                              { src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop', title: '숲속 길' },
+                              { src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=300&h=300&fit=crop', title: '호수 반영' },
+                              { src: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=300&h=300&fit=crop', title: '석양 풍경' },
+                              { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop', title: '바다 파도' },
+                              { src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop', title: '꽃밭' }
+                            ].map((image, index) => (
+                              <div key={index} className="group cursor-pointer">
+                                <div className="relative overflow-hidden rounded-lg bg-gray-100 aspect-square">
+                                  <img
+                                    src={image.src}
+                                    alt={image.title}
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = `https://picsum.photos/seed/gallery-${index}/300/300`
+                                    }}
+                                  />
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                                    <h3 className="text-white font-medium text-sm">{image.title}</h3>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Carousel Gallery */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">캐러셀 갤러리</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-lg">
+                          <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory">
+                            {[
+                              { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=320&h=240&fit=crop', title: '여행 사진 1' },
+                              { src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=320&h=240&fit=crop', title: '여행 사진 2' },
+                              { src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=320&h=240&fit=crop', title: '여행 사진 3' },
+                              { src: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=320&h=240&fit=crop', title: '여행 사진 4' }
+                            ].map((image, index) => (
+                              <div key={index} className="flex-shrink-0 w-80 snap-start cursor-pointer">
+                                <div className="relative overflow-hidden rounded-lg bg-gray-100 h-60">
+                                  <img
+                                    src={image.src}
+                                    alt={image.title}
+                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = `https://picsum.photos/seed/carousel-${index}/320/240`
+                                    }}
+                                  />
+                                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                                    <h3 className="text-white font-medium">{image.title}</h3>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* 지원되지 않는 컴포넌트에 대한 기본 메시지 */}
                   {![
                     'button', 'input', 'card', 'modal', 'table', 'badge', 'avatar', 'toast', 
                     'grid', 'divider', 'tabs', 'bar-chart', 'line-chart', 'pie-chart',
                     'notification', 'banner', 'pagination', 'accordion', 'carousel',
-                    'enhanced-button', 'enhanced-input', 'enhanced-modal', 'typography'
+                    'enhanced-button', 'enhanced-input', 'enhanced-modal', 'typography',
+                    'profile-card', 'product-card', 'blog-card', 'gallery'
                   ].includes(template.id) && (
                     <div className="p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 text-center">
                       <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">

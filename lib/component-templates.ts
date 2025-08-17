@@ -3,6 +3,7 @@ import { enhancedComponentTemplates } from './enhanced-component-templates'
 import { additionalComponentTemplates } from './additional-component-templates'
 import { extendedComponentTemplates } from './extended-component-templates'
 import { chartComponentTemplates } from './chart-component-templates'
+import { imageComponentTemplates } from './image-component-templates'
 
 // Basic Component Templates
 export const BUTTON_TEMPLATE = `import React from 'react'
@@ -351,7 +352,8 @@ export const allComponentTemplates: ComponentTemplate[] = [
   ...enhancedComponentTemplates,
   ...additionalComponentTemplates,
   ...extendedComponentTemplates,
-  ...chartComponentTemplates
+  ...chartComponentTemplates,
+  ...imageComponentTemplates
 ]
 
 export default allComponentTemplates
