@@ -117,3 +117,187 @@ export function mergeThemeWithDefaults(partialTheme: Partial<ThemeData>): ThemeD
     }
   }
 }
+
+// JSON 문자열을 ThemeData로 파싱하고 검증
+export function parseThemeJson(jsonString: string): { theme: ThemeData | null, error: string | null } {
+  try {
+    const parsed = JSON.parse(jsonString)
+    
+    // 기본 구조 검증
+    if (!parsed || typeof parsed !== 'object') {
+      return { theme: null, error: '유효하지 않은 JSON 객체입니다.' }
+    }
+    
+    // 필수 속성 검증
+    if (!parsed.colors || typeof parsed.colors !== 'object') {
+      return { theme: null, error: 'colors 속성이 필요합니다.' }
+    }
+    
+    if (!parsed.colors.primary || typeof parsed.colors.primary !== 'object') {
+      return { theme: null, error: 'colors.primary 속성이 필요합니다.' }
+    }
+    
+    if (!parsed.colors.secondary || typeof parsed.colors.secondary !== 'object') {
+      return { theme: null, error: 'colors.secondary 속성이 필요합니다.' }
+    }
+    
+    // 기본값으로 병합
+    const theme: ThemeData = {
+      name: parsed.name || "Custom Theme",
+      colors: {
+        primary: parsed.colors.primary,
+        secondary: parsed.colors.secondary,
+        success: parsed.colors.success,
+        warning: parsed.colors.warning,
+        error: parsed.colors.error
+      },
+      typography: {
+        ...defaultTheme.typography,
+        ...parsed.typography
+      },
+      spacing: {
+        ...defaultTheme.spacing,
+        ...parsed.spacing
+      },
+      borderRadius: {
+        ...defaultTheme.borderRadius,
+        ...parsed.borderRadius
+      }
+    }
+    
+    return { theme, error: null }
+  } catch (err) {
+    return { 
+      theme: null, 
+      error: err instanceof Error ? err.message : '유효하지 않은 JSON 형식입니다.' 
+    }
+  }
+}
+
+// ThemeData를 CSS 커스텀 속성으로 변환
+export function generateCssVariables(theme: ThemeData): Record<string, string> {
+  const variables: Record<string, string> = {}
+  
+  // 컬러 변수 생성
+  Object.entries(theme.colors).forEach(([colorName, colorPalette]) => {
+    if (colorPalette && typeof colorPalette === 'object') {
+      Object.entries(colorPalette).forEach(([shade, value]) => {
+        if (typeof value === 'string') {
+          // #ffffff -> 255 255 255 형태로 변환
+          const rgb = hexToRgb(value)
+          if (rgb) {
+            variables[`--color-${colorName}-${shade}`] = `${rgb.r} ${rgb.g} ${rgb.b}`
+          }
+        }
+      })
+    }
+  })
+  
+  // 타이포그래피 변수 생성
+  if (theme.typography) {
+    Object.entries(theme.typography.fontSize || {}).forEach(([size, value]) => {
+      variables[`--font-size-${size}`] = value
+    })
+    
+    if (theme.typography.fontFamily?.sans) {
+      variables['--font-family-sans'] = theme.typography.fontFamily.sans.join(', ')
+    }
+    
+    if (theme.typography.fontFamily?.mono) {
+      variables['--font-family-mono'] = theme.typography.fontFamily.mono.join(', ')
+    }
+  }
+  
+  // 스페이싱 변수 생성
+  if (theme.spacing) {
+    Object.entries(theme.spacing).forEach(([size, value]) => {
+      variables[`--spacing-${size}`] = value
+    })
+  }
+  
+  // 보더 라디우스 변수 생성
+  if (theme.borderRadius) {
+    Object.entries(theme.borderRadius).forEach(([size, value]) => {
+      variables[`--border-radius-${size}`] = value
+    })
+  }
+  
+  return variables
+}
+
+// CSS 변수를 DOM에 적용
+export function applyCssVariables(variables: Record<string, string>, element?: HTMLElement) {
+  const target = element || document.documentElement
+  
+  Object.entries(variables).forEach(([property, value]) => {
+    target.style.setProperty(property, value)
+  })
+}
+
+// HEX 색상을 RGB로 변환
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null
+}
+
+// CSS 변수 문자열로 변환 (style 태그용)
+export function cssVariablesToString(variables: Record<string, string>): string {
+  const declarations = Object.entries(variables)
+    .map(([property, value]) => `  ${property}: ${value};`)
+    .join('\n')
+  
+  return `:root {\n${declarations}\n}`
+}
+
+// 테마 미리보기용 샘플 JSON
+export const sampleThemes = {
+  modern: {
+    name: "Modern Blue",
+    colors: {
+      primary: {
+        "50": "#eff6ff",
+        "500": "#3b82f6", 
+        "900": "#1e3a8a"
+      },
+      secondary: {
+        "50": "#f8fafc",
+        "500": "#64748b",
+        "900": "#0f172a"
+      }
+    }
+  },
+  dark: {
+    name: "Dark Purple",
+    colors: {
+      primary: {
+        "50": "#faf5ff",
+        "500": "#8b5cf6",
+        "900": "#581c87"
+      },
+      secondary: {
+        "50": "#1e293b", 
+        "500": "#475569",
+        "900": "#0f172a"
+      }
+    }
+  },
+  minimal: {
+    name: "Minimal Gray",
+    colors: {
+      primary: {
+        "50": "#f9fafb",
+        "500": "#6b7280",
+        "900": "#111827"
+      },
+      secondary: {
+        "50": "#f3f4f6",
+        "500": "#9ca3af", 
+        "900": "#1f2937"
+      }
+    }
+  }
+}
