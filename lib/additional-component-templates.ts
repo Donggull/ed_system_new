@@ -619,7 +619,7 @@ Tabs.displayName = 'Tabs'
 
 export default Tabs`
 
-// 추가 컴포넌트 템플릿 배열
+// Additional component templates array
 export const additionalComponentTemplates: ComponentTemplate[] = [
   // Data Display
   {
@@ -741,7 +741,7 @@ export const additionalComponentTemplates: ComponentTemplate[] = [
         type: 'number',
         required: false,
         default: 1,
-        options: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
         description: 'Number of grid columns'
       },
       gap: {
@@ -808,4 +808,4 @@ export const additionalComponentTemplates: ComponentTemplate[] = [
     is_active: true,
     created_at: new Date().toISOString()
   }
-]`
+]

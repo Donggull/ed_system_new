@@ -854,4 +854,4 @@ export const extendedComponentTemplates: ComponentTemplate[] = [
     is_active: true,
     created_at: new Date().toISOString()
   }
-]`
+]

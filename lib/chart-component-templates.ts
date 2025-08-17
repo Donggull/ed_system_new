@@ -619,4 +619,4 @@ export const chartComponentTemplates: ComponentTemplate[] = [
     is_active: true,
     created_at: new Date().toISOString()
   }
-]`
+]
