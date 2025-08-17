@@ -18,6 +18,8 @@ import {
   sampleThemes 
 } from '@/lib/theme-utils'
 import { allComponentTemplates } from '@/lib/component-templates'
+import { useToast } from '@/hooks/useToast'
+import Toast from '@/components/ui/Toast'
 
 export default function Home() {
   const [themeTemplates, setThemeTemplates] = useState<Theme[]>([])
@@ -32,10 +34,10 @@ export default function Home() {
   const [jsonError, setJsonError] = useState<string | null>(null)
   const [userThemes, setUserThemes] = useState<Theme[]>([])
   const [saveLoading, setSaveLoading] = useState(false)
-  const [saveSuccess, setSaveSuccess] = useState<string | null>(null)
   const [showUserThemes, setShowUserThemes] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
+  const { toast, success, error: showError, hideToast } = useToast()
 
   const handleLogout = async () => {
     try {
@@ -175,7 +177,7 @@ export default function Home() {
   // 테마 저장 함수
   const handleSaveTheme = async () => {
     if (!user) {
-      alert('로그인이 필요합니다.')
+      showError('로그인이 필요합니다.')
       return
     }
 
@@ -183,10 +185,9 @@ export default function Home() {
     if (!themeName) return
 
     setSaveLoading(true)
-    setSaveSuccess(null)
 
     try {
-      const { data, error } = await saveTheme({
+      const { data, error: saveError } = await saveTheme({
         name: themeName,
         theme_data: currentTheme,
         selected_components: selectedComponents,
@@ -194,19 +195,17 @@ export default function Home() {
         is_template: false
       })
 
-      if (error) {
-        alert(`저장 실패: ${error}`)
+      if (saveError) {
+        showError(`저장 실패: ${saveError}`)
       } else {
-        setSaveSuccess(`테마 "${themeName}"이 컴포넌트 ${selectedComponents.length}개와 함께 저장되었습니다!`)
+        success(`테마 "${themeName}"이 컴포넌트 ${selectedComponents.length}개와 함께 저장되었습니다!`)
         // 사용자 테마 목록 새로고침
         const updatedUserThemes = await getUserThemes(user.id)
         setUserThemes(updatedUserThemes)
-        
-        setTimeout(() => setSaveSuccess(null), 4000)
       }
     } catch (err) {
       console.error('Save error:', err)
-      alert('저장 중 오류가 발생했습니다.')
+      showError('저장 중 오류가 발생했습니다.')
     } finally {
       setSaveLoading(false)
     }
@@ -233,8 +232,7 @@ export default function Home() {
     
     // 성공 메시지 표시
     const componentCount = theme.selected_components?.length || 0
-    setSaveSuccess(`테마 "${theme.name}"과 컴포넌트 ${componentCount}개를 불러왔습니다!`)
-    setTimeout(() => setSaveSuccess(null), 3000)
+    success(`테마 "${theme.name}"과 컴포넌트 ${componentCount}개를 불러왔습니다!`)
   }
 
   return (
@@ -275,11 +273,6 @@ export default function Home() {
               </button>
             </div>
             
-            {saveSuccess && (
-              <div className="text-xs text-green-600 mb-3">
-                ✅ {saveSuccess}
-              </div>
-            )}
             
             {/* User Themes List */}
             {showUserThemes && userThemes.length > 0 && (
@@ -1184,6 +1177,14 @@ export default function Home() {
         </div>
         </div>
       </div>
+      
+      {/* Toast Notification */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
     </ProtectedRoute>
   )
 }
