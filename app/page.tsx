@@ -1143,12 +1143,295 @@ export default function Home() {
                     </div>
                   )}
 
+                  {/* Typography/Font Component 미리보기 */}
+                  {template.id === 'typography' && (
+                    <div className="space-y-6">
+                      {/* Headings */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">제목 스타일</h4>
+                        <div className="space-y-3">
+                          <h1 className="text-4xl font-bold text-gray-900 leading-tight" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            Heading 1 - 주요 제목
+                          </h1>
+                          <h2 className="text-3xl font-bold text-gray-800 leading-tight" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            Heading 2 - 부제목
+                          </h2>
+                          <h3 className="text-2xl font-semibold text-gray-700 leading-tight" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            Heading 3 - 섹션 제목
+                          </h3>
+                          <h4 className="text-xl font-medium text-gray-700 leading-tight" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            Heading 4 - 소제목
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Body Text */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">본문 텍스트</h4>
+                        <div className="space-y-3">
+                          <p className="text-lg text-gray-700 leading-relaxed" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            대형 본문 텍스트 - 이것은 큰 본문 텍스트 예시입니다. 읽기 편한 크기와 줄 간격을 가지고 있습니다.
+                          </p>
+                          <p className="text-base text-gray-600 leading-relaxed" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            일반 본문 텍스트 - 가장 많이 사용되는 기본 텍스트 크기입니다. 대부분의 콘텐츠에 적합합니다.
+                          </p>
+                          <p className="text-sm text-gray-500 leading-relaxed" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            소형 본문 텍스트 - 부가 정보나 설명에 사용되는 작은 텍스트입니다.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Code and Monospace */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">코드 텍스트</h4>
+                        <div className="space-y-3">
+                          <code className="px-2 py-1 text-sm bg-gray-100 text-gray-800 rounded" style={{ fontFamily: currentTheme.typography.fontFamily.mono.join(', ') }}>
+                            const example = &apos;inline code&apos;
+                          </code>
+                          <pre className="p-4 bg-gray-900 text-green-400 rounded-lg text-sm overflow-x-auto" style={{ fontFamily: currentTheme.typography.fontFamily.mono.join(', ') }}>
+{`function generateComponent() {
+  return {
+    name: 'Button',
+    variant: 'primary',
+    size: 'medium'
+  };
+}`}
+                          </pre>
+                        </div>
+                      </div>
+
+                      {/* Text Styles */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">텍스트 스타일</h4>
+                        <div className="space-y-2">
+                          <p className="text-base" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            <span className="font-bold">굵은 텍스트</span>, 
+                            <span className="italic ml-2">기울임 텍스트</span>, 
+                            <span className="underline ml-2">밑줄 텍스트</span>, 
+                            <span className="line-through ml-2">취소선 텍스트</span>
+                          </p>
+                          <p className="text-base" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                            <span className="text-[hsl(var(--color-primary-500))] font-medium">컬러 텍스트</span>, 
+                            <span className="text-gray-500 ml-2">회색 텍스트</span>, 
+                            <span className="text-red-500 ml-2">빨간 텍스트</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Enhanced Button 더 많은 예시 */}
+                  {template.id === 'button' && (
+                    <div className="space-y-6">
+                      {/* 기본 버튼들 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 버튼</h4>
+                        <div className="flex flex-wrap gap-3">
+                          <button className="px-6 py-3 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-all transform hover:scale-105 shadow-lg">
+                            Primary Button
+                          </button>
+                          <button className="px-6 py-3 text-sm font-medium text-[hsl(var(--color-primary-500))] border-2 border-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))] rounded-lg transition-all">
+                            Outline Button
+                          </button>
+                          <button className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all">
+                            Ghost Button
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 크기별 버튼 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">크기별 버튼</h4>
+                        <div className="flex items-center flex-wrap gap-3">
+                          <button className="px-3 py-1.5 text-xs font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-md">
+                            Small
+                          </button>
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                            Medium
+                          </button>
+                          <button className="px-6 py-3 text-base font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                            Large
+                          </button>
+                          <button className="px-8 py-4 text-lg font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-xl">
+                            Extra Large
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 아이콘 버튼 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">아이콘 버튼</h4>
+                        <div className="flex flex-wrap gap-3">
+                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                            </svg>
+                            추가하기
+                          </button>
+                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 012 0v4a1 1 0 11-2 0V7zM12 7a1 1 0 012 0v4a1 1 0 11-2 0V7z" clipRule="evenodd" />
+                            </svg>
+                            삭제하기
+                          </button>
+                          <button className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 상태별 버튼 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">상태별 버튼</h4>
+                        <div className="flex flex-wrap gap-3">
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg">
+                            성공
+                          </button>
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg">
+                            경고
+                          </button>
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg">
+                            위험
+                          </button>
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed" disabled>
+                            비활성화
+                          </button>
+                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                            </svg>
+                            로딩 중...
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Enhanced Input 더 많은 예시 */}
+                  {template.id === 'input' && (
+                    <div className="space-y-6">
+                      {/* 기본 입력 필드 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 입력 필드</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">이름</label>
+                            <input 
+                              type="text" 
+                              placeholder="홍길동" 
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">이메일</label>
+                            <input 
+                              type="email" 
+                              placeholder="hong@example.com" 
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">비밀번호</label>
+                            <input 
+                              type="password" 
+                              placeholder="••••••••" 
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">전화번호</label>
+                            <input 
+                              type="tel" 
+                              placeholder="010-1234-5678" 
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 아이콘이 있는 입력 필드 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">아이콘 입력 필드</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">검색</label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                              </div>
+                              <input 
+                                type="text" 
+                                placeholder="검색어를 입력하세요"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">사용자명</label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                              </div>
+                              <input 
+                                type="text" 
+                                placeholder="사용자명"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 특수 입력 필드 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">특수 입력 필드</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">메시지</label>
+                            <textarea 
+                              placeholder="메시지를 입력하세요..."
+                              rows={4}
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all resize-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">국가 선택</label>
+                            <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all">
+                              <option>대한민국</option>
+                              <option>미국</option>
+                              <option>일본</option>
+                              <option>중국</option>
+                            </select>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <input 
+                              type="checkbox" 
+                              id="terms"
+                              className="w-4 h-4 text-[hsl(var(--color-primary-500))] border-gray-300 rounded focus:ring-[hsl(var(--color-primary-500))]"
+                            />
+                            <label htmlFor="terms" className="text-sm text-gray-700">
+                              이용약관에 동의합니다
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* 지원되지 않는 컴포넌트에 대한 기본 메시지 */}
                   {![
                     'button', 'input', 'card', 'modal', 'table', 'badge', 'avatar', 'toast', 
                     'grid', 'divider', 'tabs', 'bar-chart', 'line-chart', 'pie-chart',
                     'notification', 'banner', 'pagination', 'accordion', 'carousel',
-                    'enhanced-button', 'enhanced-input', 'enhanced-modal'
+                    'enhanced-button', 'enhanced-input', 'enhanced-modal', 'typography'
                   ].includes(template.id) && (
                     <div className="p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 text-center">
                       <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
