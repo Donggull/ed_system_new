@@ -24,6 +24,8 @@ export interface Theme {
   user_id?: string
   name: string
   theme_data: ThemeData
+  selected_components?: string[]
+  component_settings?: ComponentSettings
   version: number
   is_template: boolean
   is_active: boolean

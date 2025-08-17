@@ -1,5 +1,5 @@
 import { supabase } from './client'
-import { Theme, ThemeData } from '@/types/database'
+import { Theme, ThemeData, ComponentSettings } from '@/types/database'
 
 export async function getThemes() {
   if (!supabase) {
@@ -67,6 +67,8 @@ export async function createTheme(theme: Partial<Theme>) {
 export async function saveTheme(theme: {
   name: string
   theme_data: ThemeData
+  selected_components?: string[]
+  component_settings?: ComponentSettings
   user_id?: string
   project_id?: string
   is_template?: boolean
@@ -85,6 +87,8 @@ export async function saveTheme(theme: {
     const themeToSave = {
       name: theme.name,
       theme_data: theme.theme_data,
+      selected_components: theme.selected_components || [],
+      component_settings: theme.component_settings || {},
       user_id: user.id,
       project_id: theme.project_id || null,
       is_template: theme.is_template || false,

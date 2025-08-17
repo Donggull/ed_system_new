@@ -189,18 +189,20 @@ export default function Home() {
       const { data, error } = await saveTheme({
         name: themeName,
         theme_data: currentTheme,
+        selected_components: selectedComponents,
+        component_settings: componentSettings,
         is_template: false
       })
 
       if (error) {
         alert(`저장 실패: ${error}`)
       } else {
-        setSaveSuccess('테마가 성공적으로 저장되었습니다!')
+        setSaveSuccess(`테마 "${themeName}"이 컴포넌트 ${selectedComponents.length}개와 함께 저장되었습니다!`)
         // 사용자 테마 목록 새로고침
         const updatedUserThemes = await getUserThemes(user.id)
         setUserThemes(updatedUserThemes)
         
-        setTimeout(() => setSaveSuccess(null), 3000)
+        setTimeout(() => setSaveSuccess(null), 4000)
       }
     } catch (err) {
       console.error('Save error:', err)
@@ -210,14 +212,29 @@ export default function Home() {
     }
   }
 
-  // 저장된 테마 불러오기
+  // 저장된 테마 불러오기 (컴포넌트 정보 포함)
   const handleLoadTheme = (theme: Theme) => {
     setCurrentTheme(theme.theme_data)
     setJsonInput(JSON.stringify(theme.theme_data, null, 2))
     
+    // 컴포넌트 선택 상태 복원
+    if (theme.selected_components) {
+      setSelectedComponents(theme.selected_components)
+    }
+    
+    // 컴포넌트 설정 복원
+    if (theme.component_settings) {
+      setComponentSettings(theme.component_settings)
+    }
+    
     // CSS 변수 적용
     const cssVars = generateCssVariables(theme.theme_data)
     applyCssVariables(cssVars)
+    
+    // 성공 메시지 표시
+    const componentCount = theme.selected_components?.length || 0
+    setSaveSuccess(`테마 "${theme.name}"과 컴포넌트 ${componentCount}개를 불러왔습니다!`)
+    setTimeout(() => setSaveSuccess(null), 3000)
   }
 
   return (
@@ -268,15 +285,47 @@ export default function Home() {
             {showUserThemes && userThemes.length > 0 && (
               <div className="mb-3 p-3 bg-gray-50 rounded-lg">
                 <h4 className="text-xs font-semibold text-gray-700 mb-2">저장된 테마</h4>
-                <div className="space-y-1 max-h-32 overflow-y-auto">
+                <div className="space-y-2 max-h-48 overflow-y-auto">
                   {userThemes.map((theme) => (
-                    <button
+                    <div
                       key={theme.id}
-                      onClick={() => handleLoadTheme(theme)}
-                      className="w-full text-left px-2 py-1 text-xs text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                      className="bg-white rounded-lg p-3 border border-gray-200 hover:border-blue-300 transition-colors"
                     >
-                      {theme.name}
-                    </button>
+                      <button
+                        onClick={() => handleLoadTheme(theme)}
+                        className="w-full text-left"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <h5 className="text-sm font-medium text-gray-900">{theme.name}</h5>
+                          <span className="text-xs text-gray-500">
+                            {new Date(theme.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-600 mb-2">
+                          테마: {theme.theme_data.name || '사용자 정의'}
+                        </div>
+                        {theme.selected_components && theme.selected_components.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            <span className="text-xs text-blue-600 font-medium">
+                              컴포넌트 {theme.selected_components.length}개:
+                            </span>
+                            {theme.selected_components.slice(0, 3).map((componentId) => {
+                              const component = allComponentTemplates.find(t => t.id === componentId)
+                              return component ? (
+                                <span key={componentId} className="text-xs bg-blue-100 text-blue-700 px-1 py-0.5 rounded">
+                                  {component.name}
+                                </span>
+                              ) : null
+                            })}
+                            {theme.selected_components.length > 3 && (
+                              <span className="text-xs text-gray-500">
+                                +{theme.selected_components.length - 3}개
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
