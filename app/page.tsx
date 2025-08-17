@@ -316,10 +316,17 @@ export default function Home() {
                       {selectedComponents.includes(template.id) && 
                        expandedSettings.includes(template.id) && 
                        Object.keys(template.props_schema).length > 0 && (
-                        <div className="ml-7 p-3 bg-gray-50 rounded-lg space-y-3">
+                        <div className="ml-7 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 space-y-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                            </svg>
+                            <span className="text-sm font-semibold text-blue-700">컴포넌트 설정</span>
+                          </div>
+                          
                           {Object.entries(template.props_schema).map(([propKey, propSchema]) => (
-                            <div key={propKey} className="space-y-1">
-                              <label className="text-xs font-medium text-gray-600">
+                            <div key={propKey} className="space-y-2">
+                              <label className="text-xs font-medium text-blue-600 uppercase tracking-wide">
                                 {propSchema.description || propKey}
                               </label>
                               
@@ -327,28 +334,28 @@ export default function Home() {
                                 <select
                                   value={componentSettings[template.id]?.[propKey] || propSchema.default}
                                   onChange={(e) => updateComponentSetting(template.id, propKey, e.target.value)}
-                                  className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  className="w-full px-3 py-2 text-sm bg-white border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                 >
                                   {propSchema.options.map(option => (
                                     <option key={option} value={option}>{option}</option>
                                   ))}
                                 </select>
                               ) : propSchema.type === 'boolean' ? (
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-3 p-2 bg-white rounded-lg border border-blue-100 hover:bg-blue-25 transition-colors cursor-pointer">
                                   <input
                                     type="checkbox"
                                     checked={componentSettings[template.id]?.[propKey] || propSchema.default || false}
                                     onChange={(e) => updateComponentSetting(template.id, propKey, e.target.checked)}
-                                    className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    className="w-4 h-4 text-blue-600 border-blue-300 rounded focus:ring-blue-500"
                                   />
-                                  <span className="text-xs text-gray-600">활성화</span>
+                                  <span className="text-sm text-gray-700">활성화</span>
                                 </label>
                               ) : (
                                 <input
                                   type={propSchema.type === 'number' ? 'number' : 'text'}
                                   value={componentSettings[template.id]?.[propKey] || propSchema.default || ''}
                                   onChange={(e) => updateComponentSetting(template.id, propKey, e.target.value)}
-                                  className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  className="w-full px-3 py-2 text-sm bg-white border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                   placeholder={propSchema.default}
                                 />
                               )}
@@ -406,10 +413,17 @@ export default function Home() {
                       {selectedComponents.includes(template.id) && 
                        expandedSettings.includes(template.id) && 
                        Object.keys(template.props_schema).length > 0 && (
-                        <div className="ml-7 p-3 bg-gray-50 rounded-lg space-y-3">
+                        <div className="ml-7 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 space-y-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                            </svg>
+                            <span className="text-sm font-semibold text-blue-700">컴포넌트 설정</span>
+                          </div>
+                          
                           {Object.entries(template.props_schema).map(([propKey, propSchema]) => (
-                            <div key={propKey} className="space-y-1">
-                              <label className="text-xs font-medium text-gray-600">
+                            <div key={propKey} className="space-y-2">
+                              <label className="text-xs font-medium text-blue-600 uppercase tracking-wide">
                                 {propSchema.description || propKey}
                               </label>
                               
@@ -417,28 +431,28 @@ export default function Home() {
                                 <select
                                   value={componentSettings[template.id]?.[propKey] || propSchema.default}
                                   onChange={(e) => updateComponentSetting(template.id, propKey, e.target.value)}
-                                  className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  className="w-full px-3 py-2 text-sm bg-white border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                 >
                                   {propSchema.options.map(option => (
                                     <option key={option} value={option}>{option}</option>
                                   ))}
                                 </select>
                               ) : propSchema.type === 'boolean' ? (
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-3 p-2 bg-white rounded-lg border border-blue-100 hover:bg-blue-25 transition-colors cursor-pointer">
                                   <input
                                     type="checkbox"
                                     checked={componentSettings[template.id]?.[propKey] || propSchema.default || false}
                                     onChange={(e) => updateComponentSetting(template.id, propKey, e.target.checked)}
-                                    className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    className="w-4 h-4 text-blue-600 border-blue-300 rounded focus:ring-blue-500"
                                   />
-                                  <span className="text-xs text-gray-600">활성화</span>
+                                  <span className="text-sm text-gray-700">활성화</span>
                                 </label>
                               ) : (
                                 <input
                                   type={propSchema.type === 'number' ? 'number' : 'text'}
                                   value={componentSettings[template.id]?.[propKey] || propSchema.default || ''}
                                   onChange={(e) => updateComponentSetting(template.id, propKey, e.target.value)}
-                                  className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  className="w-full px-3 py-2 text-sm bg-white border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                   placeholder={propSchema.default}
                                 />
                               )}
@@ -513,40 +527,22 @@ export default function Home() {
                     const size = getComponentSetting('button', 'size', 'md')
                     
                     const sizeClasses = {
-                      sm: 'px-4 py-2 text-xs',
-                      md: 'px-6 py-3 text-sm',
-                      lg: 'px-8 py-4 text-base'
-                    }
-                    
-                    const variantClasses = {
-                      primary: 'bg-[hsl(var(--color-primary-500))] text-white hover:bg-[hsl(var(--color-primary-600))]',
-                      secondary: 'bg-[hsl(var(--color-secondary-500))] text-white hover:bg-[hsl(var(--color-secondary-600))]',
-                      outline: 'border-2 border-[hsl(var(--color-primary-500))] text-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))]',
-                      ghost: 'text-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))]'
+                      sm: 'h-8 px-3 text-sm',
+                      md: 'h-10 px-4 text-base', 
+                      lg: 'h-12 px-6 text-lg'
                     }
                     
                     return (
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
-                          <span className="text-xs font-medium text-blue-700">현재 설정:</span>
-                          <span className="text-xs text-blue-600">변형: {variant}</span>
-                          <span className="text-xs text-blue-600">크기: {size}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-4">
-                          <button className={`${sizeClasses[size as keyof typeof sizeClasses]} ${variantClasses[variant as keyof typeof variantClasses]} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
-                            {variant.charAt(0).toUpperCase() + variant.slice(1)} Button
-                          </button>
-                          {variant !== 'primary' && (
-                            <button className={`${sizeClasses[size as keyof typeof sizeClasses]} ${variantClasses.primary} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
-                              Primary (비교용)
-                            </button>
-                          )}
-                          {variant !== 'outline' && (
-                            <button className={`${sizeClasses[size as keyof typeof sizeClasses]} ${variantClasses.outline} rounded-xl font-semibold transition-all transform hover:-translate-y-0.5`}>
-                              Outline (비교용)
-                            </button>
-                          )}
-                        </div>
+                      <div className="flex flex-wrap gap-4">
+                        <button className={`${sizeClasses[size as keyof typeof sizeClasses]} bg-[hsl(var(--color-primary-500))] text-white rounded-xl hover:bg-[hsl(var(--color-primary-600))] font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
+                          Primary Button
+                        </button>
+                        <button className={`${sizeClasses[size as keyof typeof sizeClasses]} bg-[hsl(var(--color-secondary-500))] text-white rounded-xl hover:bg-[hsl(var(--color-secondary-600))] font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
+                          Secondary Button
+                        </button>
+                        <button className={`${sizeClasses[size as keyof typeof sizeClasses]} border-2 border-[hsl(var(--color-primary-500))] text-[hsl(var(--color-primary-500))] rounded-xl hover:bg-[hsl(var(--color-primary-50))] font-semibold transition-all transform hover:-translate-y-0.5`}>
+                          Outline Button
+                        </button>
                       </div>
                     )
                   })()}
@@ -556,40 +552,33 @@ export default function Home() {
                     const inputSize = getComponentSetting('input', 'inputSize', 'md')
                     
                     const sizeClasses = {
-                      sm: 'px-3 py-2 text-xs',
-                      md: 'px-4 py-3 text-sm', 
-                      lg: 'px-5 py-4 text-base'
+                      sm: 'h-8 px-3 text-sm',
+                      md: 'h-10 px-4 text-base', 
+                      lg: 'h-12 px-5 text-lg'
                     }
                     
                     const variantClasses = {
-                      default: 'border-2 border-gray-200 bg-white focus:border-[hsl(var(--color-primary-500))]',
-                      filled: 'border-transparent bg-[hsl(var(--color-secondary-100))] focus:bg-white focus:border-[hsl(var(--color-primary-500))]'
+                      default: 'border-2 border-gray-200 bg-white',
+                      filled: 'border-transparent bg-[hsl(var(--color-secondary-100))] focus:bg-white'
                     }
                     
                     return (
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
-                          <span className="text-xs font-medium text-blue-700">현재 설정:</span>
-                          <span className="text-xs text-blue-600">변형: {variant}</span>
-                          <span className="text-xs text-blue-600">크기: {inputSize}</span>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">텍스트 입력</label>
+                          <input 
+                            type="text" 
+                            placeholder="텍스트를 입력하세요" 
+                            className={`w-full ${sizeClasses[inputSize as keyof typeof sizeClasses]} ${variantClasses[variant as keyof typeof variantClasses]} rounded-xl focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all`}
+                          />
                         </div>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">텍스트 입력</label>
-                            <input 
-                              type="text" 
-                              placeholder="텍스트를 입력하세요" 
-                              className={`w-full ${sizeClasses[inputSize as keyof typeof sizeClasses]} ${variantClasses[variant as keyof typeof variantClasses]} rounded-xl focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] transition-all`}
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">이메일 입력</label>
-                            <input 
-                              type="email" 
-                              placeholder="name@example.com" 
-                              className={`w-full ${sizeClasses[inputSize as keyof typeof sizeClasses]} ${variantClasses[variant as keyof typeof variantClasses]} rounded-xl focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] transition-all`}
-                            />
-                          </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">이메일 입력</label>
+                          <input 
+                            type="email" 
+                            placeholder="name@example.com" 
+                            className={`w-full ${sizeClasses[inputSize as keyof typeof sizeClasses]} ${variantClasses[variant as keyof typeof variantClasses]} rounded-xl focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all`}
+                          />
                         </div>
                       </div>
                     )
@@ -598,35 +587,37 @@ export default function Home() {
                   {template.id === 'card' && (() => {
                     const variant = getComponentSetting('card', 'variant', 'default')
                     
-                    const variantClasses = {
-                      default: 'bg-white',
-                      outlined: 'bg-white border border-[hsl(var(--color-secondary-300))]',
-                      elevated: 'bg-white shadow-xl'
+                    const getCardClasses = (cardVariant: string) => {
+                      const baseClasses = "bg-white rounded-2xl p-6 hover:shadow-xl transition-all transform hover:-translate-y-1"
+                      switch(cardVariant) {
+                        case 'outlined': 
+                          return `${baseClasses} border border-gray-200`
+                        case 'elevated':
+                          return `${baseClasses} shadow-lg`
+                        default:
+                          return baseClasses
+                      }
                     }
                     
                     return (
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
-                          <span className="text-xs font-medium text-blue-700">현재 설정:</span>
-                          <span className="text-xs text-blue-600">변형: {variant}</span>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className={getCardClasses(variant)}>
+                          <h4 className="font-bold text-gray-900 mb-3">기본 카드</h4>
+                          <p className="text-sm text-gray-600 leading-relaxed">테마가 적용된 기본 카드 컴포넌트입니다.</p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          <div className={`${variantClasses[variant as keyof typeof variantClasses]} rounded-2xl p-6 hover:shadow-xl transition-all transform hover:-translate-y-1`}>
-                            <h4 className="font-bold text-gray-900 mb-3">선택된 변형</h4>
-                            <p className="text-sm text-gray-600 leading-relaxed">{variant} 스타일의 카드입니다.</p>
+                        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                          <div className="h-32 bg-[hsl(var(--color-primary-100))]"></div>
+                          <div className="p-6">
+                            <h4 className="font-bold text-gray-900 mb-3">이미지 카드</h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">헤더 이미지가 포함된 카드입니다.</p>
                           </div>
-                          {variant !== 'outlined' && (
-                            <div className={`${variantClasses.outlined} rounded-2xl p-6 hover:shadow-xl transition-all transform hover:-translate-y-1`}>
-                              <h4 className="font-bold text-gray-900 mb-3">테두리 카드</h4>
-                              <p className="text-sm text-gray-600 leading-relaxed">비교용 outlined 카드입니다.</p>
-                            </div>
-                          )}
-                          {variant !== 'elevated' && (
-                            <div className={`${variantClasses.elevated} rounded-2xl p-6 hover:shadow-2xl transition-all transform hover:-translate-y-1`}>
-                              <h4 className="font-bold text-gray-900 mb-3">그림자 카드</h4>
-                              <p className="text-sm text-gray-600 leading-relaxed">비교용 elevated 카드입니다.</p>
-                            </div>
-                          )}
+                        </div>
+                        <div className={getCardClasses(variant)}>
+                          <h4 className="font-bold text-gray-900 mb-3">액션 카드</h4>
+                          <p className="text-sm text-gray-600 leading-relaxed mb-4">버튼이 포함된 카드입니다.</p>
+                          <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm font-medium hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                            액션
+                          </button>
                         </div>
                       </div>
                     )
