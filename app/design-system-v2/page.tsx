@@ -124,24 +124,43 @@ export default function DesignSystemV2() {
     selectedComponents.includes(template.id)
   )
 
-  // 미리보기 컴포넌트 렌더링 (useMemo로 의존성 관리)
-  const previewContent = React.useMemo(() => {
-    console.log('Rendering preview content with selectedComponents:', selectedComponents)
+  // 강제 리렌더링을 위한 상태
+  const [renderKey, setRenderKey] = useState(0)
+
+  // 컴포넌트 선택 변경 감지
+  useEffect(() => {
+    console.log('🔄 Component selection changed:', selectedComponents)
+    setRenderKey(prev => prev + 1) // 강제 리렌더링 트리거
+  }, [selectedComponents])
+
+  // 미리보기 컨텐츠 JSX (조건부 렌더링)
+  const renderPreviewContent = () => {
+    console.log('🎨 Rendering preview with components:', selectedComponents)
     
     return (
-      <div className="space-y-6" key={`preview-content-${selectedComponents.join(',')}`}>
+      <div className="space-y-6" key={`render-${renderKey}-${selectedComponents.join(',')}`}>
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">실시간 테마 미리보기</h3>
           
           {/* 선택된 컴포넌트 상태 표시 */}
-          <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
-            선택된 컴포넌트: {selectedComponents.length > 0 ? selectedComponents.join(', ') : '없음'}
+          <div className="text-xs text-gray-500 bg-yellow-100 p-3 rounded border">
+            <strong>현재 선택된 컴포넌트:</strong> {selectedComponents.length > 0 ? selectedComponents.join(', ') : '없음'}
+            <br />
+            <strong>렌더링 키:</strong> {renderKey}
           </div>
+          
+          {/* 디버그 정보 */}
+          {selectedComponents.length === 0 && (
+            <div className="text-center py-8 bg-red-50 border border-red-200 rounded">
+              <p className="text-red-600 font-medium">선택된 컴포넌트가 없습니다.</p>
+              <p className="text-red-500 text-sm">좌측에서 컴포넌트를 선택해주세요.</p>
+            </div>
+          )}
           
           {/* 버튼 컴포넌트들 */}
           {selectedComponents.includes('button') && (
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-700">Button 컴포넌트</h4>
+            <div className="space-y-3 border border-green-200 p-4 rounded bg-green-50">
+              <h4 className="font-medium text-gray-700 text-green-800">✅ Button 컴포넌트</h4>
               <div className="flex flex-wrap gap-2">
                 <PreviewComponents.Button variant="primary" size="sm">Primary</PreviewComponents.Button>
                 <PreviewComponents.Button variant="secondary" size="sm">Secondary</PreviewComponents.Button>
@@ -157,8 +176,8 @@ export default function DesignSystemV2() {
 
           {/* 카드 컴포넌트들 */}
           {selectedComponents.includes('card') && (
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-700">Card 컴포넌트</h4>
+            <div className="space-y-3 border border-blue-200 p-4 rounded bg-blue-50">
+              <h4 className="font-medium text-gray-700 text-blue-800">✅ Card 컴포넌트</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <PreviewComponents.Card variant="default">
                   <h5 className="font-semibold mb-2">Default Card</h5>
@@ -178,8 +197,8 @@ export default function DesignSystemV2() {
 
           {/* 입력 컴포넌트들 */}
           {selectedComponents.includes('input') && (
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-700">Input 컴포넌트</h4>
+            <div className="space-y-3 border border-purple-200 p-4 rounded bg-purple-50">
+              <h4 className="font-medium text-gray-700 text-purple-800">✅ Input 컴포넌트</h4>
               <div className="space-y-2 max-w-md">
                 <PreviewComponents.Input placeholder="Default input" variant="default" />
                 <PreviewComponents.Input placeholder="Filled input" variant="filled" />
@@ -234,7 +253,7 @@ export default function DesignSystemV2() {
         </div>
       </div>
     )
-  }, [selectedComponents, themeState.currentTheme.name, themeState.isValid])
+  }
 
   // 초기화 중일 때 로딩 표시
   if (!isInitialized) {
@@ -380,14 +399,14 @@ export default function DesignSystemV2() {
               </div>
 
               {/* 미리보기 영역 */}
-              <div className="flex-1" key={`preview-${selectedComponents.join(',')}-${themeState.currentTheme.name}`}>
+              <div className="flex-1" key={`preview-area-${renderKey}-${selectedComponents.length}`}>
                 {viewMode === 'enhanced' ? (
                   <EnhancedPreview componentName="Design System">
-                    {previewContent}
+                    {renderPreviewContent()}
                   </EnhancedPreview>
                 ) : (
                   <ResponsivePreview>
-                    {previewContent}
+                    {renderPreviewContent()}
                   </ResponsivePreview>
                 )}
               </div>
