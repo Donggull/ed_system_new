@@ -7,6 +7,7 @@ import ThemeEditor from '@/components/editor/ThemeEditor'
 import EnhancedPreview from '@/components/preview/EnhancedPreview'
 import ResponsivePreview from '@/components/preview/ResponsivePreview'
 import { themeManager, ThemeState } from '@/lib/theme-manager'
+import { DEFAULT_THEME } from '@/lib/theme-parser'
 import { allComponentTemplates } from '@/lib/component-templates'
 import { ComponentTemplate } from '@/types/database'
 import { cn } from '@/lib/utils'
@@ -68,12 +69,32 @@ export default function DesignSystemV2() {
   const [viewMode, setViewMode] = useState<'enhanced' | 'responsive'>('enhanced')
   const [themeState, setThemeState] = useState<ThemeState>(themeManager.getState())
   const [themeErrors, setThemeErrors] = useState<string[]>([])
+  const [isInitialized, setIsInitialized] = useState(false)
   const { user } = useAuth()
+
+  // 컴포넌트 마운트 시 테마 초기화
+  useEffect(() => {
+    // 기본 테마로 초기화 및 CSS 변수 강제 주입
+    themeManager.updateTheme(DEFAULT_THEME, { animate: false })
+    
+    // CSS 변수가 제대로 적용되는지 확인하기 위한 약간의 지연
+    setTimeout(() => {
+      setIsInitialized(true)
+    }, 100)
+  }, [])
 
   // 테마 상태 구독
   useEffect(() => {
     const unsubscribe = themeManager.subscribe((newState) => {
       setThemeState(newState)
+      
+      // 테마 변경 시 컴포넌트 강제 리렌더링을 위한 상태 업데이트
+      if (newState.isValid) {
+        // CSS 변수가 적용될 시간을 주기 위한 짧은 지연
+        setTimeout(() => {
+          setIsInitialized(prev => !prev ? prev : true) // 이미 true면 그대로, false면 true로
+        }, 50)
+      }
     })
     return unsubscribe
   }, [])
@@ -94,7 +115,7 @@ export default function DesignSystemV2() {
 
   // 미리보기 컴포넌트 렌더링
   const renderPreviewComponents = () => (
-    <div className="space-y-6">
+    <div className="space-y-6" key={`components-${themeState.currentTheme.name}-${themeState.isValid}`}>
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">실시간 테마 미리보기</h3>
         
@@ -194,6 +215,20 @@ export default function DesignSystemV2() {
       </div>
     </div>
   )
+
+  // 초기화 중일 때 로딩 표시
+  if (!isInitialized) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">테마 시스템 초기화 중...</p>
+          </div>
+        </div>
+      </ProtectedRoute>
+    )
+  }
 
   return (
     <ProtectedRoute>
@@ -325,7 +360,7 @@ export default function DesignSystemV2() {
               </div>
 
               {/* 미리보기 영역 */}
-              <div className="flex-1">
+              <div className="flex-1" key={`preview-${themeState.currentTheme.name}`}>
                 {viewMode === 'enhanced' ? (
                   <EnhancedPreview componentName="Design System">
                     {renderPreviewComponents()}
