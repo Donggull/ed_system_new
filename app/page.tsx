@@ -366,11 +366,318 @@ export default function Home() {
                     </div>
                   )}
                   
-                  {/* 다른 컴포넌트들도 유사하게 렌더링 */}
-                  {!['button', 'input', 'card'].includes(template.id) && (
+                  {template.id === 'modal' && (
+                    <div className="relative bg-white rounded-2xl border border-gray-200 p-6 shadow-xl max-w-md mx-auto">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-lg font-bold text-gray-900">모달 제목</h4>
+                        <button className="text-gray-400 hover:text-gray-600">×</button>
+                      </div>
+                      <p className="text-gray-600 text-sm mb-6">모달 컴포넌트의 미리보기입니다.</p>
+                      <div className="flex gap-3 justify-end">
+                        <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50">취소</button>
+                        <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))]">확인</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {template.id === 'table' && (
+                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                      <table className="w-full">
+                        <thead className="bg-[hsl(var(--color-secondary-50))]">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">이름</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">역할</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          <tr>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">홍길동</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">개발자</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">활성</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">김철수</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">디자이너</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">대기</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {template.id === 'badge' && (
+                    <div className="flex flex-wrap gap-3">
+                      <span className="px-3 py-1 text-xs font-semibold bg-[hsl(var(--color-primary-100))] text-[hsl(var(--color-primary-800))] rounded-full">Primary</span>
+                      <span className="px-3 py-1 text-xs font-semibold bg-[hsl(var(--color-secondary-100))] text-[hsl(var(--color-secondary-800))] rounded-full">Secondary</span>
+                      <span className="px-3 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">Success</span>
+                      <span className="px-3 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Warning</span>
+                      <span className="px-3 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">Error</span>
+                    </div>
+                  )}
+
+                  {template.id === 'avatar' && (
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-[hsl(var(--color-primary-500))] rounded-full flex items-center justify-center text-white font-semibold">홍</div>
+                      <div className="w-16 h-16 bg-gradient-to-r from-[hsl(var(--color-primary-500))] to-[hsl(var(--color-secondary-500))] rounded-full flex items-center justify-center text-white font-bold text-lg">김</div>
+                      <div className="w-20 h-20 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="w-full h-full bg-gradient-to-b from-gray-300 to-gray-400 flex items-center justify-center">
+                          <svg className="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {template.id === 'toast' && (
+                    <div className="space-y-3">
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+                        <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-green-800">성공!</p>
+                          <p className="text-xs text-green-600">작업이 성공적으로 완료되었습니다.</p>
+                        </div>
+                      </div>
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+                        <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-red-800">오류!</p>
+                          <p className="text-xs text-red-600">작업을 처리하는 중 오류가 발생했습니다.</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {template.id === 'grid' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+                        <div key={item} className="bg-white border border-gray-200 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
+                          <div className="w-12 h-12 bg-[hsl(var(--color-primary-100))] rounded-lg mx-auto mb-3 flex items-center justify-center">
+                            <span className="text-[hsl(var(--color-primary-600))] font-semibold">{item}</span>
+                          </div>
+                          <p className="text-sm text-gray-600">Grid Item {item}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {template.id === 'divider' && (
+                    <div className="space-y-6">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-4">기본 구분선</p>
+                        <hr className="border-gray-200" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 mb-4">텍스트가 포함된 구분선</p>
+                        <div className="relative">
+                          <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300" />
+                          </div>
+                          <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-white text-gray-500">또는</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {template.id === 'tabs' && (
+                    <div className="w-full">
+                      <div className="border-b border-gray-200">
+                        <nav className="-mb-px flex space-x-8">
+                          <button className="border-b-2 border-[hsl(var(--color-primary-500))] text-[hsl(var(--color-primary-600))] py-2 px-1 text-sm font-medium">
+                            탭 1
+                          </button>
+                          <button className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-2 px-1 text-sm font-medium">
+                            탭 2
+                          </button>
+                          <button className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-2 px-1 text-sm font-medium">
+                            탭 3
+                          </button>
+                        </nav>
+                      </div>
+                      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">선택된 탭의 내용이 여기에 표시됩니다.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {(template.id === 'bar-chart' || template.id === 'line-chart' || template.id === 'pie-chart') && (
+                    <div className="bg-white p-6 rounded-xl border border-gray-200">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">차트 미리보기</h4>
+                      {template.id === 'bar-chart' && (
+                        <div className="flex items-end justify-center gap-2 h-32">
+                          <div className="w-8 bg-[hsl(var(--color-primary-500))] h-16 rounded-t"></div>
+                          <div className="w-8 bg-[hsl(var(--color-primary-400))] h-24 rounded-t"></div>
+                          <div className="w-8 bg-[hsl(var(--color-primary-600))] h-12 rounded-t"></div>
+                          <div className="w-8 bg-[hsl(var(--color-primary-500))] h-20 rounded-t"></div>
+                          <div className="w-8 bg-[hsl(var(--color-primary-400))] h-28 rounded-t"></div>
+                        </div>
+                      )}
+                      {template.id === 'line-chart' && (
+                        <div className="relative h-32 bg-gray-50 rounded-lg p-4">
+                          <svg className="w-full h-full" viewBox="0 0 300 100">
+                            <polyline
+                              fill="none"
+                              stroke={`hsl(var(--color-primary-500))`}
+                              strokeWidth="2"
+                              points="20,80 60,40 100,60 140,20 180,50 220,30 260,70"
+                            />
+                            <circle cx="20" cy="80" r="3" fill={`hsl(var(--color-primary-500))`} />
+                            <circle cx="60" cy="40" r="3" fill={`hsl(var(--color-primary-500))`} />
+                            <circle cx="100" cy="60" r="3" fill={`hsl(var(--color-primary-500))`} />
+                            <circle cx="140" cy="20" r="3" fill={`hsl(var(--color-primary-500))`} />
+                            <circle cx="180" cy="50" r="3" fill={`hsl(var(--color-primary-500))`} />
+                            <circle cx="220" cy="30" r="3" fill={`hsl(var(--color-primary-500))`} />
+                            <circle cx="260" cy="70" r="3" fill={`hsl(var(--color-primary-500))`} />
+                          </svg>
+                        </div>
+                      )}
+                      {template.id === 'pie-chart' && (
+                        <div className="flex justify-center">
+                          <svg className="w-32 h-32" viewBox="0 0 42 42">
+                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke={`hsl(var(--color-secondary-200))`} strokeWidth="3" />
+                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke={`hsl(var(--color-primary-500))`} strokeWidth="3" strokeDasharray="60 40" strokeDashoffset="25" />
+                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke={`hsl(var(--color-primary-300))`} strokeWidth="3" strokeDasharray="40 60" strokeDashoffset="-35" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {template.id === 'notification' && (
+                    <div className="bg-blue-50 border-l-4 border-[hsl(var(--color-primary-500))] p-4 rounded-r-lg">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <svg className="h-5 w-5 text-[hsl(var(--color-primary-500))]" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm text-[hsl(var(--color-primary-700))]">
+                            <strong>알림:</strong> 새로운 업데이트가 있습니다.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {template.id === 'banner' && (
+                    <div className="bg-gradient-to-r from-[hsl(var(--color-primary-500))] to-[hsl(var(--color-primary-600))] rounded-xl p-6 text-white">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-lg font-bold mb-2">환영합니다!</h4>
+                          <p className="text-sm opacity-90">새로운 디자인 시스템을 경험해보세요.</p>
+                        </div>
+                        <button className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors">
+                          시작하기
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {template.id === 'pagination' && (
+                    <div className="flex items-center justify-center space-x-1">
+                      <button className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
+                        이전
+                      </button>
+                      <button className="px-3 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] border border-[hsl(var(--color-primary-500))]">
+                        1
+                      </button>
+                      <button className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                        2
+                      </button>
+                      <button className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                        3
+                      </button>
+                      <button className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
+                        다음
+                      </button>
+                    </div>
+                  )}
+
+                  {template.id === 'accordion' && (
+                    <div className="space-y-2">
+                      <div className="border border-gray-200 rounded-lg">
+                        <button className="w-full px-4 py-3 text-left font-medium text-gray-900 bg-gray-50 hover:bg-gray-100 flex items-center justify-between rounded-t-lg">
+                          <span>첫 번째 아코디언</span>
+                          <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                        <div className="px-4 py-3 text-sm text-gray-600 border-t border-gray-200">
+                          첫 번째 아코디언의 내용입니다.
+                        </div>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg">
+                        <button className="w-full px-4 py-3 text-left font-medium text-gray-900 hover:bg-gray-50 flex items-center justify-between rounded-lg">
+                          <span>두 번째 아코디언</span>
+                          <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {template.id === 'carousel' && (
+                    <div className="relative bg-white rounded-xl border border-gray-200 overflow-hidden">
+                      <div className="flex">
+                        <div className="w-full h-48 bg-gradient-to-r from-[hsl(var(--color-primary-100))] to-[hsl(var(--color-primary-200))] flex items-center justify-center">
+                          <div className="text-center">
+                            <h4 className="text-xl font-bold text-[hsl(var(--color-primary-700))] mb-2">슬라이드 1</h4>
+                            <p className="text-[hsl(var(--color-primary-600))]">첫 번째 슬라이드 내용</p>
+                          </div>
+                        </div>
+                      </div>
+                      <button className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg">
+                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                      <button className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg">
+                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                        <div className="w-2 h-2 bg-[hsl(var(--color-primary-500))] rounded-full"></div>
+                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 지원되지 않는 컴포넌트에 대한 기본 메시지 */}
+                  {![
+                    'button', 'input', 'card', 'modal', 'table', 'badge', 'avatar', 'toast', 
+                    'grid', 'divider', 'tabs', 'bar-chart', 'line-chart', 'pie-chart',
+                    'notification', 'banner', 'pagination', 'accordion', 'carousel'
+                  ].includes(template.id) && (
                     <div className="p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 text-center">
-                      <p className="text-gray-500 text-sm">
-                        {template.name} 컴포넌트 미리보기 (개발 예정)
+                      <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-500 text-sm font-medium mb-1">
+                        {template.name} 컴포넌트
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        미리보기 준비 중
                       </p>
                     </div>
                   )}
