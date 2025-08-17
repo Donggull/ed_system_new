@@ -20,6 +20,7 @@ import {
 import { allComponentTemplates } from '@/lib/component-templates'
 import { useToast } from '@/hooks/useToast'
 import Toast from '@/components/ui/Toast'
+import SaveThemeModal from '@/components/ui/SaveThemeModal'
 
 export default function Home() {
   const [themeTemplates, setThemeTemplates] = useState<Theme[]>([])
@@ -35,6 +36,7 @@ export default function Home() {
   const [userThemes, setUserThemes] = useState<Theme[]>([])
   const [saveLoading, setSaveLoading] = useState(false)
   const [showUserThemes, setShowUserThemes] = useState(false)
+  const [showSaveModal, setShowSaveModal] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
   const { toast, success, error: showError, hideToast } = useToast()
@@ -174,16 +176,17 @@ export default function Home() {
     return componentSettings[componentId]?.[propKey] ?? defaultValue
   }
 
-  // 테마 저장 함수
-  const handleSaveTheme = async () => {
+  // 테마 저장 버튼 클릭
+  const handleSaveThemeClick = () => {
     if (!user) {
       showError('로그인이 필요합니다.')
       return
     }
+    setShowSaveModal(true)
+  }
 
-    const themeName = prompt('테마 이름을 입력하세요:', currentTheme.name || 'My Theme')
-    if (!themeName) return
-
+  // 테마 저장 실행
+  const handleSaveTheme = async (themeName: string) => {
     setSaveLoading(true)
 
     try {
@@ -200,8 +203,11 @@ export default function Home() {
       } else {
         success(`테마 "${themeName}"이 컴포넌트 ${selectedComponents.length}개와 함께 저장되었습니다!`)
         // 사용자 테마 목록 새로고침
-        const updatedUserThemes = await getUserThemes(user.id)
-        setUserThemes(updatedUserThemes)
+        if (user) {
+          const updatedUserThemes = await getUserThemes(user.id)
+          setUserThemes(updatedUserThemes)
+        }
+        setShowSaveModal(false)
       }
     } catch (err) {
       console.error('Save error:', err)
@@ -259,7 +265,7 @@ export default function Home() {
             {/* Save/Load Controls */}
             <div className="flex items-center gap-2 mb-3">
               <button
-                onClick={handleSaveTheme}
+                onClick={handleSaveThemeClick}
                 disabled={saveLoading}
                 className="flex-1 px-3 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-lg transition-colors"
               >
@@ -1184,6 +1190,15 @@ export default function Home() {
         type={toast.type}
         isVisible={toast.isVisible}
         onClose={hideToast}
+      />
+
+      {/* Save Theme Modal */}
+      <SaveThemeModal
+        isOpen={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={handleSaveTheme}
+        defaultName={currentTheme.name || 'My Theme'}
+        isLoading={saveLoading}
       />
     </ProtectedRoute>
   )
