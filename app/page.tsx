@@ -769,15 +769,112 @@ export default function Home() {
                   })()}
                   
                   {template.id === 'modal' && (
-                    <div className="relative bg-white rounded-2xl border border-gray-200 p-6 shadow-xl max-w-md mx-auto">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-lg font-bold text-gray-900">모달 제목</h4>
-                        <button className="text-gray-400 hover:text-gray-600">×</button>
+                    <div className="space-y-6">
+                      {/* 기본 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 모달</h4>
+                        <div className="relative bg-white rounded-2xl border border-gray-200 p-6 shadow-xl max-w-md mx-auto">
+                          <div className="flex items-center justify-between mb-4">
+                            <h4 className="text-lg font-bold text-gray-900">확인 모달</h4>
+                            <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                          <p className="text-gray-600 text-sm mb-6">이 작업을 계속 진행하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+                          <div className="flex gap-3 justify-end">
+                            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors">취소</button>
+                            <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))] transition-colors">확인</button>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-gray-600 text-sm mb-6">모달 컴포넌트의 미리보기입니다.</p>
-                      <div className="flex gap-3 justify-end">
-                        <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50">취소</button>
-                        <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))]">확인</button>
+
+                      {/* 경고 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">경고 모달</h4>
+                        <div className="relative bg-white rounded-2xl border border-red-200 p-6 shadow-xl max-w-md mx-auto">
+                          <div className="flex items-start gap-4">
+                            <div className="flex-shrink-0">
+                              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="text-lg font-bold text-gray-900 mb-2">삭제 확인</h4>
+                              <p className="text-gray-600 text-sm mb-6">정말로 이 항목을 삭제하시겠습니까? 삭제된 데이터는 복구할 수 없습니다.</p>
+                              <div className="flex gap-3 justify-end">
+                                <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors">취소</button>
+                                <button className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors">삭제</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 성공 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">성공 모달</h4>
+                        <div className="relative bg-white rounded-2xl border border-green-200 p-6 shadow-xl max-w-md mx-auto">
+                          <div className="text-center">
+                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                            <h4 className="text-lg font-bold text-gray-900 mb-2">작업 완료!</h4>
+                            <p className="text-gray-600 text-sm mb-6">모든 작업이 성공적으로 완료되었습니다.</p>
+                            <button className="w-full px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))] transition-colors">확인</button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 폼 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">폼 모달</h4>
+                        <div className="relative bg-white rounded-2xl border border-gray-200 p-6 shadow-xl max-w-lg mx-auto">
+                          <div className="flex items-center justify-between mb-6">
+                            <h4 className="text-lg font-bold text-gray-900">새 항목 추가</h4>
+                            <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="space-y-4 mb-6">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">제목</label>
+                              <input 
+                                type="text" 
+                                placeholder="제목을 입력하세요"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">설명</label>
+                              <textarea 
+                                placeholder="설명을 입력하세요"
+                                rows={3}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] resize-none"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
+                              <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))]">
+                                <option>선택하세요</option>
+                                <option>업무</option>
+                                <option>개인</option>
+                                <option>학습</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="flex gap-3 justify-end">
+                            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors">취소</button>
+                            <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))] transition-colors">추가</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -917,46 +1014,587 @@ export default function Home() {
                     </div>
                   )}
 
-                  {(template.id === 'bar-chart' || template.id === 'line-chart' || template.id === 'pie-chart') && (
-                    <div className="bg-white p-6 rounded-xl border border-gray-200">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">차트 미리보기</h4>
-                      {template.id === 'bar-chart' && (
-                        <div className="flex items-end justify-center gap-2 h-32">
-                          <div className="w-8 bg-[hsl(var(--color-primary-500))] h-16 rounded-t"></div>
-                          <div className="w-8 bg-[hsl(var(--color-primary-400))] h-24 rounded-t"></div>
-                          <div className="w-8 bg-[hsl(var(--color-primary-600))] h-12 rounded-t"></div>
-                          <div className="w-8 bg-[hsl(var(--color-primary-500))] h-20 rounded-t"></div>
-                          <div className="w-8 bg-[hsl(var(--color-primary-400))] h-28 rounded-t"></div>
+                  {/* Bar Chart 미리보기 */}
+                  {template.id === 'bar-chart' && (
+                    <div className="space-y-6">
+                      {/* 기본 막대 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 막대 차트</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200">
+                          <div className="flex items-center justify-between mb-4">
+                            <h5 className="text-lg font-semibold text-gray-900">월별 매출</h5>
+                            <div className="flex gap-2">
+                              <div className="flex items-center gap-1">
+                                <div className="w-3 h-3 bg-[hsl(var(--color-primary-500))] rounded"></div>
+                                <span className="text-xs text-gray-600">2024</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="w-3 h-3 bg-[hsl(var(--color-primary-300))] rounded"></div>
+                                <span className="text-xs text-gray-600">2023</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <div className="flex items-end justify-center gap-3 h-40 px-4">
+                              {/* 1월 */}
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="flex items-end gap-1">
+                                  <div className="w-6 bg-[hsl(var(--color-primary-500))] h-16 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2024: ₩450만"></div>
+                                  <div className="w-6 bg-[hsl(var(--color-primary-300))] h-12 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2023: ₩320만"></div>
+                                </div>
+                                <span className="text-xs text-gray-500">1월</span>
+                              </div>
+                              {/* 2월 */}
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="flex items-end gap-1">
+                                  <div className="w-6 bg-[hsl(var(--color-primary-500))] h-24 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2024: ₩680만"></div>
+                                  <div className="w-6 bg-[hsl(var(--color-primary-300))] h-18 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2023: ₩510만"></div>
+                                </div>
+                                <span className="text-xs text-gray-500">2월</span>
+                              </div>
+                              {/* 3월 */}
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="flex items-end gap-1">
+                                  <div className="w-6 bg-[hsl(var(--color-primary-500))] h-12 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2024: ₩320만"></div>
+                                  <div className="w-6 bg-[hsl(var(--color-primary-300))] h-20 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2023: ₩560만"></div>
+                                </div>
+                                <span className="text-xs text-gray-500">3월</span>
+                              </div>
+                              {/* 4월 */}
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="flex items-end gap-1">
+                                  <div className="w-6 bg-[hsl(var(--color-primary-500))] h-20 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2024: ₩580만"></div>
+                                  <div className="w-6 bg-[hsl(var(--color-primary-300))] h-16 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2023: ₩450만"></div>
+                                </div>
+                                <span className="text-xs text-gray-500">4월</span>
+                              </div>
+                              {/* 5월 */}
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="flex items-end gap-1">
+                                  <div className="w-6 bg-[hsl(var(--color-primary-500))] h-32 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2024: ₩920만"></div>
+                                  <div className="w-6 bg-[hsl(var(--color-primary-300))] h-24 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2023: ₩680만"></div>
+                                </div>
+                                <span className="text-xs text-gray-500">5월</span>
+                              </div>
+                              {/* 6월 */}
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="flex items-end gap-1">
+                                  <div className="w-6 bg-[hsl(var(--color-primary-500))] h-28 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2024: ₩820만"></div>
+                                  <div className="w-6 bg-[hsl(var(--color-primary-300))] h-22 rounded-t hover:opacity-80 transition-opacity cursor-pointer" title="2023: ₩620만"></div>
+                                </div>
+                                <span className="text-xs text-gray-500">6월</span>
+                              </div>
+                            </div>
+                            {/* Y축 라벨 */}
+                            <div className="absolute left-0 top-0 h-40 flex flex-col justify-between text-xs text-gray-500 -ml-2">
+                              <span>₩1,000만</span>
+                              <span>₩750만</span>
+                              <span>₩500만</span>
+                              <span>₩250만</span>
+                              <span>₩0</span>
+                            </div>
+                          </div>
                         </div>
-                      )}
-                      {template.id === 'line-chart' && (
-                        <div className="relative h-32 bg-gray-50 rounded-lg p-4">
-                          <svg className="w-full h-full" viewBox="0 0 300 100">
-                            <polyline
-                              fill="none"
-                              stroke={`hsl(var(--color-primary-500))`}
-                              strokeWidth="2"
-                              points="20,80 60,40 100,60 140,20 180,50 220,30 260,70"
-                            />
-                            <circle cx="20" cy="80" r="3" fill={`hsl(var(--color-primary-500))`} />
-                            <circle cx="60" cy="40" r="3" fill={`hsl(var(--color-primary-500))`} />
-                            <circle cx="100" cy="60" r="3" fill={`hsl(var(--color-primary-500))`} />
-                            <circle cx="140" cy="20" r="3" fill={`hsl(var(--color-primary-500))`} />
-                            <circle cx="180" cy="50" r="3" fill={`hsl(var(--color-primary-500))`} />
-                            <circle cx="220" cy="30" r="3" fill={`hsl(var(--color-primary-500))`} />
-                            <circle cx="260" cy="70" r="3" fill={`hsl(var(--color-primary-500))`} />
-                          </svg>
+                      </div>
+
+                      {/* 수평 막대 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">수평 막대 차트</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200">
+                          <h5 className="text-lg font-semibold text-gray-900 mb-4">인기 카테고리</h5>
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-4">
+                              <div className="w-20 text-sm text-gray-700 text-right">전자제품</div>
+                              <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                                <div className="bg-[hsl(var(--color-primary-500))] h-full rounded-full transition-all duration-700 ease-out" style={{width: '85%'}}></div>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-white">85%</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="w-20 text-sm text-gray-700 text-right">의류</div>
+                              <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                                <div className="bg-[hsl(var(--color-primary-400))] h-full rounded-full transition-all duration-700 ease-out" style={{width: '72%'}}></div>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-white">72%</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="w-20 text-sm text-gray-700 text-right">도서</div>
+                              <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                                <div className="bg-[hsl(var(--color-primary-600))] h-full rounded-full transition-all duration-700 ease-out" style={{width: '58%'}}></div>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-white">58%</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="w-20 text-sm text-gray-700 text-right">홈&리빙</div>
+                              <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                                <div className="bg-[hsl(var(--color-primary-300))] h-full rounded-full transition-all duration-700 ease-out" style={{width: '45%'}}></div>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-600">45%</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="w-20 text-sm text-gray-700 text-right">스포츠</div>
+                              <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                                <div className="bg-[hsl(var(--color-primary-200))] h-full rounded-full transition-all duration-700 ease-out" style={{width: '32%'}}></div>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-600">32%</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      )}
-                      {template.id === 'pie-chart' && (
-                        <div className="flex justify-center">
-                          <svg className="w-32 h-32" viewBox="0 0 42 42">
-                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke={`hsl(var(--color-secondary-200))`} strokeWidth="3" />
-                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke={`hsl(var(--color-primary-500))`} strokeWidth="3" strokeDasharray="60 40" strokeDashoffset="25" />
-                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke={`hsl(var(--color-primary-300))`} strokeWidth="3" strokeDasharray="40 60" strokeDashoffset="-35" />
-                          </svg>
+                      </div>
+
+                      {/* 스택 막대 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">스택 막대 차트</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200">
+                          <div className="flex items-center justify-between mb-4">
+                            <h5 className="text-lg font-semibold text-gray-900">프로젝트 진행률</h5>
+                            <div className="flex gap-3 text-xs">
+                              <div className="flex items-center gap-1">
+                                <div className="w-3 h-3 bg-green-500 rounded"></div>
+                                <span>완료</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="w-3 h-3 bg-[hsl(var(--color-primary-500))] rounded"></div>
+                                <span>진행중</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="w-3 h-3 bg-gray-300 rounded"></div>
+                                <span>대기</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="text-gray-700">Design System</span>
+                                <span className="text-gray-500">23/30 작업</span>
+                              </div>
+                              <div className="flex h-4 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="bg-green-500 transition-all duration-500" style={{width: '60%'}}></div>
+                                <div className="bg-[hsl(var(--color-primary-500))] transition-all duration-500" style={{width: '17%'}}></div>
+                                <div className="bg-gray-300 transition-all duration-500" style={{width: '23%'}}></div>
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="text-gray-700">Mobile App</span>
+                                <span className="text-gray-500">18/25 작업</span>
+                              </div>
+                              <div className="flex h-4 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="bg-green-500 transition-all duration-500" style={{width: '48%'}}></div>
+                                <div className="bg-[hsl(var(--color-primary-500))] transition-all duration-500" style={{width: '24%'}}></div>
+                                <div className="bg-gray-300 transition-all duration-500" style={{width: '28%'}}></div>
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="text-gray-700">Web Platform</span>
+                                <span className="text-gray-500">31/35 작업</span>
+                              </div>
+                              <div className="flex h-4 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="bg-green-500 transition-all duration-500" style={{width: '74%'}}></div>
+                                <div className="bg-[hsl(var(--color-primary-500))] transition-all duration-500" style={{width: '15%'}}></div>
+                                <div className="bg-gray-300 transition-all duration-500" style={{width: '11%'}}></div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Line Chart 미리보기 */}
+                  {template.id === 'line-chart' && (
+                    <div className="space-y-6">
+                      {/* 기본 라인 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 라인 차트</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200">
+                          <div className="flex items-center justify-between mb-4">
+                            <h5 className="text-lg font-semibold text-gray-900">방문자 추이</h5>
+                            <div className="flex gap-2">
+                              <button className="px-3 py-1 text-xs bg-[hsl(var(--color-primary-500))] text-white rounded-full">7일</button>
+                              <button className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-full transition-colors">30일</button>
+                              <button className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-full transition-colors">90일</button>
+                            </div>
+                          </div>
+                          <div className="relative h-40 bg-gradient-to-t from-[hsl(var(--color-primary-50))] to-transparent rounded-lg p-4">
+                            <svg className="w-full h-full" viewBox="0 0 350 120">
+                              {/* 그리드 라인 */}
+                              <defs>
+                                <pattern id="grid" width="50" height="24" patternUnits="userSpaceOnUse">
+                                  <path d="M 50 0 L 0 0 0 24" fill="none" stroke="#e5e7eb" strokeWidth="0.5"/>
+                                </pattern>
+                              </defs>
+                              <rect width="100%" height="100%" fill="url(#grid)" />
+                              
+                              {/* 영역 그래디언트 */}
+                              <defs>
+                                <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" stopColor="hsl(var(--color-primary-500))" stopOpacity="0.3" />
+                                  <stop offset="100%" stopColor="hsl(var(--color-primary-500))" stopOpacity="0.05" />
+                                </linearGradient>
+                              </defs>
+                              
+                              {/* 영역 */}
+                              <path
+                                fill="url(#areaGradient)"
+                                d="M 30,90 L 70,60 L 110,70 L 150,35 L 190,50 L 230,25 L 270,45 L 310,20 L 310,120 L 30,120 Z"
+                              />
+                              
+                              {/* 라인 */}
+                              <polyline
+                                fill="none"
+                                stroke="hsl(var(--color-primary-500))"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                points="30,90 70,60 110,70 150,35 190,50 230,25 270,45 310,20"
+                              />
+                              
+                              {/* 데이터 포인트 */}
+                              <circle cx="30" cy="90" r="4" fill="white" stroke="hsl(var(--color-primary-500))" strokeWidth="2" />
+                              <circle cx="70" cy="60" r="4" fill="white" stroke="hsl(var(--color-primary-500))" strokeWidth="2" />
+                              <circle cx="110" cy="70" r="4" fill="white" stroke="hsl(var(--color-primary-500))" strokeWidth="2" />
+                              <circle cx="150" cy="35" r="4" fill="white" stroke="hsl(var(--color-primary-500))" strokeWidth="2" />
+                              <circle cx="190" cy="50" r="4" fill="white" stroke="hsl(var(--color-primary-500))" strokeWidth="2" />
+                              <circle cx="230" cy="25" r="4" fill="white" stroke="hsl(var(--color-primary-500))" strokeWidth="2" />
+                              <circle cx="270" cy="45" r="4" fill="white" stroke="hsl(var(--color-primary-500))" strokeWidth="2" />
+                              <circle cx="310" cy="20" r="4" fill="white" stroke="hsl(var(--color-primary-500))" strokeWidth="2" />
+                            </svg>
+                            {/* X축 라벨 */}
+                            <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-500 px-4">
+                              <span>월</span>
+                              <span>화</span>
+                              <span>수</span>
+                              <span>목</span>
+                              <span>금</span>
+                              <span>토</span>
+                              <span>일</span>
+                            </div>
+                          </div>
+                          <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                            <div>
+                              <div className="text-2xl font-bold text-gray-900">12.4K</div>
+                              <div className="text-xs text-gray-500">총 방문자</div>
+                            </div>
+                            <div>
+                              <div className="text-2xl font-bold text-green-600">+24%</div>
+                              <div className="text-xs text-gray-500">증가율</div>
+                            </div>
+                            <div>
+                              <div className="text-2xl font-bold text-gray-900">2.1K</div>
+                              <div className="text-xs text-gray-500">평균 일일</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 다중 라인 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">다중 라인 차트</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200">
+                          <div className="flex items-center justify-between mb-4">
+                            <h5 className="text-lg font-semibold text-gray-900">매출 vs 비용</h5>
+                            <div className="flex gap-3 text-xs">
+                              <div className="flex items-center gap-1">
+                                <div className="w-3 h-3 bg-[hsl(var(--color-primary-500))] rounded"></div>
+                                <span>매출</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="w-3 h-3 bg-red-500 rounded"></div>
+                                <span>비용</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="w-3 h-3 bg-green-500 rounded"></div>
+                                <span>이익</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="relative h-40 bg-gray-50 rounded-lg p-4">
+                            <svg className="w-full h-full" viewBox="0 0 320 100">
+                              {/* 매출 라인 */}
+                              <polyline
+                                fill="none"
+                                stroke="hsl(var(--color-primary-500))"
+                                strokeWidth="2.5"
+                                strokeDasharray="none"
+                                points="20,70 60,45 100,55 140,30 180,40 220,20 260,35 300,15"
+                              />
+                              {/* 비용 라인 */}
+                              <polyline
+                                fill="none"
+                                stroke="#ef4444"
+                                strokeWidth="2.5"
+                                strokeDasharray="4,4"
+                                points="20,80 60,65 100,70 140,55 180,60 220,45 260,55 300,40"
+                              />
+                              {/* 이익 라인 */}
+                              <polyline
+                                fill="none"
+                                stroke="#22c55e"
+                                strokeWidth="2.5"
+                                strokeDasharray="8,2"
+                                points="20,85 60,75 100,80 140,65 180,70 220,55 260,65 300,50"
+                              />
+                              
+                              {/* 매출 포인트 */}
+                              <circle cx="60" cy="45" r="3" fill="hsl(var(--color-primary-500))" />
+                              <circle cx="140" cy="30" r="3" fill="hsl(var(--color-primary-500))" />
+                              <circle cx="220" cy="20" r="3" fill="hsl(var(--color-primary-500))" />
+                              <circle cx="300" cy="15" r="3" fill="hsl(var(--color-primary-500))" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 실시간 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">실시간 모니터링</h4>
+                        <div className="bg-gray-900 p-6 rounded-xl border border-gray-700">
+                          <div className="flex items-center justify-between mb-4">
+                            <h5 className="text-lg font-semibold text-white">CPU 사용률</h5>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                              <span className="text-xs text-green-400">실시간</span>
+                            </div>
+                          </div>
+                          <div className="relative h-32 bg-gray-800 rounded-lg p-4">
+                            <svg className="w-full h-full" viewBox="0 0 300 80">
+                              {/* 그리드 */}
+                              <defs>
+                                <pattern id="darkGrid" width="30" height="16" patternUnits="userSpaceOnUse">
+                                  <path d="M 30 0 L 0 0 0 16" fill="none" stroke="#374151" strokeWidth="0.5"/>
+                                </pattern>
+                              </defs>
+                              <rect width="100%" height="100%" fill="url(#darkGrid)" />
+                              
+                              {/* CPU 라인 */}
+                              <polyline
+                                fill="none"
+                                stroke="#22d3ee"
+                                strokeWidth="2"
+                                points="0,60 30,45 60,50 90,30 120,40 150,25 180,35 210,20 240,30 270,15 300,25"
+                              >
+                                <animate attributeName="points" 
+                                  values="0,60 30,45 60,50 90,30 120,40 150,25 180,35 210,20 240,30 270,15 300,25;
+                                         0,50 30,55 60,40 90,45 120,30 150,35 180,25 210,30 240,20 270,25 300,15;
+                                         0,60 30,45 60,50 90,30 120,40 150,25 180,35 210,20 240,30 270,15 300,25"
+                                  dur="3s" repeatCount="indefinite"/>
+                              </polyline>
+                              
+                              {/* 현재 값 표시 */}
+                              <circle cx="300" cy="25" r="3" fill="#22d3ee">
+                                <animate attributeName="cy" values="25;15;25" dur="3s" repeatCount="indefinite"/>
+                              </circle>
+                            </svg>
+                            <div className="absolute top-2 right-2 text-2xl font-bold text-cyan-400">
+                              <span className="animate-pulse">67</span><span className="text-sm">%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pie Chart 미리보기 */}
+                  {template.id === 'pie-chart' && (
+                    <div className="space-y-6">
+                      {/* 기본 파이 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 파이 차트</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200">
+                          <h5 className="text-lg font-semibold text-gray-900 mb-4">브라우저 점유율</h5>
+                          <div className="flex items-center justify-center gap-8">
+                            <div className="relative">
+                              <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 42 42">
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e5e7eb" strokeWidth="2" />
+                                {/* Chrome - 45% */}
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" 
+                                  stroke="hsl(var(--color-primary-500))" strokeWidth="2" 
+                                  strokeDasharray="45 55" strokeDashoffset="0" 
+                                  className="transition-all duration-1000" />
+                                {/* Safari - 25% */}
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" 
+                                  stroke="#06b6d4" strokeWidth="2" 
+                                  strokeDasharray="25 75" strokeDashoffset="-45" 
+                                  className="transition-all duration-1000" />
+                                {/* Firefox - 20% */}
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" 
+                                  stroke="#f59e0b" strokeWidth="2" 
+                                  strokeDasharray="20 80" strokeDashoffset="-70" 
+                                  className="transition-all duration-1000" />
+                                {/* Edge - 10% */}
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" 
+                                  stroke="#84cc16" strokeWidth="2" 
+                                  strokeDasharray="10 90" strokeDashoffset="-90" 
+                                  className="transition-all duration-1000" />
+                              </svg>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-center">
+                                  <div className="text-2xl font-bold text-gray-900">100%</div>
+                                  <div className="text-xs text-gray-500">사용자</div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                                <div className="w-4 h-4 bg-[hsl(var(--color-primary-500))] rounded"></div>
+                                <div className="flex-1">
+                                  <div className="text-sm font-medium text-gray-900">Chrome</div>
+                                  <div className="text-xs text-gray-500">45.2%</div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900">2,840</div>
+                              </div>
+                              <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                                <div className="w-4 h-4 bg-cyan-500 rounded"></div>
+                                <div className="flex-1">
+                                  <div className="text-sm font-medium text-gray-900">Safari</div>
+                                  <div className="text-xs text-gray-500">24.8%</div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900">1,560</div>
+                              </div>
+                              <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                                <div className="w-4 h-4 bg-amber-500 rounded"></div>
+                                <div className="flex-1">
+                                  <div className="text-sm font-medium text-gray-900">Firefox</div>
+                                  <div className="text-xs text-gray-500">19.7%</div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900">1,240</div>
+                              </div>
+                              <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                                <div className="w-4 h-4 bg-lime-500 rounded"></div>
+                                <div className="flex-1">
+                                  <div className="text-sm font-medium text-gray-900">Edge</div>
+                                  <div className="text-xs text-gray-500">9.3%</div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900">580</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 도넛 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">도넛 차트</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200">
+                          <h5 className="text-lg font-semibold text-gray-900 mb-4">수익 분석</h5>
+                          <div className="flex items-center justify-center gap-8">
+                            <div className="relative">
+                              <svg className="w-36 h-36 transform -rotate-90" viewBox="0 0 42 42">
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#f3f4f6" strokeWidth="4" />
+                                {/* 상품 판매 - 60% */}
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" 
+                                  stroke="hsl(var(--color-primary-500))" strokeWidth="4" 
+                                  strokeDasharray="60 40" strokeDashoffset="0" />
+                                {/* 서비스 - 25% */}
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" 
+                                  stroke="#8b5cf6" strokeWidth="4" 
+                                  strokeDasharray="25 75" strokeDashoffset="-60" />
+                                {/* 광고 - 15% */}
+                                <circle cx="21" cy="21" r="15.915" fill="transparent" 
+                                  stroke="#f59e0b" strokeWidth="4" 
+                                  strokeDasharray="15 85" strokeDashoffset="-85" />
+                              </svg>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-center">
+                                  <div className="text-xl font-bold text-gray-900">₩850만</div>
+                                  <div className="text-xs text-gray-500">총 수익</div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                              <div>
+                                <div className="flex items-center justify-between mb-1">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-[hsl(var(--color-primary-500))] rounded-full"></div>
+                                    <span className="text-sm text-gray-700">상품 판매</span>
+                                  </div>
+                                  <span className="text-sm font-semibold text-gray-900">₩510만</span>
+                                </div>
+                                <div className="text-xs text-gray-500 ml-5">전월 대비 +12%</div>
+                              </div>
+                              <div>
+                                <div className="flex items-center justify-between mb-1">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                    <span className="text-sm text-gray-700">서비스</span>
+                                  </div>
+                                  <span className="text-sm font-semibold text-gray-900">₩213만</span>
+                                </div>
+                                <div className="text-xs text-gray-500 ml-5">전월 대비 +8%</div>
+                              </div>
+                              <div>
+                                <div className="flex items-center justify-between mb-1">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+                                    <span className="text-sm text-gray-700">광고</span>
+                                  </div>
+                                  <span className="text-sm font-semibold text-gray-900">₩127만</span>
+                                </div>
+                                <div className="text-xs text-gray-500 ml-5">전월 대비 -3%</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 반원형 게이지 차트 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">게이지 차트</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gray-200">
+                          <h5 className="text-lg font-semibold text-gray-900 mb-4">목표 달성률</h5>
+                          <div className="flex justify-center gap-8">
+                            {/* 매출 게이지 */}
+                            <div className="text-center">
+                              <div className="relative">
+                                <svg className="w-32 h-16" viewBox="0 0 100 50">
+                                  <path d="M 10 40 A 30 30 0 0 1 90 40" stroke="#e5e7eb" strokeWidth="8" fill="none" strokeLinecap="round"/>
+                                  <path d="M 10 40 A 30 30 0 0 1 90 40" stroke="hsl(var(--color-primary-500))" strokeWidth="8" fill="none" 
+                                    strokeLinecap="round" strokeDasharray="94" strokeDashoffset="24" className="transition-all duration-1000"/>
+                                </svg>
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
+                                  <div className="text-xl font-bold text-gray-900">75%</div>
+                                </div>
+                              </div>
+                              <div className="text-sm text-gray-600 mt-2">매출 목표</div>
+                            </div>
+                            
+                            {/* 고객 게이지 */}
+                            <div className="text-center">
+                              <div className="relative">
+                                <svg className="w-32 h-16" viewBox="0 0 100 50">
+                                  <path d="M 10 40 A 30 30 0 0 1 90 40" stroke="#e5e7eb" strokeWidth="8" fill="none" strokeLinecap="round"/>
+                                  <path d="M 10 40 A 30 30 0 0 1 90 40" stroke="#22c55e" strokeWidth="8" fill="none" 
+                                    strokeLinecap="round" strokeDasharray="94" strokeDashoffset="6" className="transition-all duration-1000"/>
+                                </svg>
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
+                                  <div className="text-xl font-bold text-gray-900">94%</div>
+                                </div>
+                              </div>
+                              <div className="text-sm text-gray-600 mt-2">고객 만족도</div>
+                            </div>
+                            
+                            {/* 프로젝트 게이지 */}
+                            <div className="text-center">
+                              <div className="relative">
+                                <svg className="w-32 h-16" viewBox="0 0 100 50">
+                                  <path d="M 10 40 A 30 30 0 0 1 90 40" stroke="#e5e7eb" strokeWidth="8" fill="none" strokeLinecap="round"/>
+                                  <path d="M 10 40 A 30 30 0 0 1 90 40" stroke="#f59e0b" strokeWidth="8" fill="none" 
+                                    strokeLinecap="round" strokeDasharray="94" strokeDashoffset="41" className="transition-all duration-1000"/>
+                                </svg>
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
+                                  <div className="text-xl font-bold text-gray-900">56%</div>
+                                </div>
+                              </div>
+                              <div className="text-sm text-gray-600 mt-2">프로젝트 완료</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
 
@@ -1065,56 +1703,376 @@ export default function Home() {
 
                   {/* Enhanced Button 미리보기 */}
                   {template.id === 'enhanced-button' && (
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap gap-2">
-                        <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-colors">
-                          Primary
-                        </button>
-                        <button className="px-4 py-2 text-sm font-medium text-[hsl(var(--color-primary-500))] border border-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))] rounded-lg transition-colors">
-                          Outline
-                        </button>
-                        <button className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
-                          Destructive
-                        </button>
+                    <div className="space-y-6">
+                      {/* 기본 버튼들 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 버튼 변형</h4>
+                        <div className="flex flex-wrap gap-3">
+                          <button className="px-6 py-3 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-all transform hover:scale-105 shadow-lg">
+                            Primary
+                          </button>
+                          <button className="px-6 py-3 text-sm font-medium text-[hsl(var(--color-primary-500))] border-2 border-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))] rounded-lg transition-all">
+                            Outline
+                          </button>
+                          <button className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all">
+                            Ghost
+                          </button>
+                          <button className="px-6 py-3 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all">
+                            Destructive
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                          </svg>
-                          With Icon
-                        </button>
-                        <button className="px-4 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed" disabled>
-                          Disabled
-                        </button>
+
+                      {/* 크기별 버튼 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">크기 변형</h4>
+                        <div className="flex items-center flex-wrap gap-3">
+                          <button className="px-3 py-1.5 text-xs font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-md">
+                            Extra Small
+                          </button>
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                            Small
+                          </button>
+                          <button className="px-6 py-3 text-base font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                            Medium
+                          </button>
+                          <button className="px-8 py-4 text-lg font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-xl">
+                            Large
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 아이콘 버튼들 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">아이콘 버튼</h4>
+                        <div className="flex flex-wrap gap-3">
+                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-all">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                            </svg>
+                            새로 만들기
+                          </button>
+                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition-all">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            저장하기
+                          </button>
+                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-all">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 012 0v4a1 1 0 11-2 0V7zM12 7a1 1 0 012 0v4a1 1 0 11-2 0V7z" clipRule="evenodd" />
+                            </svg>
+                            삭제하기
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 아이콘 전용 버튼 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">아이콘 전용 버튼</h4>
+                        <div className="flex items-center gap-3">
+                          <button className="p-2 text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-all">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          <button className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                            </svg>
+                          </button>
+                          <button className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 상태별 버튼 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">상태별 버튼</h4>
+                        <div className="flex flex-wrap gap-3">
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed" disabled>
+                            비활성화
+                          </button>
+                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                            </svg>
+                            로딩 중...
+                          </button>
+                          <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all">
+                            정보
+                          </button>
+                          <button className="px-4 py-2 text-sm font-medium text-yellow-600 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-all">
+                            경고
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 플로팅 액션 버튼 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">플로팅 액션 버튼</h4>
+                        <div className="flex items-center gap-4">
+                          <button className="w-14 h-14 bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] text-white rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 flex items-center justify-center">
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          <button className="w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 flex items-center justify-center">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                            </svg>
+                          </button>
+                          <button className="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 flex items-center justify-center">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {/* Enhanced Input 미리보기 */}
                   {template.id === 'enhanced-input' && (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
+                      {/* 기본 입력 필드들 */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Enhanced Input</label>
-                        <input 
-                          type="text" 
-                          placeholder="Enter your text..."
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">With Icon</label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 입력 필드</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">텍스트 입력</label>
+                            <input 
+                              type="text" 
+                              placeholder="텍스트를 입력하세요"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                            />
                           </div>
-                          <input 
-                            type="text" 
-                            placeholder="Username"
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-colors"
-                          />
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">이메일</label>
+                            <input 
+                              type="email" 
+                              placeholder="email@example.com"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">비밀번호</label>
+                            <input 
+                              type="password" 
+                              placeholder="••••••••"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">숫자</label>
+                            <input 
+                              type="number" 
+                              placeholder="0"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 아이콘이 있는 입력 필드들 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">아이콘 입력 필드</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">검색</label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                              </div>
+                              <input 
+                                type="text" 
+                                placeholder="검색어를 입력하세요"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">사용자명</label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                              </div>
+                              <input 
+                                type="text" 
+                                placeholder="사용자명"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">이메일 주소</label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                                </svg>
+                              </div>
+                              <input 
+                                type="email" 
+                                placeholder="name@company.com"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">전화번호</label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                              </div>
+                              <input 
+                                type="tel" 
+                                placeholder="010-1234-5678"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 고급 입력 필드들 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">고급 입력 필드</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">메시지</label>
+                            <textarea 
+                              placeholder="메시지를 입력하세요..."
+                              rows={4}
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all resize-none"
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">국가</label>
+                              <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all">
+                                <option>선택하세요</option>
+                                <option>대한민국</option>
+                                <option>미국</option>
+                                <option>일본</option>
+                                <option>중국</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">날짜</label>
+                              <input 
+                                type="date" 
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-all"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 상태별 입력 필드 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">상태별 입력 필드</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">성공 상태</label>
+                            <input 
+                              type="text" 
+                              placeholder="올바른 입력"
+                              className="w-full px-4 py-3 border-2 border-green-300 bg-green-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                            />
+                            <p className="text-sm text-green-600 mt-1">✓ 입력이 올바릅니다</p>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">오류 상태</label>
+                            <input 
+                              type="text" 
+                              placeholder="잘못된 입력"
+                              className="w-full px-4 py-3 border-2 border-red-300 bg-red-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+                            />
+                            <p className="text-sm text-red-600 mt-1">✗ 입력을 확인해주세요</p>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">비활성화 상태</label>
+                            <input 
+                              type="text" 
+                              placeholder="비활성화된 입력"
+                              disabled
+                              className="w-full px-4 py-3 border border-gray-300 bg-gray-100 text-gray-500 rounded-lg cursor-not-allowed"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 체크박스와 라디오 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">선택 입력</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">관심사 (복수 선택)</label>
+                            <div className="space-y-2">
+                              <label className="flex items-center">
+                                <input 
+                                  type="checkbox" 
+                                  className="w-4 h-4 text-[hsl(var(--color-primary-500))] border-gray-300 rounded focus:ring-[hsl(var(--color-primary-500))]"
+                                />
+                                <span className="ml-2 text-sm text-gray-700">웹 개발</span>
+                              </label>
+                              <label className="flex items-center">
+                                <input 
+                                  type="checkbox" 
+                                  className="w-4 h-4 text-[hsl(var(--color-primary-500))] border-gray-300 rounded focus:ring-[hsl(var(--color-primary-500))]"
+                                />
+                                <span className="ml-2 text-sm text-gray-700">모바일 앱</span>
+                              </label>
+                              <label className="flex items-center">
+                                <input 
+                                  type="checkbox" 
+                                  className="w-4 h-4 text-[hsl(var(--color-primary-500))] border-gray-300 rounded focus:ring-[hsl(var(--color-primary-500))]"
+                                />
+                                <span className="ml-2 text-sm text-gray-700">데이터 분석</span>
+                              </label>
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">경력 수준 (단일 선택)</label>
+                            <div className="space-y-2">
+                              <label className="flex items-center">
+                                <input 
+                                  type="radio" 
+                                  name="experience" 
+                                  className="w-4 h-4 text-[hsl(var(--color-primary-500))] border-gray-300 focus:ring-[hsl(var(--color-primary-500))]"
+                                />
+                                <span className="ml-2 text-sm text-gray-700">초급 (1-2년)</span>
+                              </label>
+                              <label className="flex items-center">
+                                <input 
+                                  type="radio" 
+                                  name="experience" 
+                                  className="w-4 h-4 text-[hsl(var(--color-primary-500))] border-gray-300 focus:ring-[hsl(var(--color-primary-500))]"
+                                />
+                                <span className="ml-2 text-sm text-gray-700">중급 (3-5년)</span>
+                              </label>
+                              <label className="flex items-center">
+                                <input 
+                                  type="radio" 
+                                  name="experience" 
+                                  className="w-4 h-4 text-[hsl(var(--color-primary-500))] border-gray-300 focus:ring-[hsl(var(--color-primary-500))]"
+                                />
+                                <span className="ml-2 text-sm text-gray-700">고급 (5년+)</span>
+                              </label>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1122,23 +2080,265 @@ export default function Home() {
 
                   {/* Enhanced Modal 미리보기 */}
                   {template.id === 'enhanced-modal' && (
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6 max-w-md">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Enhanced Modal</h3>
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
+                    <div className="space-y-6">
+                      {/* 기본 확인 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 확인 모달 (Small)</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6 max-w-sm">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900">확인</h3>
+                            <button className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100 transition-colors">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                          <p className="text-gray-600 mb-6">정말로 이 작업을 수행하시겠습니까?</p>
+                          <div className="flex justify-end gap-3">
+                            <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                              취소
+                            </button>
+                            <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                              확인
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-gray-600 mb-6">이것은 향상된 모달 다이얼로그 컴포넌트입니다. 더 나은 접근성과 애니메이션을 제공합니다.</p>
-                      <div className="flex justify-end gap-3">
-                        <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                          취소
-                        </button>
-                        <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg hover:bg-[hsl(var(--color-primary-600))] transition-colors">
-                          확인
-                        </button>
+
+                      {/* 경고 삭제 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">경고 삭제 모달 (Medium)</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6 max-w-md">
+                          <div className="flex items-start gap-4 mb-6">
+                            <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                              <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-lg font-semibold text-gray-900 mb-2">파일 삭제</h3>
+                              <p className="text-gray-600 text-sm">
+                                <strong>design-system.zip</strong> 파일을 삭제하시겠습니까? 
+                                <br />이 작업은 되돌릴 수 없습니다.
+                              </p>
+                            </div>
+                            <button className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100 transition-colors">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="flex justify-end gap-3">
+                            <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                              취소
+                            </button>
+                            <button className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+                              삭제
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 성공 알림 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">성공 알림 모달 (Large)</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6 max-w-lg">
+                          <div className="text-center mb-6">
+                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">테마 저장 완료!</h3>
+                            <p className="text-gray-600">
+                              &quot;Modern Blue Theme&quot;이 성공적으로 저장되었습니다.<br />
+                              이제 디자인 시스템을 다운로드하거나 팀과 공유할 수 있습니다.
+                            </p>
+                          </div>
+                          <div className="flex flex-col sm:flex-row gap-3">
+                            <button className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                              나중에
+                            </button>
+                            <button className="flex-1 px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                              다운로드
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 폼 입력 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">폼 입력 모달 (Extra Large)</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6 max-w-xl">
+                          <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
+                            <div>
+                              <h3 className="text-xl font-semibold text-gray-900">새 프로젝트 생성</h3>
+                              <p className="text-sm text-gray-500 mt-1">프로젝트 정보를 입력하여 새로운 디자인 시스템을 시작하세요</p>
+                            </div>
+                            <button className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                          
+                          <div className="space-y-4 mb-6">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">프로젝트 이름 *</label>
+                              <input 
+                                type="text" 
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-transparent transition-all"
+                                placeholder="예: E-commerce Design System"
+                                defaultValue="My Awesome Project"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">설명</label>
+                              <textarea 
+                                rows={3}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-transparent transition-all resize-none"
+                                placeholder="프로젝트에 대한 간단한 설명을 입력하세요..."
+                                defaultValue="온라인 쇼핑몰을 위한 모던하고 일관된 디자인 시스템"
+                              />
+                            </div>
+                            <div className="flex gap-4">
+                              <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">템플릿</label>
+                                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-transparent transition-all">
+                                  <option>Material Design</option>
+                                  <option>Modern Minimal</option>
+                                  <option>Corporate</option>
+                                  <option>Custom</option>
+                                </select>
+                              </div>
+                              <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">색상 테마</label>
+                                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-transparent transition-all">
+                                  <option>Blue</option>
+                                  <option>Green</option>
+                                  <option>Purple</option>
+                                  <option>Custom</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <input type="checkbox" id="public-project" className="w-4 h-4 text-[hsl(var(--color-primary-500))] border-gray-300 rounded focus:ring-[hsl(var(--color-primary-500))]" />
+                              <label htmlFor="public-project" className="text-sm text-gray-700">
+                                공개 프로젝트로 생성 (다른 사용자가 볼 수 있습니다)
+                              </label>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                            <button className="px-6 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                              취소
+                            </button>
+                            <button className="px-6 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                              프로젝트 생성
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 설정 모달 */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">설정 모달 (Full Width)</h4>
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6 w-full max-w-4xl">
+                          <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
+                            <div>
+                              <h3 className="text-xl font-semibold text-gray-900">테마 설정</h3>
+                              <p className="text-sm text-gray-500 mt-1">디자인 시스템의 전반적인 설정을 관리합니다</p>
+                            </div>
+                            <button className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* 색상 설정 */}
+                            <div className="space-y-4">
+                              <h4 className="text-sm font-semibold text-gray-900">색상 팔레트</h4>
+                              <div className="space-y-3">
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-600 mb-2">Primary</label>
+                                  <div className="flex gap-2">
+                                    <div className="w-8 h-8 bg-blue-500 rounded border-2 border-gray-200"></div>
+                                    <input type="text" className="flex-1 px-3 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" defaultValue="#3B82F6" />
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-600 mb-2">Secondary</label>
+                                  <div className="flex gap-2">
+                                    <div className="w-8 h-8 bg-gray-500 rounded border-2 border-gray-200"></div>
+                                    <input type="text" className="flex-1 px-3 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" defaultValue="#6B7280" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* 타이포그래피 설정 */}
+                            <div className="space-y-4">
+                              <h4 className="text-sm font-semibold text-gray-900">타이포그래피</h4>
+                              <div className="space-y-3">
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-600 mb-2">본문 폰트</label>
+                                  <select className="w-full px-3 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500">
+                                    <option>Inter</option>
+                                    <option>Roboto</option>
+                                    <option>Open Sans</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-600 mb-2">제목 폰트</label>
+                                  <select className="w-full px-3 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500">
+                                    <option>Inter</option>
+                                    <option>Poppins</option>
+                                    <option>Playfair Display</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* 간격 설정 */}
+                            <div className="space-y-4">
+                              <h4 className="text-sm font-semibold text-gray-900">간격 & 크기</h4>
+                              <div className="space-y-3">
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-600 mb-2">기본 간격</label>
+                                  <input type="range" min="4" max="16" defaultValue="8" className="w-full" />
+                                  <div className="flex justify-between text-xs text-gray-500">
+                                    <span>4px</span>
+                                    <span>16px</span>
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-600 mb-2">둥근 모서리</label>
+                                  <input type="range" min="0" max="16" defaultValue="8" className="w-full" />
+                                  <div className="flex justify-between text-xs text-gray-500">
+                                    <span>0px</span>
+                                    <span>16px</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-6">
+                            <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                              기본값으로 복원
+                            </button>
+                            <div className="flex gap-3">
+                              <button className="px-6 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                취소
+                              </button>
+                              <button className="px-6 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                                설정 저장
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
