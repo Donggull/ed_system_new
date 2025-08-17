@@ -1006,11 +1006,92 @@ export default function Home() {
                     </div>
                   )}
 
+                  {/* Enhanced Button 미리보기 */}
+                  {template.id === 'enhanced-button' && (
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap gap-2">
+                        <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-colors">
+                          Primary
+                        </button>
+                        <button className="px-4 py-2 text-sm font-medium text-[hsl(var(--color-primary-500))] border border-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))] rounded-lg transition-colors">
+                          Outline
+                        </button>
+                        <button className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                          Destructive
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                          </svg>
+                          With Icon
+                        </button>
+                        <button className="px-4 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed" disabled>
+                          Disabled
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Enhanced Input 미리보기 */}
+                  {template.id === 'enhanced-input' && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Enhanced Input</label>
+                        <input 
+                          type="text" 
+                          placeholder="Enter your text..."
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">With Icon</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </div>
+                          <input 
+                            type="text" 
+                            placeholder="Username"
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary-500))] focus:border-[hsl(var(--color-primary-500))] transition-colors"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Enhanced Modal 미리보기 */}
+                  {template.id === 'enhanced-modal' && (
+                    <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6 max-w-md">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900">Enhanced Modal</h3>
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                      <p className="text-gray-600 mb-6">이것은 향상된 모달 다이얼로그 컴포넌트입니다. 더 나은 접근성과 애니메이션을 제공합니다.</p>
+                      <div className="flex justify-end gap-3">
+                        <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                          취소
+                        </button>
+                        <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                          확인
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* 지원되지 않는 컴포넌트에 대한 기본 메시지 */}
                   {![
                     'button', 'input', 'card', 'modal', 'table', 'badge', 'avatar', 'toast', 
                     'grid', 'divider', 'tabs', 'bar-chart', 'line-chart', 'pie-chart',
-                    'notification', 'banner', 'pagination', 'accordion', 'carousel'
+                    'notification', 'banner', 'pagination', 'accordion', 'carousel',
+                    'enhanced-button', 'enhanced-input', 'enhanced-modal'
                   ].includes(template.id) && (
                     <div className="p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 text-center">
                       <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">

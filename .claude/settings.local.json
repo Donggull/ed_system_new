@@ -50,7 +50,8 @@
       "Bash(git commit:*)",
       "Bash(cat:*)",
       "Bash(cp:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

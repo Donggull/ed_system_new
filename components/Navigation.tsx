@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
+import { signOut } from '@/lib/supabase/auth'
 
 const navigationItems = [
   { href: '/', label: '디자인 시스템 생성기', icon: '🎨' },
@@ -15,6 +17,17 @@ const navigationItems = [
 
 export default function Navigation() {
   const pathname = usePathname()
+  const router = useRouter()
+  const { user } = useAuth()
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      router.push('/auth/signin')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   return (
     <nav className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-6 py-3">
@@ -47,18 +60,34 @@ export default function Navigation() {
         </div>
         
         <div className="flex items-center gap-3">
-          <Link
-            href="/auth/signin"
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            로그인
-          </Link>
-          <Link
-            href="/auth/signup"
-            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
-          >
-            회원가입
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-600">
+                {user.email}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-300 hover:border-gray-400 rounded-lg transition-all"
+              >
+                로그아웃
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/auth/signin"
+                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+              >
+                회원가입
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
