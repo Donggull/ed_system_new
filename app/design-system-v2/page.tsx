@@ -99,6 +99,14 @@ export default function DesignSystemV2() {
     return unsubscribe
   }, [])
 
+  // 컴포넌트 선택 변경 감지 및 리렌더링
+  useEffect(() => {
+    // 컴포넌트 선택이 변경되면 미리보기를 다시 렌더링하기 위해 상태 업데이트
+    if (isInitialized) {
+      console.log('Selected components changed:', selectedComponents)
+    }
+  }, [selectedComponents, isInitialized])
+
   // 컴포넌트 선택 토글
   const toggleComponent = (componentId: string) => {
     setSelectedComponents(prev => 
@@ -115,7 +123,7 @@ export default function DesignSystemV2() {
 
   // 미리보기 컴포넌트 렌더링
   const renderPreviewComponents = () => (
-    <div className="space-y-6" key={`components-${themeState.currentTheme.name}-${themeState.isValid}`}>
+    <div className="space-y-6" key={`components-${selectedComponents.join(',')}-${themeState.currentTheme.name}-${themeState.isValid}`}>
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">실시간 테마 미리보기</h3>
         
@@ -360,7 +368,7 @@ export default function DesignSystemV2() {
               </div>
 
               {/* 미리보기 영역 */}
-              <div className="flex-1" key={`preview-${themeState.currentTheme.name}`}>
+              <div className="flex-1" key={`preview-${selectedComponents.join(',')}-${themeState.currentTheme.name}`}>
                 {viewMode === 'enhanced' ? (
                   <EnhancedPreview componentName="Design System">
                     {renderPreviewComponents()}
