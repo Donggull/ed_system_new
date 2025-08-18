@@ -23,7 +23,9 @@ import Toast from '@/components/ui/Toast'
 import SaveThemeModal from '@/components/ui/SaveThemeModal'
 import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemModal'
 import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
-import { DesignSystem } from '@/types/database'
+import VersionHistoryModal from '@/components/design-system/VersionHistoryModal'
+import { DesignSystem, DesignSystemVersion } from '@/types/database'
+import { useDesignSystem } from '@/lib/hooks/useDesignSystem'
 
 export default function Home() {
   const [themeTemplates, setThemeTemplates] = useState<Theme[]>([])
@@ -43,9 +45,12 @@ export default function Home() {
   const [showSaveDesignSystemModal, setShowSaveDesignSystemModal] = useState(false)
   const [showSavedDesignSystems, setShowSavedDesignSystems] = useState(false)
   const [currentDesignSystem, setCurrentDesignSystem] = useState<DesignSystem | null>(null)
+  const [showVersionHistory, setShowVersionHistory] = useState(false)
+  const [versionHistoryDesignSystem, setVersionHistoryDesignSystem] = useState<DesignSystem | null>(null)
   const { user } = useAuth()
   const router = useRouter()
   const { toast, success, error: showError, hideToast } = useToast()
+  const { createVersion } = useDesignSystem()
 
   const handleLogout = async () => {
     try {
@@ -283,6 +288,48 @@ export default function Home() {
     setCurrentDesignSystem(designSystem)
     setShowSaveDesignSystemModal(true)
     setShowSavedDesignSystems(false)
+  }
+
+  const handleViewVersionHistory = (designSystem: DesignSystem) => {
+    setVersionHistoryDesignSystem(designSystem)
+    setShowVersionHistory(true)
+    setShowSavedDesignSystems(false)
+  }
+
+  const handleCreateVersion = async (changeNotes?: string) => {
+    if (!versionHistoryDesignSystem) return
+
+    await createVersion(
+      versionHistoryDesignSystem.id,
+      currentTheme,
+      selectedComponents,
+      componentSettings,
+      changeNotes
+    )
+
+    // Refresh the current design system data
+    // Note: In a full implementation, you'd want to refetch the design system
+    // to get the updated version number
+    success('New version created successfully!')
+  }
+
+  const handleLoadVersion = (version: DesignSystemVersion) => {
+    setCurrentTheme(version.theme_data)
+    setJsonInput(JSON.stringify(version.theme_data, null, 2))
+    
+    // Restore component selection state
+    setSelectedComponents(version.selected_components)
+    
+    // Restore component settings
+    if (version.component_settings) {
+      setComponentSettings(version.component_settings)
+    }
+    
+    // Apply CSS variables
+    const cssVars = generateCssVariables(version.theme_data)
+    applyCssVariables(cssVars)
+    
+    success(`Loaded version ${version.version_number} successfully!`)
   }
 
   return (
@@ -3252,7 +3299,22 @@ export default function Home() {
         onClose={() => setShowSavedDesignSystems(false)}
         onLoadDesignSystem={handleLoadDesignSystem}
         onEditDesignSystem={handleEditDesignSystem}
+        onViewVersionHistory={handleViewVersionHistory}
       />
+
+      {/* Version History Modal */}
+      {versionHistoryDesignSystem && (
+        <VersionHistoryModal
+          isOpen={showVersionHistory}
+          onClose={() => {
+            setShowVersionHistory(false)
+            setVersionHistoryDesignSystem(null)
+          }}
+          designSystem={versionHistoryDesignSystem}
+          onLoadVersion={handleLoadVersion}
+          onCreateVersion={handleCreateVersion}
+        />
+      )}
     </ProtectedRoute>
   )
 }

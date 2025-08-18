@@ -12,13 +12,15 @@ interface SavedDesignSystemsProps {
   onClose: () => void
   onLoadDesignSystem: (designSystem: DesignSystem) => void
   onEditDesignSystem?: (designSystem: DesignSystem) => void
+  onViewVersionHistory?: (designSystem: DesignSystem) => void
 }
 
 export default function SavedDesignSystems({
   isOpen,
   onClose,
   onLoadDesignSystem,
-  onEditDesignSystem
+  onEditDesignSystem,
+  onViewVersionHistory
 }: SavedDesignSystemsProps) {
   const { user } = useAuth()
   const { 
@@ -225,6 +227,17 @@ export default function SavedDesignSystems({
                             className="text-sm text-gray-600 hover:text-gray-700"
                           >
                             Edit
+                          </button>
+                        )}
+                        {onViewVersionHistory && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onViewVersionHistory(designSystem)
+                            }}
+                            className="text-sm text-purple-600 hover:text-purple-700"
+                          >
+                            Versions
                           </button>
                         )}
                       </div>
