@@ -38,7 +38,7 @@ export default function DiscoverDesignSystems({
     if (isOpen) {
       loadPublicSystems()
     }
-  }, [isOpen])
+  }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadPublicSystems = async () => {
     try {

@@ -33,7 +33,7 @@ export default function SavedDesignSystems({
     remove,
     like,
     favorite,
-    loadUserFavorites 
+    loadFavorites: loadUserFavoritesFunc 
   } = useDesignSystem()
 
   const [selectedDesignSystem, setSelectedDesignSystem] = useState<DesignSystem | null>(null)
@@ -48,16 +48,16 @@ export default function SavedDesignSystems({
       loadUserDesignSystems(user.id)
       loadFavorites()
     }
-  }, [isOpen, user, loadUserDesignSystems])
+  }, [isOpen, user, loadUserDesignSystems]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadFavorites = async () => {
     if (!user) return
     
     try {
-      const favorites = await loadUserFavorites()
+      const favorites = await loadUserFavoritesFunc()
       if (favorites) {
         const favoriteIds = new Set(
-          favorites.map((fav: any) => fav.design_system_id)
+          favorites.map((fav: any) => fav.design_system_id as string)
         )
         setUserFavoriteIds(favoriteIds)
       }

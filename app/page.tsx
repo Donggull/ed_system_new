@@ -1,5 +1,7 @@
 'use client'
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useState } from 'react'
 import { getThemeTemplates, saveTheme, getUserThemes } from '@/lib/supabase/themes'
 import { getComponentTemplates } from '@/lib/supabase/components'
@@ -3369,7 +3371,12 @@ export default function Home() {
         onViewDesignSystem={handleViewDiscoveredSystem}
       />
 
-      <Toast toast={toast} onClose={hideToast} />
+      <Toast 
+        message={toast.message} 
+        type={toast.type} 
+        isVisible={toast.isVisible} 
+        onClose={hideToast} 
+      />
     </ProtectedRoute>
   )
 }

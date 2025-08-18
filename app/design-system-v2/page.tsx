@@ -1015,7 +1015,12 @@ export default function DesignSystemV2() {
           onViewDesignSystem={handleViewDiscoveredSystem}
         />
 
-        <Toast toast={toast} onClose={hideToast} />
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          isVisible={toast.isVisible} 
+          onClose={hideToast} 
+        />
       </div>
     </ProtectedRoute>
   )

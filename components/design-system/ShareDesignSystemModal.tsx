@@ -94,7 +94,7 @@ export default function ShareDesignSystemModal({
           <div>
             <h2 className="text-xl font-semibold text-gray-900">Share Design System</h2>
             <p className="text-gray-600 text-sm mt-1">
-              Share "{designSystem.name}" with others
+              Share &quot;{designSystem.name}&quot; with others
             </p>
           </div>
           <button

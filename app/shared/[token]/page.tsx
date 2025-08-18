@@ -26,7 +26,7 @@ export default function SharedDesignSystemPage() {
     if (token) {
       loadSharedSystem()
     }
-  }, [token])
+  }, [token]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadSharedSystem = async () => {
     try {

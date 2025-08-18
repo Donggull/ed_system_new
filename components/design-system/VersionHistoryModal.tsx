@@ -32,7 +32,7 @@ export default function VersionHistoryModal({
     if (isOpen && designSystem) {
       loadVersionHistory()
     }
-  }, [isOpen, designSystem])
+  }, [isOpen, designSystem]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadVersionHistory = async () => {
     if (!designSystem) return
