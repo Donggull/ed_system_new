@@ -26,86 +26,59 @@ export default function SavedDesignSystems({
 }: SavedDesignSystemsProps) {
   const { user } = useAuth()
   const { 
-    designSystems, 
-    isLoading, 
-    error, 
-    loadUserDesignSystems,
     remove,
     like,
     favorite,
-    loadFavorites: loadUserFavoritesFunc,
-    setDesignSystems 
+    loadFavorites: loadUserFavoritesFunc
   } = useDesignSystem()
 
+  // Local state management like DiscoverDesignSystems
+  const [designSystems, setDesignSystems] = useState<DesignSystem[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  
   const [selectedDesignSystem, setSelectedDesignSystem] = useState<DesignSystem | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
   const [selectedTag, setSelectedTag] = useState<string>('')
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [sortBy, setSortBy] = useState<'updated' | 'name' | 'created'>('updated')
   const [userFavoriteIds, setUserFavoriteIds] = useState<Set<string>>(new Set())
-  const [forceRefresh, setForceRefresh] = useState(0)
 
   useEffect(() => {
     if (isOpen && user) {
-      console.log('🚪 Modal opened - Starting data load process')
-      console.log('👤 Current user details:', {
-        id: user.id,
-        email: user.email,
-        authenticated_at: user.last_sign_in_at
-      })
-      
-      const loadData = async () => {
-        try {
-          // Reset filters to avoid UI state issues
-          setSelectedTag('')
-          setShowFavoritesOnly(false)
-          
-          // First, let's verify the user authentication
-          console.log('🔐 Verifying authentication...')
-          const { getUserDesignSystems } = await import('@/lib/supabase/design-systems')
-          
-          // Try direct database call to see what's happening
-          console.log('📡 Making direct database call with user ID:', user.id)
-          const directResult = await getUserDesignSystems(user.id)
-          console.log('📊 Direct DB result:', {
-            hasData: !!directResult.data,
-            dataLength: directResult.data?.length || 0,
-            hasError: !!directResult.error,
-            error: directResult.error
-          })
-          
-          if (directResult.data) {
-            console.log('✅ Direct DB call found systems:', directResult.data.map(ds => ({
-              id: ds.id,
-              name: ds.name,
-              user_id: ds.user_id
-            })))
-          }
-          
-          // Now try through the hook
-          console.log('🎣 Calling loadUserDesignSystems hook...')
-          const systems = await loadUserDesignSystems(user.id)
-          console.log('🎣 Hook returned:', systems?.length || 0, 'systems')
-          
-          // Load favorites separately
-          console.log('⭐ Loading favorites...')
-          await loadFavorites()
-          console.log('⭐ Favorites loaded successfully')
-          
-        } catch (error) {
-          console.error('💥 Failed to load data:', error)
-        }
-      }
-      
-      loadData()
-    } else {
-      console.log('❌ Modal not open or user not available:', { 
-        isOpen, 
-        hasUser: !!user,
-        userDetails: user ? { id: user.id, email: user.email } : null
-      })
+      loadUserSystems()
+      loadFavorites()
     }
-  }, [isOpen, user, forceRefresh]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isOpen, user]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadUserSystems = async () => {
+    if (!user) return
+    
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      console.log('📡 Loading design systems for user:', user.id)
+      const { getUserDesignSystems } = await import('@/lib/supabase/design-systems')
+      const result = await getUserDesignSystems(user.id)
+      
+      if (result.error) {
+        console.error('❌ Error loading design systems:', result.error)
+        setError(result.error.message || 'Failed to load design systems')
+        return
+      }
+
+      const systems = result.data || []
+      console.log('✅ Successfully loaded design systems:', systems.length)
+      setDesignSystems(systems)
+      
+    } catch (error) {
+      console.error('💥 Exception loading design systems:', error)
+      setError('Failed to load design systems')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // Debug: log design systems when they change
   useEffect(() => {
@@ -148,16 +121,29 @@ export default function SavedDesignSystems({
     const success = await remove(id)
     if (success) {
       setShowDeleteConfirm(null)
+      // Update local state immediately
+      setDesignSystems(prev => prev.filter(ds => ds.id !== id))
     }
   }
 
   const handleLike = async (e: React.MouseEvent, designSystemId: string) => {
     e.stopPropagation()
-    await like(designSystemId)
+    const result = await like(designSystemId)
     
-    // Refresh the design systems to show updated like counts
-    if (user) {
-      loadUserDesignSystems(user.id)
+    // Update local state immediately
+    if (result) {
+      setDesignSystems(prev =>
+        prev.map(ds =>
+          ds.id === designSystemId
+            ? { 
+                ...ds, 
+                like_count: result.liked 
+                  ? ds.like_count + 1 
+                  : Math.max(ds.like_count - 1, 0)
+              }
+            : ds
+        )
+      )
     }
   }
 
@@ -310,36 +296,12 @@ export default function SavedDesignSystems({
                 <div className="space-y-3">
                   <button
                     onClick={() => {
-                      console.log('Manual refresh triggered - forcing reload...')
-                      setForceRefresh(prev => prev + 1)
+                      console.log('🔄 Manual refresh triggered...')
+                      loadUserSystems()
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm mr-2"
                   >
                     🔄 새로고침
-                  </button>
-                  <button
-                    onClick={async () => {
-                      console.log('🔧 Manual state override - forcing designSystems update...')
-                      try {
-                        const { getUserDesignSystems } = await import('@/lib/supabase/design-systems')
-                        const result = await getUserDesignSystems(user.id)
-                        
-                        if (result.data && result.data.length > 0) {
-                          console.log('🔧 Manually setting designSystems state with:', result.data)
-                          // Direct state manipulation using the hook's setter
-                          setDesignSystems(result.data)
-                          alert(`수동으로 ${result.data.length}개 시스템을 로드했습니다!`)
-                        } else {
-                          alert('DB에서 데이터를 찾을 수 없습니다.')
-                        }
-                      } catch (error) {
-                        console.error('Manual state override failed:', error)
-                        alert(`수동 로드 실패: ${error}`)
-                      }
-                    }}
-                    className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors text-sm mr-2"
-                  >
-                    🔧 강제 로드
                   </button>
                   <button
                     onClick={async () => {
