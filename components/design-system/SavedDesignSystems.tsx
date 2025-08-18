@@ -32,17 +32,39 @@ export default function SavedDesignSystems({
     loadUserDesignSystems,
     remove,
     like,
-    favorite 
+    favorite,
+    loadUserFavorites 
   } = useDesignSystem()
 
   const [selectedDesignSystem, setSelectedDesignSystem] = useState<DesignSystem | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
+  const [selectedTag, setSelectedTag] = useState<string>('')
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
+  const [sortBy, setSortBy] = useState<'updated' | 'name' | 'created'>('updated')
+  const [userFavoriteIds, setUserFavoriteIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (isOpen && user) {
       loadUserDesignSystems(user.id)
+      loadFavorites()
     }
   }, [isOpen, user, loadUserDesignSystems])
+
+  const loadFavorites = async () => {
+    if (!user) return
+    
+    try {
+      const favorites = await loadUserFavorites()
+      if (favorites) {
+        const favoriteIds = new Set(
+          favorites.map((fav: any) => fav.design_system_id)
+        )
+        setUserFavoriteIds(favoriteIds)
+      }
+    } catch (error) {
+      console.error('Failed to load user favorites:', error)
+    }
+  }
 
   const handleLoad = (designSystem: DesignSystem) => {
     onLoadDesignSystem(designSystem)
@@ -59,12 +81,60 @@ export default function SavedDesignSystems({
   const handleLike = async (e: React.MouseEvent, designSystemId: string) => {
     e.stopPropagation()
     await like(designSystemId)
+    
+    // Refresh the design systems to show updated like counts
+    if (user) {
+      loadUserDesignSystems(user.id)
+    }
   }
 
   const handleFavorite = async (e: React.MouseEvent, designSystemId: string) => {
     e.stopPropagation()
-    await favorite(designSystemId)
+    const result = await favorite(designSystemId)
+    
+    // Update local state based on the result
+    if (result) {
+      setUserFavoriteIds(prev => {
+        const newSet = new Set(prev)
+        if (result.favorited) {
+          newSet.add(designSystemId)
+        } else {
+          newSet.delete(designSystemId)
+        }
+        return newSet
+      })
+    }
   }
+
+  // Get all unique tags
+  const allTags = Array.from(new Set(
+    designSystems.flatMap(ds => ds.tags)
+  )).sort()
+
+  // Filter and sort design systems
+  const filteredAndSortedDesignSystems = designSystems
+    .filter(ds => {
+      // Tag filter
+      if (selectedTag && !ds.tags.includes(selectedTag)) return false
+      
+      // Favorites filter
+      if (showFavoritesOnly) {
+        return userFavoriteIds.has(ds.id)
+      }
+      
+      return true
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name)
+        case 'created':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        case 'updated':
+        default:
+          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      }
+    })
 
   if (!isOpen) return null
 
@@ -73,19 +143,64 @@ export default function SavedDesignSystems({
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-lg shadow-xl w-full max-w-6xl mx-4 max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Saved Design Systems</h2>
-            <p className="text-gray-600 text-sm mt-1">
-              {designSystems.length} design system{designSystems.length !== 1 ? 's' : ''} saved
-            </p>
+        <div className="p-6 border-b">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Saved Design Systems</h2>
+              <p className="text-gray-600 text-sm mt-1">
+                {filteredAndSortedDesignSystems.length} of {designSystems.length} design systems
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 text-2xl"
+            >
+              ×
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl"
-          >
-            ×
-          </button>
+
+          {/* Filters and Controls */}
+          <div className="flex items-center gap-4 flex-wrap">
+            {/* Tag Filter */}
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">Tag:</label>
+              <select
+                value={selectedTag}
+                onChange={(e) => setSelectedTag(e.target.value)}
+                className="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">All Tags</option>
+                {allTags.map(tag => (
+                  <option key={tag} value={tag}>{tag}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Favorites Filter */}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showFavoritesOnly}
+                onChange={(e) => setShowFavoritesOnly(e.target.checked)}
+                className="rounded"
+              />
+              <span className="text-sm text-gray-700">⭐ Favorites only</span>
+            </label>
+
+            {/* Sort By */}
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">Sort:</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="updated">Recently Updated</option>
+                <option value="created">Recently Created</option>
+                <option value="name">Name A-Z</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Content */}
@@ -101,17 +216,27 @@ export default function SavedDesignSystems({
               <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Design Systems</h3>
               <p className="text-red-700">{error}</p>
             </div>
-          ) : designSystems.length === 0 ? (
+          ) : filteredAndSortedDesignSystems.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">📝</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Saved Design Systems</h3>
+              <div className="text-gray-400 text-6xl mb-4">
+                {designSystems.length === 0 ? '📝' : '🔍'}
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {designSystems.length === 0 
+                  ? 'No Saved Design Systems' 
+                  : 'No Matching Design Systems'
+                }
+              </h3>
               <p className="text-gray-600">
-                You haven&apos;t saved any design systems yet. Create and save your first design system!
+                {designSystems.length === 0 
+                  ? "You haven't saved any design systems yet. Create and save your first design system!"
+                  : 'Try adjusting your filters to see more results.'
+                }
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {designSystems.map((designSystem) => (
+              {filteredAndSortedDesignSystems.map((designSystem) => (
                 <div
                   key={designSystem.id}
                   className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
@@ -144,21 +269,33 @@ export default function SavedDesignSystems({
                       <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
                         {designSystem.name}
                       </h3>
-                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => handleLike(e, designSystem.id)}
-                          className="text-gray-400 hover:text-red-500 transition-colors"
-                          title="Like"
-                        >
-                          ♥️
-                        </button>
-                        <button
-                          onClick={(e) => handleFavorite(e, designSystem.id)}
-                          className="text-gray-400 hover:text-yellow-500 transition-colors"
-                          title="Add to favorites"
-                        >
-                          ⭐
-                        </button>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={(e) => handleLike(e, designSystem.id)}
+                            className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                            title="Like"
+                          >
+                            ♥️
+                          </button>
+                          <button
+                            onClick={(e) => handleFavorite(e, designSystem.id)}
+                            className={`transition-colors p-1 ${
+                              userFavoriteIds.has(designSystem.id)
+                                ? 'text-yellow-500 hover:text-yellow-600'
+                                : 'text-gray-400 hover:text-yellow-500'
+                            }`}
+                            title={userFavoriteIds.has(designSystem.id) ? "Remove from favorites" : "Add to favorites"}
+                          >
+                            {userFavoriteIds.has(designSystem.id) ? '⭐' : '☆'}
+                          </button>
+                        </div>
+                        {/* Featured badge */}
+                        {designSystem.is_featured && (
+                          <div className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">
+                            ⭐ Featured
+                          </div>
+                        )}
                       </div>
                     </div>
 

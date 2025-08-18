@@ -18,6 +18,7 @@ import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemMo
 import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
 import VersionHistoryModal from '@/components/design-system/VersionHistoryModal'
 import ShareDesignSystemModal from '@/components/design-system/ShareDesignSystemModal'
+import DiscoverDesignSystems from '@/components/design-system/DiscoverDesignSystems'
 import { DesignSystem, DesignSystemVersion } from '@/types/database'
 import { useDesignSystem } from '@/lib/hooks/useDesignSystem'
 import { useToast } from '@/hooks/useToast'
@@ -264,6 +265,7 @@ export default function DesignSystemV2() {
   const [versionHistoryDesignSystem, setVersionHistoryDesignSystem] = useState<DesignSystem | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
   const [shareDesignSystem, setShareDesignSystem] = useState<DesignSystem | null>(null)
+  const [showDiscoverSystems, setShowDiscoverSystems] = useState(false)
   const { user } = useAuth()
   const { toast, success, error: showError, hideToast } = useToast()
   const { createVersion } = useDesignSystem()
@@ -411,6 +413,21 @@ export default function DesignSystemV2() {
     setShareDesignSystem(designSystem)
     setShowShareModal(true)
     setShowSavedDesignSystems(false)
+  }
+
+  const handleCloneDesignSystem = (designSystem: DesignSystem) => {
+    // Load the cloned system into the current editor
+    handleLoadDesignSystem(designSystem)
+    setShowDiscoverSystems(false)
+    success('Design system cloned successfully!')
+  }
+
+  const handleViewDiscoveredSystem = (designSystem: DesignSystem) => {
+    // Open the shared design system page in a new tab
+    if (designSystem.share_token) {
+      const shareUrl = `${window.location.origin}/shared/${designSystem.share_token}`
+      window.open(shareUrl, '_blank')
+    }
   }
 
   // 컴포넌트 선택 변경 감지
@@ -701,6 +718,12 @@ export default function DesignSystemV2() {
                   >
                     📁 불러오기
                   </button>
+                  <button
+                    onClick={() => setShowDiscoverSystems(true)}
+                    className="px-4 py-2 bg-white text-blue-600 text-sm font-medium rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors shadow-sm"
+                  >
+                    🌐 둘러보기
+                  </button>
                 </div>
 
                 {/* 테마 상태 */}
@@ -983,6 +1006,16 @@ export default function DesignSystemV2() {
             designSystem={shareDesignSystem}
           />
         )}
+
+        {/* Discover Design Systems Modal */}
+        <DiscoverDesignSystems
+          isOpen={showDiscoverSystems}
+          onClose={() => setShowDiscoverSystems(false)}
+          onCloneDesignSystem={handleCloneDesignSystem}
+          onViewDesignSystem={handleViewDiscoveredSystem}
+        />
+
+        <Toast toast={toast} onClose={hideToast} />
       </div>
     </ProtectedRoute>
   )

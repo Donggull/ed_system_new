@@ -5,6 +5,7 @@ import { ComponentTemplate } from '@/types/database'
 import { useCodeExport } from '@/lib/hooks/useCodeExport'
 import { CodeGenerationOptions } from '@/lib/code-generator'
 import { cn } from '@/lib/utils'
+import { incrementDownloadCount } from '@/lib/supabase/design-systems'
 
 interface ExportModalProps {
   isOpen: boolean
@@ -12,6 +13,7 @@ interface ExportModalProps {
   selectedComponents: ComponentTemplate[]
   theme: any
   projectName?: string
+  designSystemId?: string
 }
 
 export default function ExportModal({
@@ -19,7 +21,8 @@ export default function ExportModal({
   onClose,
   selectedComponents,
   theme,
-  projectName = 'My Design System'
+  projectName = 'My Design System',
+  designSystemId
 }: ExportModalProps) {
   const [options, setOptions] = useState<CodeGenerationOptions>({
     framework: 'react',
@@ -58,6 +61,15 @@ export default function ExportModal({
     
     if (result.success && exportType === 'zip') {
       await downloadAsZip(result.files, currentProjectName)
+      
+      // Track download if design system ID is provided
+      if (designSystemId) {
+        try {
+          await incrementDownloadCount(designSystemId)
+        } catch (error) {
+          console.error('Failed to track download:', error)
+        }
+      }
     }
   }
 
@@ -80,6 +92,15 @@ export default function ExportModal({
       const npmResult = await exportAsNPMPackage(result.files, currentProjectName.toLowerCase().replace(/\s+/g, '-'))
       if (npmResult.success) {
         await downloadAsZip(npmResult.files, `${currentProjectName}-npm`)
+        
+        // Track download if design system ID is provided
+        if (designSystemId) {
+          try {
+            await incrementDownloadCount(designSystemId)
+          } catch (error) {
+            console.error('Failed to track download:', error)
+          }
+        }
       }
     }
   }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useDesignSystem } from '@/lib/hooks/useDesignSystem'
 import { DesignSystem, SharedDesignSystem } from '@/types/database'
+import { incrementViewCount } from '@/lib/supabase/design-systems'
 import Navigation from '@/components/Navigation'
 import EnhancedPreview from '@/components/preview/EnhancedPreview'
 import { themeManager } from '@/lib/theme-manager'
@@ -37,6 +38,13 @@ export default function SharedDesignSystemPage() {
         
         // Apply theme
         themeManager.updateTheme(result.design_system.theme_data, { animate: false })
+        
+        // Track view count
+        try {
+          await incrementViewCount(result.design_system.id)
+        } catch (error) {
+          console.error('Failed to track view:', error)
+        }
       }
     } catch (err) {
       console.error('Failed to load shared design system:', err)

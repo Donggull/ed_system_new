@@ -25,6 +25,7 @@ import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemMo
 import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
 import VersionHistoryModal from '@/components/design-system/VersionHistoryModal'
 import ShareDesignSystemModal from '@/components/design-system/ShareDesignSystemModal'
+import DiscoverDesignSystems from '@/components/design-system/DiscoverDesignSystems'
 import { DesignSystem, DesignSystemVersion } from '@/types/database'
 import { useDesignSystem } from '@/lib/hooks/useDesignSystem'
 
@@ -50,6 +51,7 @@ export default function Home() {
   const [versionHistoryDesignSystem, setVersionHistoryDesignSystem] = useState<DesignSystem | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
   const [shareDesignSystem, setShareDesignSystem] = useState<DesignSystem | null>(null)
+  const [showDiscoverSystems, setShowDiscoverSystems] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
   const { toast, success, error: showError, hideToast } = useToast()
@@ -341,6 +343,21 @@ export default function Home() {
     setShowSavedDesignSystems(false)
   }
 
+  const handleCloneDesignSystem = (designSystem: DesignSystem) => {
+    // Load the cloned system into the current editor
+    handleLoadDesignSystem(designSystem)
+    setShowDiscoverSystems(false)
+    success('Design system cloned successfully!')
+  }
+
+  const handleViewDiscoveredSystem = (designSystem: DesignSystem) => {
+    // Open the shared design system page in a new tab
+    if (designSystem.share_token) {
+      const shareUrl = `${window.location.origin}/shared/${designSystem.share_token}`
+      window.open(shareUrl, '_blank')
+    }
+  }
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
@@ -394,6 +411,12 @@ export default function Home() {
                   className="px-3 py-2 text-xs font-medium text-purple-600 border border-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                 >
                   내 시스템
+                </button>
+                <button
+                  onClick={() => setShowDiscoverSystems(true)}
+                  className="px-3 py-2 text-xs font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  🌐 둘러보기
                 </button>
               </div>
             </div>
@@ -3337,6 +3360,16 @@ export default function Home() {
           designSystem={shareDesignSystem}
         />
       )}
+
+      {/* Discover Design Systems Modal */}
+      <DiscoverDesignSystems
+        isOpen={showDiscoverSystems}
+        onClose={() => setShowDiscoverSystems(false)}
+        onCloneDesignSystem={handleCloneDesignSystem}
+        onViewDesignSystem={handleViewDiscoveredSystem}
+      />
+
+      <Toast toast={toast} onClose={hideToast} />
     </ProtectedRoute>
   )
 }
