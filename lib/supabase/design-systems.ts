@@ -431,7 +431,8 @@ export async function getSharedDesignSystem(
     return { data: null, error: 'Supabase client not available' }
   }
 
-  const { data, error } = await supabase
+  // First try to find in shared_design_systems table (explicit shares)
+  const { data: sharedData, error: sharedError } = await supabase
     .from('shared_design_systems')
     .select(`
       *,
@@ -440,15 +441,48 @@ export async function getSharedDesignSystem(
     .eq('share_token', share_token)
     .single()
 
-  if (!error && data) {
-    // Increment access count
+  if (!sharedError && sharedData) {
+    // Increment access count for explicit shares
     await supabase
       .from('shared_design_systems')
-      .update({ access_count: data.access_count + 1 })
-      .eq('id', data.id)
+      .update({ access_count: sharedData.access_count + 1 })
+      .eq('id', sharedData.id)
+    
+    return { data: sharedData, error: null }
   }
 
-  return { data, error }
+  // If not found in shared_design_systems, try public design systems
+  const { data: publicData, error: publicError } = await supabase
+    .from('design_systems')
+    .select('*')
+    .eq('share_token', share_token)
+    .eq('is_public', true)
+    .single()
+
+  if (!publicError && publicData) {
+    // Increment view count for public design systems
+    await supabase
+      .from('design_systems')
+      .update({ view_count: (publicData.view_count || 0) + 1 })
+      .eq('id', publicData.id)
+    
+    // Format the response to match the expected structure
+    const formattedData = {
+      id: `public-${publicData.id}`, // Unique ID for public shares
+      design_system_id: publicData.id,
+      share_token: publicData.share_token,
+      permission_level: 'view' as const, // Public systems are view-only
+      expires_at: null, // Public systems don't expire
+      access_count: publicData.view_count || 0,
+      created_at: publicData.created_at,
+      design_system: publicData
+    }
+    
+    return { data: formattedData, error: null }
+  }
+
+  // If not found in either table, return the original shared table error
+  return { data: null, error: sharedError || publicError || 'Design system not found' }
 }
 
 // Favorites
