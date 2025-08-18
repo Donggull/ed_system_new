@@ -6,7 +6,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'DesignSystem',
+  title: 'Eluo Design System',
   description: 'Modern design system generator with Supabase integration',
 }
 

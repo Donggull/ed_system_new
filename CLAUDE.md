@@ -18,7 +18,7 @@ npm run start        # Start production server
 npm run lint         # Run ESLint for code quality
 
 # Type checking
-npx tsc --noEmit     # TypeScript compilation check without output
+npx tsc --noEmit     # TypeScript compilation check without output (critical for development)
 
 # Git workflow (using GitHub MCP)
 # Use mcp__github-mcp__git-* commands for git operations
@@ -46,11 +46,15 @@ components/             # React components
 
 lib/                   # Core business logic
 ├── supabase/          # Database queries and auth
-├── component-templates.ts    # Template definitions for all components
+├── component-templates.ts    # Main component template aggregator
 ├── additional-component-templates.ts  # Extended component library
 ├── chart-component-templates.ts       # Chart.js based components
+├── enhanced-component-templates.ts    # Enhanced UI components
 ├── extended-component-templates.ts    # Advanced UI components
-├── component-generator.ts    # Theme → React component generation
+├── image-component-templates.ts       # Image handling components
+├── component-generator.ts    # Theme → React component generation (to be implemented)
+├── theme-utils.ts    # Theme parsing and CSS variable generation
+├── theme-manager.ts  # Theme state management utilities
 └── utils.ts          # Shared utilities
 
 types/
@@ -61,10 +65,13 @@ types/
 
 The core architecture revolves around a **template-based component generation system**:
 
-1. **Component Templates** (`lib/*-component-templates.ts`): Define React component code templates with theme variable placeholders
-2. **Theme Data** (`types/database.ts` - `ThemeData`): JSON structure defining colors, typography, spacing, etc.
-3. **Component Generator** (`lib/component-generator.ts`): Processes templates + theme data → final React components
-4. **Database Storage**: Templates stored in `component_templates` table, generated components in `generated_components`
+1. **Component Templates** (`lib/*-component-templates.ts`): Define React component code templates with CSS custom property placeholders (`hsl(var(--color-primary-500))`)
+2. **Theme Data** (`types/database.ts` - `ThemeData`): JSON structure defining colors, typography, spacing, border radius
+3. **Theme Processing** (`lib/theme-utils.ts`): Parses JSON theme data, generates CSS variables, applies dynamic styling
+4. **Component Generator** (`lib/component-generator.ts`): Processes templates + theme data → final React components (to be implemented)
+5. **Database Storage**: Templates stored in `component_templates` table, generated components in `generated_components`
+
+**CSS Variable System**: Components use CSS custom properties for theming (e.g., `hsl(var(--color-primary-500))`) which are dynamically generated from theme JSON and applied via `applyCssVariables()` function.
 
 ### Database Schema (Supabase)
 
@@ -115,6 +122,7 @@ When adding new component templates:
 
 3. **Theme Integration**: Use CSS custom properties format `hsl(var(--color-primary-500))` for dynamic theming
 4. **Props Schema**: Define all component props with types, defaults, and options (must be `string[]` for options)
+5. **Template Aggregation**: All templates are collected in `component-templates.ts` via `allComponentTemplates` array
 
 ### Supabase Integration Patterns
 - **Client**: Use `lib/supabase/client.ts` for client-side operations
@@ -123,26 +131,29 @@ When adding new component templates:
 - **Error Handling**: Always check for Supabase client availability with null checks
 
 ### State Management
-- **Authentication**: React Context (`contexts/AuthContext.tsx`)
-- **Theme State**: Local state in components, persisted to Supabase
+- **Authentication**: React Context (`contexts/AuthContext.tsx`) with Supabase Auth
+- **Theme State**: Local state in main app (`app/page.tsx`), persisted to Supabase via `saveTheme()`
+- **Component Selection**: Local state with `selectedComponents` array and `componentSettings` object
+- **Real-time Preview**: Theme changes trigger CSS variable regeneration and immediate UI updates
 - **Generated Components**: Fetched from database on demand
 
 ## Current Implementation Status
 
 **✅ Completed:**
-- Authentication system with Supabase Auth
-- Main dashboard with static component previews
-- JSON theme editor with real-time preview (`/design-system`)
-- Comprehensive component template library (20+ components)
-- Database schema and CRUD operations
-- TypeScript type system
+- Authentication system with Supabase Auth and protected routes
+- Main dashboard with component selection and real-time theme preview (`app/page.tsx`)
+- JSON theme editor with live CSS variable generation (`/design-system`)
+- Comprehensive component template library (40+ components across multiple files)
+- Theme parsing and CSS variable generation (`lib/theme-utils.ts`)
+- Database schema and CRUD operations for themes, components, users
+- TypeScript type system with comprehensive interfaces
+- Component selection state management and settings configuration
 
-**🚧 In Progress/Next Priority:**
-- Component generation engine (theme + template → React code)
-- Component selection UI with checkboxes
-- Real-time component preview with generated code
-- ZIP file generation and download system
-- Theme persistence and management
+**🚧 Next Priority:**
+- Complete component generation engine (`lib/component-generator.ts` - currently empty)
+- ZIP file generation and download system (JSZip dependency already added)
+- Enhanced component customization UI
+- Theme template management and sharing
 
 ## Environment Setup
 
@@ -157,12 +168,29 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key  # For admin operations
 
 ## Key Files to Understand
 
-1. **`app/page.tsx`** - Main dashboard with component showcase
-2. **`app/design-system/page.tsx`** - JSON theme editor with live preview  
-3. **`lib/component-templates.ts`** - Core component template definitions
-4. **`types/database.ts`** - All TypeScript interfaces
-5. **`lib/supabase/components.ts`** - Component database operations
+1. **`app/page.tsx`** - Main dashboard with component selection, theme management, and real-time preview
+2. **`app/design-system/page.tsx`** - Dedicated JSON theme editor with live preview
+3. **`lib/component-templates.ts`** - Main component template aggregator importing all template libraries
+4. **`lib/theme-utils.ts`** - Core theme processing: JSON parsing, CSS variable generation, theme application
+5. **`types/database.ts`** - Complete TypeScript interfaces for all data models
+6. **`contexts/AuthContext.tsx`** - Authentication state management with Supabase
+7. **`lib/supabase/themes.ts`** - Theme persistence and retrieval operations
 
 ## Development Focus
 
 The application follows a **main-page-centric approach** - all core functionality should be implemented on the main dashboard before expanding to sub-pages. The primary development focus should be connecting the JSON theme editor to the component generation system for the core user workflow.
+
+## Dependencies and Libraries
+
+**Core Dependencies:**
+- `@supabase/supabase-js` & `@supabase/ssr` - Database and authentication
+- `jszip` & `@types/jszip` - ZIP file generation for component downloads  
+- `html2canvas` - Component screenshot generation
+- `clsx` & `tailwind-merge` - Conditional CSS class utilities
+- `zod` - Runtime type validation
+
+**Development Stack:**
+- Next.js 14 with App Router (file-based routing in `app/` directory)
+- TypeScript 5.5+ (strict mode enabled)
+- TailwindCSS 3.4+ with PostCSS and Autoprefixer
+- ESLint with Next.js configuration

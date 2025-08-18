@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import Navigation from '@/components/Navigation'
 
 // JSON 스키마 타입 정의
 interface ThemeColors {
@@ -252,28 +253,24 @@ export default function DesignSystemPage() {
   return (
     <ProtectedRoute>
       <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
-        {/* 상단 헤더 */}
-        <header className={`sticky top-0 z-50 backdrop-blur-xl border-b transition-colors ${
+        {/* Navigation */}
+        <Navigation />
+        
+        {/* v1 페이지 전용 기능 헤더 */}
+        <div className={`sticky top-[80px] z-40 backdrop-blur-xl border-b transition-colors ${
           isDarkMode 
             ? 'bg-gray-900/90 border-gray-700' 
             : 'bg-white/90 border-gray-200'
         }`}>
-          <div className="px-6 py-4">
+          <div className="px-6 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">DS</span>
-                  </div>
-                  <div>
-                    <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                      디자인 시스템 생성기
-                    </h1>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      JSON 테마로 자동 컴포넌트 생성
-                    </p>
-                  </div>
-                </div>
+              <div>
+                <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  디자인 시스템 v1
+                </h2>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  JSON 테마로 자동 컴포넌트 생성
+                </p>
               </div>
               
               <div className="flex items-center gap-4">
@@ -297,17 +294,12 @@ export default function DesignSystemPage() {
                     </svg>
                   )}
                 </button>
-                
-                {/* 사용자 정보 */}
-                <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {user?.email}
-                </div>
               </div>
             </div>
           </div>
-        </header>
+        </div>
 
-        <div className="flex h-[calc(100vh-80px)]">
+        <div className="flex h-[calc(100vh-140px)]">
           {/* 왼쪽 사이드바 - JSON 입력 영역 */}
           <div className={`w-96 border-r overflow-y-auto transition-colors ${
             isDarkMode 

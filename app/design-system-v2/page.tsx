@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import Navigation from '@/components/Navigation'
 import ThemeEditor from '@/components/editor/ThemeEditor'
 import EnhancedPreview from '@/components/preview/EnhancedPreview'
 import ResponsivePreview from '@/components/preview/ResponsivePreview'
@@ -272,12 +273,15 @@ export default function DesignSystemV2() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
-        {/* 헤더 */}
-        <header className="bg-white border-b border-gray-200">
-          <div className="px-6 py-4">
+        {/* Navigation */}
+        <Navigation />
+        
+        {/* v2 페이지 전용 기능 헤더 */}
+        <header className="sticky top-[80px] z-40 bg-white border-b border-gray-200">
+          <div className="px-6 py-3">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Design System Generator v2</h1>
+                <h2 className="text-lg font-semibold text-gray-900">디자인 시스템 v2</h2>
                 <p className="text-sm text-gray-600">실시간 테마 편집 및 미리보기</p>
               </div>
               <div className="flex items-center gap-4">
@@ -290,16 +294,13 @@ export default function DesignSystemV2() {
                     {themeState.isValid ? '테마 적용됨' : '테마 오류'}
                   </span>
                 </div>
-                <div className="text-sm text-gray-600">
-                  사용자: {user?.email}
-                </div>
               </div>
             </div>
           </div>
         </header>
 
         {/* 메인 레이아웃 */}
-        <div className="flex h-[calc(100vh-80px)]">
+        <div className="flex h-[calc(100vh-140px)]">
           {/* 왼쪽: 테마 에디터 */}
           <div className="w-1/3 border-r border-gray-200 bg-white">
             <ThemeErrorBoundary onThemeError={(error) => setThemeErrors([error.message])}>
