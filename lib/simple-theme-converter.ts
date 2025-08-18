@@ -3,11 +3,25 @@
 import { Theme, DEFAULT_THEME } from './theme-parser'
 import { hexToHsl, hslToString, isValidColor } from './theme-parser'
 
+// 기본 색상 스케일 (fallback용)
+const DEFAULT_COLOR_SCALE: { [key: string]: string } = {
+  '50': '#eff6ff',
+  '100': '#dbeafe',
+  '200': '#bfdbfe',
+  '300': '#93c5fd',
+  '400': '#60a5fa',
+  '500': '#3b82f6',
+  '600': '#2563eb',
+  '700': '#1d4ed8',
+  '800': '#1e40af',
+  '900': '#1e3a8a'
+}
+
 // 단순한 색상 팔레트에서 색상 스케일 생성
 function generateColorScale(baseColor: string): { [key: string]: string } {
   if (!isValidColor(baseColor)) {
     console.warn(`Invalid color: ${baseColor}, using default`)
-    return DEFAULT_THEME.colors.primary
+    return (DEFAULT_THEME.colors && DEFAULT_THEME.colors.primary) ? DEFAULT_THEME.colors.primary : DEFAULT_COLOR_SCALE
   }
 
   try {
@@ -27,7 +41,7 @@ function generateColorScale(baseColor: string): { [key: string]: string } {
     }
   } catch (error) {
     console.warn(`Failed to generate color scale for ${baseColor}:`, error)
-    return DEFAULT_THEME.colors.primary
+    return (DEFAULT_THEME.colors && DEFAULT_THEME.colors.primary) ? DEFAULT_THEME.colors.primary : DEFAULT_COLOR_SCALE
   }
 }
 
@@ -59,11 +73,17 @@ export function convertSimpleJsonToTheme(simpleJson: any): Theme {
     
     // 단순한 색상 값들을 색상 스케일로 변환
     if (colors.primary && typeof colors.primary === 'string') {
-      converted.colors.primary = generateColorScale(colors.primary)
+      converted.colors = {
+        ...converted.colors,
+        primary: generateColorScale(colors.primary)
+      }
     }
     
     if (colors.secondary && typeof colors.secondary === 'string') {
-      converted.colors.secondary = generateColorScale(colors.secondary)
+      converted.colors = {
+        ...converted.colors,
+        secondary: generateColorScale(colors.secondary)
+      }
     }
     
     // 특별한 색상들 처리
@@ -76,13 +96,19 @@ export function convertSimpleJsonToTheme(simpleJson: any): Theme {
     specialColors.forEach(colorKey => {
       if (colors[colorKey] && typeof colors[colorKey] === 'string') {
         // 특별한 색상들은 neutral 색상 스케일에 추가하거나 새로운 스케일 생성
-        if (!converted.colors.neutral) {
-          converted.colors.neutral = generateColorScale(colors[colorKey])
+        if (converted.colors && !converted.colors.neutral) {
+          converted.colors = {
+            ...converted.colors,
+            neutral: generateColorScale(colors[colorKey])
+          }
         }
         
         // 또는 accent 색상 스케일 생성
-        if (colorKey === 'accent') {
-          converted.colors.accent = generateColorScale(colors[colorKey])
+        if (colorKey === 'accent' && converted.colors) {
+          converted.colors = {
+            ...converted.colors,
+            accent: generateColorScale(colors[colorKey])
+          }
         }
       }
     })
@@ -97,28 +123,46 @@ export function convertSimpleJsonToTheme(simpleJson: any): Theme {
       
       // 각 폰트 패밀리 타입 처리
       Object.keys(fontFamilies).forEach(key => {
-        if (fontFamilies[key]) {
-          converted.typography.fontFamily = {
-            ...converted.typography.fontFamily,
-            [key]: parseFontFamily(fontFamilies[key])
+        if (fontFamilies[key] && converted.typography?.fontFamily) {
+          converted.typography = {
+            ...converted.typography,
+            fontFamily: {
+              ...converted.typography.fontFamily,
+              [key]: parseFontFamily(fontFamilies[key])
+            }
           }
         }
       })
       
       // primary를 sans로, heading을 sans로 매핑
-      if (fontFamilies.primary && !fontFamilies.sans) {
-        converted.typography.fontFamily.sans = parseFontFamily(fontFamilies.primary)
+      if (fontFamilies.primary && !fontFamilies.sans && converted.typography?.fontFamily) {
+        converted.typography = {
+          ...converted.typography,
+          fontFamily: {
+            ...converted.typography.fontFamily,
+            sans: parseFontFamily(fontFamilies.primary)
+          }
+        }
       }
-      if (fontFamilies.heading && !fontFamilies.sans) {
-        converted.typography.fontFamily.sans = parseFontFamily(fontFamilies.heading)
+      if (fontFamilies.heading && !fontFamilies.sans && !fontFamilies.primary && converted.typography?.fontFamily) {
+        converted.typography = {
+          ...converted.typography,
+          fontFamily: {
+            ...converted.typography.fontFamily,
+            sans: parseFontFamily(fontFamilies.heading)
+          }
+        }
       }
     }
     
     // 폰트 크기 처리
-    if (typography.fontSize) {
-      converted.typography.fontSize = {
-        ...converted.typography.fontSize,
-        ...typography.fontSize
+    if (typography.fontSize && converted.typography?.fontSize) {
+      converted.typography = {
+        ...converted.typography,
+        fontSize: {
+          ...converted.typography.fontSize,
+          ...typography.fontSize
+        }
       }
     }
     
@@ -132,9 +176,14 @@ export function convertSimpleJsonToTheme(simpleJson: any): Theme {
         convertedFontWeight[key] = typeof weight === 'string' ? parseInt(weight, 10) : weight
       })
       
-      converted.typography.fontWeight = {
-        ...converted.typography.fontWeight,
-        ...convertedFontWeight
+      if (converted.typography?.fontWeight) {
+        converted.typography = {
+          ...converted.typography,
+          fontWeight: {
+            ...converted.typography.fontWeight,
+            ...convertedFontWeight
+          }
+        }
       }
     }
   }
