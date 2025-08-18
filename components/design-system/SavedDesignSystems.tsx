@@ -45,10 +45,16 @@ export default function SavedDesignSystems({
 
   useEffect(() => {
     if (isOpen && user) {
+      console.log('Loading design systems for user:', user.id)
       loadUserDesignSystems(user.id)
       loadFavorites()
     }
   }, [isOpen, user, loadUserDesignSystems]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Debug: log design systems when they change
+  useEffect(() => {
+    console.log('Design systems updated:', designSystems.length, designSystems)
+  }, [designSystems])
 
   const loadFavorites = async () => {
     if (!user) return

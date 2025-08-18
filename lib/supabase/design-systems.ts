@@ -118,17 +118,22 @@ export async function getUserDesignSystems(
     return { data: null, error: 'Supabase client not available' }
   }
 
-  let query = supabase
-    .from('design_systems')
-    .select()
-    .order('updated_at', { ascending: false })
-    .range(offset, offset + limit - 1)
-
-  if (userId) {
-    query = query.eq('user_id', userId)
+  // Get current user if userId is not provided
+  let targetUserId = userId
+  if (!targetUserId) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return { data: null, error: 'User not authenticated' }
+    }
+    targetUserId = user.id
   }
 
-  const { data, error } = await query
+  const { data, error } = await supabase
+    .from('design_systems')
+    .select()
+    .eq('user_id', targetUserId)
+    .order('updated_at', { ascending: false })
+    .range(offset, offset + limit - 1)
 
   return { data, error }
 }

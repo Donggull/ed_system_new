@@ -181,14 +181,18 @@ export function useDesignSystem() {
     setError(null)
 
     try {
+      console.log('Loading design systems for userId:', userId)
       const { data: result, error } = await getUserDesignSystems(userId, limit, offset)
       
       if (error) {
+        console.error('Error loading design systems:', error)
         handleError(error)
         return []
       }
 
       const systems = result || []
+      console.log('Loaded design systems:', systems.length, systems)
+      
       if (offset === 0) {
         setDesignSystems(systems)
       } else {
@@ -197,6 +201,7 @@ export function useDesignSystem() {
 
       return systems
     } catch (err) {
+      console.error('Exception loading design systems:', err)
       handleError(err)
       return []
     } finally {
