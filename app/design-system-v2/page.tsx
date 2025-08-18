@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import Navigation from '@/components/Navigation'
@@ -66,7 +66,13 @@ const PreviewComponents = {
 }
 
 export default function DesignSystemV2() {
-  const [selectedComponents, setSelectedComponents] = useState<string[]>(['button', 'card', 'input'])
+  const [selectedComponents, setSelectedComponents] = useState<string[]>(() => {
+    // 필수 컴포넌트들을 기본 선택
+    return allComponentTemplates
+      .filter(template => template.category === 'essential')
+      .slice(0, 3) // 처음 3개만 선택
+      .map(template => template.id)
+  })
   const [viewMode, setViewMode] = useState<'enhanced' | 'responsive'>('enhanced')
   const [themeState, setThemeState] = useState<ThemeState>(themeManager.getState())
   const [themeErrors, setThemeErrors] = useState<string[]>([])
@@ -116,6 +122,8 @@ export default function DesignSystemV2() {
         ? prev.filter(id => id !== componentId)
         : [...prev, componentId]
       console.log('New selectedComponents:', newSelection)
+      // 강제 리렌더링을 위해 renderKey도 즉시 업데이트
+      setRenderKey(prevKey => prevKey + 1)
       return newSelection
     })
   }
@@ -135,7 +143,7 @@ export default function DesignSystemV2() {
   }, [selectedComponents])
 
   // 미리보기 컨텐츠 JSX (조건부 렌더링)
-  const renderPreviewContent = () => {
+  const renderPreviewContent = useCallback(() => {
     console.log('🎨 Rendering preview with components:', selectedComponents)
     
     return (
@@ -254,7 +262,7 @@ export default function DesignSystemV2() {
         </div>
       </div>
     )
-  }
+  }, [selectedComponents, renderKey])
 
   // 초기화 중일 때 로딩 표시
   if (!isInitialized) {
@@ -400,13 +408,13 @@ export default function DesignSystemV2() {
               </div>
 
               {/* 미리보기 영역 */}
-              <div className="flex-1" key={`preview-area-${renderKey}-${selectedComponents.length}`}>
+              <div className="flex-1" key={`preview-area-${renderKey}-${selectedComponents.join('-')}`}>
                 {viewMode === 'enhanced' ? (
-                  <EnhancedPreview componentName="Design System">
+                  <EnhancedPreview componentName="Design System" key={`enhanced-${renderKey}`}>
                     {renderPreviewContent()}
                   </EnhancedPreview>
                 ) : (
-                  <ResponsivePreview>
+                  <ResponsivePreview key={`responsive-${renderKey}`}>
                     {renderPreviewContent()}
                   </ResponsivePreview>
                 )}

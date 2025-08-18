@@ -52,7 +52,12 @@
       "Bash(cp:*)",
       "Bash(touch:*)",
       "Bash(grep:*)",
-      "mcp__supabase__apply_migration"
+      "mcp__supabase__apply_migration",
+      "mcp__playwright-stealth__playwright_fill",
+      "mcp__playwright-stealth__playwright_click",
+      "Bash(timeout:*)",
+      "mcp__playwright-stealth__playwright_get_visible_text",
+      "mcp__playwright-stealth__playwright_console_logs"
     ],
     "deny": [],
     "ask": []
