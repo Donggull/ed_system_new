@@ -212,16 +212,30 @@ export function useDesignSystem() {
         systems.map(s => ({ id: s.id, name: s.name, user_id: s.user_id })))
       
       if (offset === 0) {
-        console.log('🔄 Setting design systems (fresh load)')
-        setDesignSystems(systems)
+        console.log('🔄 Setting design systems (fresh load)', systems)
+        
+        // Force state update with callback to ensure it's applied
+        setDesignSystems(() => {
+          console.log('🔄 State setter callback executed with systems:', systems.length)
+          return [...systems] // Create new array reference to ensure re-render
+        })
+        
+        // Double-check after state update
+        setTimeout(() => {
+          console.log('🔄 Post-setState verification: systems count should be', systems.length)
+        }, 10)
       } else {
         console.log('🔄 Appending design systems (pagination)')
-        setDesignSystems(prev => [...prev, ...systems])
+        setDesignSystems(prev => {
+          const updated = [...prev, ...systems]
+          console.log('🔄 Pagination state update:', prev.length, '->', updated.length)
+          return updated
+        })
       }
 
-      // Force a state update to ensure component re-renders
+      // Additional state verification
       setTimeout(() => {
-        console.log('🔄 Post-load state verification - current designSystems count:', systems.length)
+        console.log('🔄 Final verification - systems loaded:', systems.length)
       }, 100)
 
       return systems

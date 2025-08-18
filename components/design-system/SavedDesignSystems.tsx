@@ -33,7 +33,8 @@ export default function SavedDesignSystems({
     remove,
     like,
     favorite,
-    loadFavorites: loadUserFavoritesFunc 
+    loadFavorites: loadUserFavoritesFunc,
+    setDesignSystems 
   } = useDesignSystem()
 
   const [selectedDesignSystem, setSelectedDesignSystem] = useState<DesignSystem | null>(null)
@@ -46,7 +47,12 @@ export default function SavedDesignSystems({
 
   useEffect(() => {
     if (isOpen && user) {
-      console.log('Modal opened - Loading design systems for user:', user.id)
+      console.log('🚪 Modal opened - Starting data load process')
+      console.log('👤 Current user details:', {
+        id: user.id,
+        email: user.email,
+        authenticated_at: user.last_sign_in_at
+      })
       
       const loadData = async () => {
         try {
@@ -54,24 +60,50 @@ export default function SavedDesignSystems({
           setSelectedTag('')
           setShowFavoritesOnly(false)
           
-          // Load user design systems first
-          console.log('Calling loadUserDesignSystems...')
+          // First, let's verify the user authentication
+          console.log('🔐 Verifying authentication...')
+          const { getUserDesignSystems } = await import('@/lib/supabase/design-systems')
+          
+          // Try direct database call to see what's happening
+          console.log('📡 Making direct database call with user ID:', user.id)
+          const directResult = await getUserDesignSystems(user.id)
+          console.log('📊 Direct DB result:', {
+            hasData: !!directResult.data,
+            dataLength: directResult.data?.length || 0,
+            hasError: !!directResult.error,
+            error: directResult.error
+          })
+          
+          if (directResult.data) {
+            console.log('✅ Direct DB call found systems:', directResult.data.map(ds => ({
+              id: ds.id,
+              name: ds.name,
+              user_id: ds.user_id
+            })))
+          }
+          
+          // Now try through the hook
+          console.log('🎣 Calling loadUserDesignSystems hook...')
           const systems = await loadUserDesignSystems(user.id)
-          console.log('loadUserDesignSystems returned:', systems?.length || 0, 'systems')
+          console.log('🎣 Hook returned:', systems?.length || 0, 'systems')
           
           // Load favorites separately
-          console.log('Loading favorites...')
+          console.log('⭐ Loading favorites...')
           await loadFavorites()
-          console.log('Favorites loaded successfully')
+          console.log('⭐ Favorites loaded successfully')
           
         } catch (error) {
-          console.error('Failed to load data:', error)
+          console.error('💥 Failed to load data:', error)
         }
       }
       
       loadData()
     } else {
-      console.log('Modal not open or user not available:', { isOpen, user: !!user })
+      console.log('❌ Modal not open or user not available:', { 
+        isOpen, 
+        hasUser: !!user,
+        userDetails: user ? { id: user.id, email: user.email } : null
+      })
     }
   }, [isOpen, user, forceRefresh]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -287,6 +319,30 @@ export default function SavedDesignSystems({
                   </button>
                   <button
                     onClick={async () => {
+                      console.log('🔧 Manual state override - forcing designSystems update...')
+                      try {
+                        const { getUserDesignSystems } = await import('@/lib/supabase/design-systems')
+                        const result = await getUserDesignSystems(user.id)
+                        
+                        if (result.data && result.data.length > 0) {
+                          console.log('🔧 Manually setting designSystems state with:', result.data)
+                          // Direct state manipulation using the hook's setter
+                          setDesignSystems(result.data)
+                          alert(`수동으로 ${result.data.length}개 시스템을 로드했습니다!`)
+                        } else {
+                          alert('DB에서 데이터를 찾을 수 없습니다.')
+                        }
+                      } catch (error) {
+                        console.error('Manual state override failed:', error)
+                        alert(`수동 로드 실패: ${error}`)
+                      }
+                    }}
+                    className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors text-sm mr-2"
+                  >
+                    🔧 강제 로드
+                  </button>
+                  <button
+                    onClick={async () => {
                       console.log('Direct database call - bypassing hook state...')
                       try {
                         const { getUserDesignSystems } = await import('@/lib/supabase/design-systems')
@@ -320,9 +376,53 @@ export default function SavedDesignSystems({
                         alert(`연결 테스트 오류: ${error}`)
                       }
                     }}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm mr-2"
                   >
                     🧪 연결 테스트
+                  </button>
+                  <button
+                    onClick={async () => {
+                      console.log('🔍 Running comprehensive diagnostic...')
+                      try {
+                        // Import required functions
+                        const { testSupabaseConnection, getUserDesignSystems } = await import('@/lib/supabase/design-systems')
+                        const { supabase } = await import('@/lib/supabase/client')
+                        
+                        console.log('1. Current user from context:', user ? { id: user.id, email: user.email } : 'No user')
+                        
+                        if (supabase) {
+                          const { data: authData } = await supabase.auth.getUser()
+                          console.log('2. Auth from Supabase client:', authData.user ? { id: authData.user.id, email: authData.user.email } : 'No auth user')
+                          
+                          // Check if user IDs match
+                          if (user && authData.user && user.id !== authData.user.id) {
+                            console.warn('⚠️ USER ID MISMATCH!')
+                            console.log('Context user ID:', user.id)
+                            console.log('Auth user ID:', authData.user.id)
+                          }
+                        }
+                        
+                        console.log('3. Testing connection...')
+                        const connectionTest = await testSupabaseConnection()
+                        console.log('Connection test:', connectionTest)
+                        
+                        console.log('4. Direct DB query with current user ID...')
+                        if (user) {
+                          const directQuery = await getUserDesignSystems(user.id)
+                          console.log('Direct query result:', directQuery)
+                        }
+                        
+                        console.log('5. Design systems from hook state:', designSystems.length, designSystems)
+                        
+                        alert('진단 완료! 콘솔을 확인하세요.')
+                      } catch (error) {
+                        console.error('💥 Diagnostic failed:', error)
+                        alert(`진단 오류: ${error}`)
+                      }
+                    }}
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm"
+                  >
+                    🔍 전체 진단
                   </button>
                 </div>
               )}
