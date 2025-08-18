@@ -13,6 +13,7 @@ import { allComponentTemplates } from '@/lib/component-templates'
 import { ComponentTemplate } from '@/types/database'
 import { cn } from '@/lib/utils'
 import { ThemeErrorBoundary } from '@/components/ui/ErrorBoundary'
+import ExportModal from '@/components/export/ExportModal'
 
 // 컴포넌트 미리보기를 위한 예시 컴포넌트들
 const PreviewComponents = {
@@ -246,6 +247,7 @@ export default function DesignSystemV2() {
   const [themeState, setThemeState] = useState<ThemeState>(themeManager.getState())
   const [themeErrors, setThemeErrors] = useState<string[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
   const { user } = useAuth()
 
   // 컴포넌트 마운트 시 테마 초기화
@@ -617,7 +619,22 @@ export default function DesignSystemV2() {
           {/* 가운데: 컴포넌트 선택 */}
           <div className="w-1/4 border-r border-gray-200 bg-white overflow-auto">
             <div className="p-4">
-              <h3 className="font-semibold text-gray-900 mb-4">컴포넌트 선택</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900">컴포넌트 선택</h3>
+                <button
+                  onClick={() => setShowExportModal(true)}
+                  disabled={selectedComponents.length === 0}
+                  className={cn(
+                    "px-3 py-1 text-sm rounded-md font-medium transition-colors",
+                    selectedComponents.length > 0
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  )}
+                  title={selectedComponents.length === 0 ? "컴포넌트를 선택해주세요" : "선택된 컴포넌트 내보내기"}
+                >
+                  {selectedComponents.length > 0 ? `내보내기 (${selectedComponents.length})` : '내보내기'}
+                </button>
+              </div>
               
               {/* 필수 컴포넌트 */}
               <div className="mb-6">
@@ -742,6 +759,15 @@ export default function DesignSystemV2() {
             </div>
           </div>
         )}
+
+        {/* Export Modal */}
+        <ExportModal
+          isOpen={showExportModal}
+          onClose={() => setShowExportModal(false)}
+          selectedComponents={selectedTemplates}
+          theme={themeState.currentTheme}
+          projectName="My Design System"
+        />
       </div>
     </ProtectedRoute>
   )
