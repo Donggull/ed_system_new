@@ -17,6 +17,7 @@ import ExportModal from '@/components/export/ExportModal'
 import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemModal'
 import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
 import VersionHistoryModal from '@/components/design-system/VersionHistoryModal'
+import ShareDesignSystemModal from '@/components/design-system/ShareDesignSystemModal'
 import { DesignSystem, DesignSystemVersion } from '@/types/database'
 import { useDesignSystem } from '@/lib/hooks/useDesignSystem'
 import { useToast } from '@/hooks/useToast'
@@ -261,6 +262,8 @@ export default function DesignSystemV2() {
   const [currentDesignSystem, setCurrentDesignSystem] = useState<DesignSystem | null>(null)
   const [showVersionHistory, setShowVersionHistory] = useState(false)
   const [versionHistoryDesignSystem, setVersionHistoryDesignSystem] = useState<DesignSystem | null>(null)
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [shareDesignSystem, setShareDesignSystem] = useState<DesignSystem | null>(null)
   const { user } = useAuth()
   const { toast, success, error: showError, hideToast } = useToast()
   const { createVersion } = useDesignSystem()
@@ -402,6 +405,12 @@ export default function DesignSystemV2() {
     setRenderKey(prev => prev + 1)
     
     success(`버전 ${version.version_number}을 불러왔습니다!`)
+  }
+
+  const handleShareDesignSystem = (designSystem: DesignSystem) => {
+    setShareDesignSystem(designSystem)
+    setShowShareModal(true)
+    setShowSavedDesignSystems(false)
   }
 
   // 컴포넌트 선택 변경 감지
@@ -946,6 +955,7 @@ export default function DesignSystemV2() {
           onLoadDesignSystem={handleLoadDesignSystem}
           onEditDesignSystem={handleEditDesignSystem}
           onViewVersionHistory={handleViewVersionHistory}
+          onShareDesignSystem={handleShareDesignSystem}
         />
 
         {/* Version History Modal */}
@@ -959,6 +969,18 @@ export default function DesignSystemV2() {
             designSystem={versionHistoryDesignSystem}
             onLoadVersion={handleLoadVersion}
             onCreateVersion={handleCreateVersion}
+          />
+        )}
+
+        {/* Share Modal */}
+        {shareDesignSystem && (
+          <ShareDesignSystemModal
+            isOpen={showShareModal}
+            onClose={() => {
+              setShowShareModal(false)
+              setShareDesignSystem(null)
+            }}
+            designSystem={shareDesignSystem}
           />
         )}
       </div>

@@ -13,6 +13,7 @@ interface SavedDesignSystemsProps {
   onLoadDesignSystem: (designSystem: DesignSystem) => void
   onEditDesignSystem?: (designSystem: DesignSystem) => void
   onViewVersionHistory?: (designSystem: DesignSystem) => void
+  onShareDesignSystem?: (designSystem: DesignSystem) => void
 }
 
 export default function SavedDesignSystems({
@@ -20,7 +21,8 @@ export default function SavedDesignSystems({
   onClose,
   onLoadDesignSystem,
   onEditDesignSystem,
-  onViewVersionHistory
+  onViewVersionHistory,
+  onShareDesignSystem
 }: SavedDesignSystemsProps) {
   const { user } = useAuth()
   const { 
@@ -238,6 +240,17 @@ export default function SavedDesignSystems({
                             className="text-sm text-purple-600 hover:text-purple-700"
                           >
                             Versions
+                          </button>
+                        )}
+                        {onShareDesignSystem && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onShareDesignSystem(designSystem)
+                            }}
+                            className="text-sm text-green-600 hover:text-green-700"
+                          >
+                            Share
                           </button>
                         )}
                       </div>

@@ -24,6 +24,7 @@ import SaveThemeModal from '@/components/ui/SaveThemeModal'
 import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemModal'
 import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
 import VersionHistoryModal from '@/components/design-system/VersionHistoryModal'
+import ShareDesignSystemModal from '@/components/design-system/ShareDesignSystemModal'
 import { DesignSystem, DesignSystemVersion } from '@/types/database'
 import { useDesignSystem } from '@/lib/hooks/useDesignSystem'
 
@@ -47,6 +48,8 @@ export default function Home() {
   const [currentDesignSystem, setCurrentDesignSystem] = useState<DesignSystem | null>(null)
   const [showVersionHistory, setShowVersionHistory] = useState(false)
   const [versionHistoryDesignSystem, setVersionHistoryDesignSystem] = useState<DesignSystem | null>(null)
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [shareDesignSystem, setShareDesignSystem] = useState<DesignSystem | null>(null)
   const { user } = useAuth()
   const router = useRouter()
   const { toast, success, error: showError, hideToast } = useToast()
@@ -330,6 +333,12 @@ export default function Home() {
     applyCssVariables(cssVars)
     
     success(`Loaded version ${version.version_number} successfully!`)
+  }
+
+  const handleShareDesignSystem = (designSystem: DesignSystem) => {
+    setShareDesignSystem(designSystem)
+    setShowShareModal(true)
+    setShowSavedDesignSystems(false)
   }
 
   return (
@@ -3300,6 +3309,7 @@ export default function Home() {
         onLoadDesignSystem={handleLoadDesignSystem}
         onEditDesignSystem={handleEditDesignSystem}
         onViewVersionHistory={handleViewVersionHistory}
+        onShareDesignSystem={handleShareDesignSystem}
       />
 
       {/* Version History Modal */}
@@ -3313,6 +3323,18 @@ export default function Home() {
           designSystem={versionHistoryDesignSystem}
           onLoadVersion={handleLoadVersion}
           onCreateVersion={handleCreateVersion}
+        />
+      )}
+
+      {/* Share Modal */}
+      {shareDesignSystem && (
+        <ShareDesignSystemModal
+          isOpen={showShareModal}
+          onClose={() => {
+            setShowShareModal(false)
+            setShareDesignSystem(null)
+          }}
+          designSystem={shareDesignSystem}
         />
       )}
     </ProtectedRoute>
