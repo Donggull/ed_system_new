@@ -21,6 +21,9 @@ import { allComponentTemplates } from '@/lib/component-templates'
 import { useToast } from '@/hooks/useToast'
 import Toast from '@/components/ui/Toast'
 import SaveThemeModal from '@/components/ui/SaveThemeModal'
+import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemModal'
+import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
+import { DesignSystem } from '@/types/database'
 
 export default function Home() {
   const [themeTemplates, setThemeTemplates] = useState<Theme[]>([])
@@ -37,6 +40,9 @@ export default function Home() {
   const [saveLoading, setSaveLoading] = useState(false)
   const [showUserThemes, setShowUserThemes] = useState(false)
   const [showSaveModal, setShowSaveModal] = useState(false)
+  const [showSaveDesignSystemModal, setShowSaveDesignSystemModal] = useState(false)
+  const [showSavedDesignSystems, setShowSavedDesignSystems] = useState(false)
+  const [currentDesignSystem, setCurrentDesignSystem] = useState<DesignSystem | null>(null)
   const { user } = useAuth()
   const router = useRouter()
   const { toast, success, error: showError, hideToast } = useToast()
@@ -241,6 +247,44 @@ export default function Home() {
     success(`테마 "${theme.name}"과 컴포넌트 ${componentCount}개를 불러왔습니다!`)
   }
 
+  // Design System handlers
+  const handleSaveDesignSystem = () => {
+    if (!user) {
+      showError('로그인이 필요합니다.')
+      return
+    }
+    setShowSaveDesignSystemModal(true)
+  }
+
+  const handleLoadDesignSystem = (designSystem: DesignSystem) => {
+    setCurrentTheme(designSystem.theme_data)
+    setJsonInput(JSON.stringify(designSystem.theme_data, null, 2))
+    
+    // 컴포넌트 선택 상태 복원
+    setSelectedComponents(designSystem.selected_components)
+    
+    // 컴포넌트 설정 복원
+    if (designSystem.component_settings) {
+      setComponentSettings(designSystem.component_settings)
+    }
+    
+    // CSS 변수 적용
+    const cssVars = generateCssVariables(designSystem.theme_data)
+    applyCssVariables(cssVars)
+    
+    // 현재 디자인 시스템 설정
+    setCurrentDesignSystem(designSystem)
+    
+    // 성공 메시지 표시
+    success(`디자인 시스템 "${designSystem.name}"을 불러왔습니다!`)
+  }
+
+  const handleEditDesignSystem = (designSystem: DesignSystem) => {
+    setCurrentDesignSystem(designSystem)
+    setShowSaveDesignSystemModal(true)
+    setShowSavedDesignSystems(false)
+  }
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
@@ -263,20 +307,39 @@ export default function Home() {
             </div>
             
             {/* Save/Load Controls */}
-            <div className="flex items-center gap-2 mb-3">
-              <button
-                onClick={handleSaveThemeClick}
-                disabled={saveLoading}
-                className="flex-1 px-3 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-lg transition-colors"
-              >
-                {saveLoading ? '저장 중...' : '테마 저장'}
-              </button>
-              <button
-                onClick={() => setShowUserThemes(!showUserThemes)}
-                className="px-3 py-2 text-xs font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-              >
-                내 테마
-              </button>
+            <div className="space-y-2 mb-3">
+              {/* Theme Controls */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleSaveThemeClick}
+                  disabled={saveLoading}
+                  className="flex-1 px-3 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-lg transition-colors"
+                >
+                  {saveLoading ? '저장 중...' : '테마 저장'}
+                </button>
+                <button
+                  onClick={() => setShowUserThemes(!showUserThemes)}
+                  className="px-3 py-2 text-xs font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  내 테마
+                </button>
+              </div>
+              
+              {/* Design System Controls */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleSaveDesignSystem}
+                  className="flex-1 px-3 py-2 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                >
+                  디자인 시스템 저장
+                </button>
+                <button
+                  onClick={() => setShowSavedDesignSystems(true)}
+                  className="px-3 py-2 text-xs font-medium text-purple-600 border border-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                >
+                  내 시스템
+                </button>
+              </div>
             </div>
             
             
@@ -3162,6 +3225,33 @@ export default function Home() {
         onSave={handleSaveTheme}
         defaultName={currentTheme.name || 'My Theme'}
         isLoading={saveLoading}
+      />
+
+      {/* Save Design System Modal */}
+      <SaveDesignSystemModal
+        isOpen={showSaveDesignSystemModal}
+        onClose={() => {
+          setShowSaveDesignSystemModal(false)
+          setCurrentDesignSystem(null)
+        }}
+        themeData={currentTheme}
+        selectedComponents={selectedComponents}
+        componentSettings={componentSettings}
+        existingDesignSystem={currentDesignSystem ? {
+          id: currentDesignSystem.id,
+          name: currentDesignSystem.name,
+          description: currentDesignSystem.description,
+          tags: currentDesignSystem.tags,
+          is_public: currentDesignSystem.is_public
+        } : undefined}
+      />
+
+      {/* Saved Design Systems Modal */}
+      <SavedDesignSystems
+        isOpen={showSavedDesignSystems}
+        onClose={() => setShowSavedDesignSystems(false)}
+        onLoadDesignSystem={handleLoadDesignSystem}
+        onEditDesignSystem={handleEditDesignSystem}
       />
     </ProtectedRoute>
   )

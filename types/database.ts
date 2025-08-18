@@ -144,3 +144,109 @@ export interface ThemeShare {
   permission_level: 'view' | 'edit'
   created_at: string
 }
+
+// Enhanced Design System interfaces for save/share functionality
+export interface DesignSystem {
+  id: string
+  user_id: string
+  name: string
+  description?: string
+  theme_data: ThemeData
+  selected_components: string[]
+  component_settings?: ComponentSettings
+  tags: string[]
+  version: number
+  is_public: boolean
+  is_featured: boolean
+  share_token?: string
+  like_count: number
+  download_count: number
+  view_count: number
+  created_at: string
+  updated_at: string
+}
+
+export interface DesignSystemVersion {
+  id: string
+  design_system_id: string
+  version_number: number
+  name: string
+  description?: string
+  theme_data: ThemeData
+  selected_components: string[]
+  component_settings?: ComponentSettings
+  change_notes?: string
+  created_at: string
+}
+
+export interface SharedDesignSystem {
+  id: string
+  design_system_id: string
+  shared_by_user_id: string
+  shared_with_user_id?: string // null for public shares
+  share_token: string
+  permission_level: 'view' | 'edit' | 'clone'
+  is_public: boolean
+  expires_at?: string
+  access_count: number
+  created_at: string
+  updated_at: string
+}
+
+export interface UserFavorite {
+  id: string
+  user_id: string
+  design_system_id: string
+  created_at: string
+}
+
+export interface DesignSystemLike {
+  id: string
+  user_id: string
+  design_system_id: string
+  created_at: string
+}
+
+export interface DesignSystemComment {
+  id: string
+  user_id: string
+  design_system_id: string
+  content: string
+  parent_comment_id?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface DesignSystemTag {
+  id: string
+  name: string
+  color: string
+  created_at: string
+}
+
+export interface DesignSystemCategory {
+  id: string
+  name: string
+  description?: string
+  icon?: string
+  sort_order: number
+  created_at: string
+}
+
+export interface Collection {
+  id: string
+  user_id: string
+  name: string
+  description?: string
+  is_public: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CollectionItem {
+  id: string
+  collection_id: string
+  design_system_id: string
+  sort_order: number
+  created_at: string
+}
