@@ -299,6 +299,28 @@ export default function DesignSystemV2() {
     })
   }
 
+  // 전체 선택
+  const selectAllComponents = () => {
+    const allComponentIds = allComponentTemplates.map(template => template.id)
+    setSelectedComponents(allComponentIds)
+    setRenderKey(prevKey => prevKey + 1)
+  }
+
+  // 전체 해제
+  const deselectAllComponents = () => {
+    setSelectedComponents([])
+    setRenderKey(prevKey => prevKey + 1)
+  }
+
+  // 필수 컴포넌트만 선택
+  const selectEssentialComponents = () => {
+    const essentialComponentIds = allComponentTemplates
+      .filter(template => template.category === 'essential')
+      .map(template => template.id)
+    setSelectedComponents(essentialComponentIds)
+    setRenderKey(prevKey => prevKey + 1)
+  }
+
   // 강제 리렌더링을 위한 상태
   const [renderKey, setRenderKey] = useState(0)
 
@@ -633,6 +655,31 @@ export default function DesignSystemV2() {
                   title={selectedComponents.length === 0 ? "컴포넌트를 선택해주세요" : "선택된 컴포넌트 내보내기"}
                 >
                   {selectedComponents.length > 0 ? `내보내기 (${selectedComponents.length})` : '내보내기'}
+                </button>
+              </div>
+
+              {/* 컴포넌트 선택 버튼들 */}
+              <div className="flex flex-wrap gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
+                <button
+                  onClick={selectAllComponents}
+                  className="px-3 py-1 text-xs bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                  title="모든 컴포넌트 선택"
+                >
+                  전체 선택
+                </button>
+                <button
+                  onClick={deselectAllComponents}
+                  className="px-3 py-1 text-xs bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+                  title="모든 컴포넌트 선택 해제"
+                >
+                  전체 해제
+                </button>
+                <button
+                  onClick={selectEssentialComponents}
+                  className="px-3 py-1 text-xs bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors"
+                  title="필수 컴포넌트만 선택"
+                >
+                  필수 선택
                 </button>
               </div>
               

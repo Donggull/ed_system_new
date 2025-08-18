@@ -194,13 +194,15 @@ export default function ThemeEditor({
       <div className="flex-1 p-4">
         <div className="relative h-full flex">
           {/* 줄 번호 */}
-          <div className="flex-shrink-0 w-12 bg-gray-50 border-r border-gray-200 rounded-l-lg p-2 overflow-hidden">
-            <div className="text-xs text-gray-400 font-mono leading-5">
-              {jsonInput.split('\n').map((_, index) => (
-                <div key={index} className="text-right pr-2">
-                  {index + 1}
-                </div>
-              ))}
+          <div className="flex-shrink-0 w-12 bg-gray-50 border-r border-gray-200 rounded-l-lg overflow-hidden">
+            <div className="h-full p-2 overflow-y-auto">
+              <div className="text-xs text-gray-400 font-mono leading-5">
+                {jsonInput.split('\n').map((_, index) => (
+                  <div key={index} className="text-right pr-2 h-5 flex items-center justify-end">
+                    {index + 1}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           
