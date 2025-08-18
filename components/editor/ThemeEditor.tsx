@@ -192,13 +192,25 @@ export default function ThemeEditor({
 
       {/* JSON 에디터 */}
       <div className="flex-1 p-4">
-        <div className="relative h-full">
+        <div className="relative h-full flex">
+          {/* 줄 번호 */}
+          <div className="flex-shrink-0 w-12 bg-gray-50 border-r border-gray-200 rounded-l-lg p-2 overflow-hidden">
+            <div className="text-xs text-gray-400 font-mono leading-5">
+              {jsonInput.split('\n').map((_, index) => (
+                <div key={index} className="text-right pr-2">
+                  {index + 1}
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* 텍스트 에디터 */}
           <textarea
             ref={textareaRef}
             value={jsonInput}
             onChange={(e) => handleInputChange(e.target.value)}
             className={cn(
-              'w-full h-full min-h-[400px] p-4 border rounded-lg font-mono text-sm resize-none',
+              'flex-1 h-full min-h-[400px] p-4 border-y border-r rounded-r-lg font-mono text-sm resize-none',
               'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
               'transition-colors duration-200',
               themeState.isValid 
@@ -207,19 +219,10 @@ export default function ThemeEditor({
             )}
             placeholder="JSON 테마 설정을 입력하세요..."
             spellCheck={false}
+            style={{ 
+              lineHeight: '1.25rem' // 줄 번호와 맞추기 위해
+            }}
           />
-          
-          {/* 줄 번호 (선택사항) */}
-          <div className="absolute left-2 top-4 pointer-events-none">
-            {jsonInput.split('\n').map((_, index) => (
-              <div 
-                key={index} 
-                className="text-xs text-gray-400 leading-5 font-mono"
-              >
-                {index + 1}
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 

@@ -142,7 +142,14 @@ export default function DesignSystemV2() {
     setRenderKey(prev => prev + 1) // 강제 리렌더링 트리거
   }, [selectedComponents])
 
-  // 미리보기 컨텐츠 JSX (조건부 렌더링)
+  // 선택된 컴포넌트 템플릿 필터링
+  const selectedTemplates = useMemo(() => {
+    return allComponentTemplates.filter(template => 
+      selectedComponents.includes(template.id)
+    )
+  }, [selectedComponents])
+
+  // 미리보기 컨텐츠 JSX (동적 렌더링)
   const renderPreviewContent = useCallback(() => {
     console.log('🎨 Rendering preview with components:', selectedComponents)
     
@@ -152,68 +159,86 @@ export default function DesignSystemV2() {
           <h3 className="text-lg font-semibold text-gray-900">실시간 테마 미리보기</h3>
           
           {/* 선택된 컴포넌트 상태 표시 */}
-          <div className="text-xs text-gray-500 bg-yellow-100 p-3 rounded border">
-            <strong>현재 선택된 컴포넌트:</strong> {selectedComponents.length > 0 ? selectedComponents.join(', ') : '없음'}
-            <br />
-            <strong>렌더링 키:</strong> {renderKey}
+          <div className="text-xs text-gray-500 bg-blue-50 p-3 rounded border border-blue-200">
+            <strong>선택된 컴포넌트 ({selectedComponents.length}개):</strong> {selectedComponents.length > 0 ? selectedComponents.join(', ') : '없음'}
           </div>
           
-          {/* 디버그 정보 */}
+          {/* 선택된 컴포넌트가 없을 때 */}
           {selectedComponents.length === 0 && (
-            <div className="text-center py-8 bg-red-50 border border-red-200 rounded">
-              <p className="text-red-600 font-medium">선택된 컴포넌트가 없습니다.</p>
-              <p className="text-red-500 text-sm">좌측에서 컴포넌트를 선택해주세요.</p>
+            <div className="text-center py-12 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="text-gray-400 text-4xl mb-4">📦</div>
+              <p className="text-gray-600 font-medium">선택된 컴포넌트가 없습니다</p>
+              <p className="text-gray-500 text-sm mt-1">왼쪽에서 컴포넌트를 선택하여 미리보기를 확인하세요</p>
             </div>
           )}
           
-          {/* 버튼 컴포넌트들 */}
-          {selectedComponents.includes('button') && (
-            <div className="space-y-3 border border-green-200 p-4 rounded bg-green-50">
-              <h4 className="font-medium text-gray-700 text-green-800">✅ Button 컴포넌트</h4>
-              <div className="flex flex-wrap gap-2">
-                <PreviewComponents.Button variant="primary" size="sm">Primary</PreviewComponents.Button>
-                <PreviewComponents.Button variant="secondary" size="sm">Secondary</PreviewComponents.Button>
-                <PreviewComponents.Button variant="outline" size="sm">Outline</PreviewComponents.Button>
-                <PreviewComponents.Button variant="ghost" size="sm">Ghost</PreviewComponents.Button>
+          {/* 동적 컴포넌트 렌더링 */}
+          {selectedTemplates.map((template, index) => (
+            <div key={`${template.id}-${renderKey}`} className="space-y-3 border border-indigo-200 p-4 rounded-lg bg-indigo-50">
+              <div className="flex items-center gap-2">
+                <span className="text-indigo-600 text-lg">✅</span>
+                <h4 className="font-semibold text-indigo-800">{template.name}</h4>
+                <span className="text-xs bg-indigo-200 text-indigo-700 px-2 py-1 rounded-full">
+                  {template.category}
+                </span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <PreviewComponents.Button variant="primary" size="md">Medium</PreviewComponents.Button>
-                <PreviewComponents.Button variant="primary" size="lg">Large</PreviewComponents.Button>
-              </div>
-            </div>
-          )}
+              {template.description && (
+                <p className="text-sm text-indigo-600 mb-3">{template.description}</p>
+              )}
+              
+              {/* 컴포넌트별 미리보기 */}
+              {template.id === 'button' && (
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    <PreviewComponents.Button variant="primary" size="sm">Primary</PreviewComponents.Button>
+                    <PreviewComponents.Button variant="secondary" size="sm">Secondary</PreviewComponents.Button>
+                    <PreviewComponents.Button variant="outline" size="sm">Outline</PreviewComponents.Button>
+                    <PreviewComponents.Button variant="ghost" size="sm">Ghost</PreviewComponents.Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <PreviewComponents.Button variant="primary" size="md">Medium</PreviewComponents.Button>
+                    <PreviewComponents.Button variant="primary" size="lg">Large</PreviewComponents.Button>
+                  </div>
+                </div>
+              )}
 
-          {/* 카드 컴포넌트들 */}
-          {selectedComponents.includes('card') && (
-            <div className="space-y-3 border border-blue-200 p-4 rounded bg-blue-50">
-              <h4 className="font-medium text-gray-700 text-blue-800">✅ Card 컴포넌트</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <PreviewComponents.Card variant="default">
-                  <h5 className="font-semibold mb-2">Default Card</h5>
-                  <p className="text-sm text-gray-600">This is a default card with basic styling.</p>
-                </PreviewComponents.Card>
-                <PreviewComponents.Card variant="outlined">
-                  <h5 className="font-semibold mb-2">Outlined Card</h5>
-                  <p className="text-sm text-gray-600">This card has a border outline.</p>
-                </PreviewComponents.Card>
-                <PreviewComponents.Card variant="elevated">
-                  <h5 className="font-semibold mb-2">Elevated Card</h5>
-                  <p className="text-sm text-gray-600">This card has shadow elevation.</p>
-                </PreviewComponents.Card>
-              </div>
-            </div>
-          )}
+              {template.id === 'card' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <PreviewComponents.Card variant="default">
+                    <h5 className="font-semibold mb-2">Default Card</h5>
+                    <p className="text-sm text-gray-600">This is a default card with basic styling.</p>
+                  </PreviewComponents.Card>
+                  <PreviewComponents.Card variant="outlined">
+                    <h5 className="font-semibold mb-2">Outlined Card</h5>
+                    <p className="text-sm text-gray-600">This card has a border outline.</p>
+                  </PreviewComponents.Card>
+                  <PreviewComponents.Card variant="elevated">
+                    <h5 className="font-semibold mb-2">Elevated Card</h5>
+                    <p className="text-sm text-gray-600">This card has shadow elevation.</p>
+                  </PreviewComponents.Card>
+                </div>
+              )}
 
-          {/* 입력 컴포넌트들 */}
-          {selectedComponents.includes('input') && (
-            <div className="space-y-3 border border-purple-200 p-4 rounded bg-purple-50">
-              <h4 className="font-medium text-gray-700 text-purple-800">✅ Input 컴포넌트</h4>
-              <div className="space-y-2 max-w-md">
-                <PreviewComponents.Input placeholder="Default input" variant="default" />
-                <PreviewComponents.Input placeholder="Filled input" variant="filled" />
-              </div>
+              {template.id === 'input' && (
+                <div className="space-y-2 max-w-md">
+                  <PreviewComponents.Input placeholder="Default input" variant="default" />
+                  <PreviewComponents.Input placeholder="Filled input" variant="filled" />
+                </div>
+              )}
+
+              {/* 다른 컴포넌트들을 위한 기본 미리보기 */}
+              {!['button', 'card', 'input'].includes(template.id) && (
+                <div className="p-4 bg-white rounded border border-gray-200">
+                  <p className="text-sm text-gray-600">
+                    <strong>{template.name}</strong> 컴포넌트 미리보기
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    이 컴포넌트는 생성된 코드에 포함됩니다.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+          ))}
         </div>
 
         {/* 타이포그래피 미리보기 */}
@@ -262,7 +287,7 @@ export default function DesignSystemV2() {
         </div>
       </div>
     )
-  }, [selectedComponents, renderKey])
+  }, [selectedComponents, renderKey, selectedTemplates])
 
   // 초기화 중일 때 로딩 표시
   if (!isInitialized) {
@@ -285,21 +310,41 @@ export default function DesignSystemV2() {
         <Navigation />
         
         {/* v2 페이지 전용 기능 헤더 */}
-        <header className="sticky top-[80px] z-40 bg-white border-b border-gray-200">
-          <div className="px-6 py-3">
+        <header className="sticky top-[80px] z-40 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200">
+          <div className="px-6 py-4">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">디자인 시스템 v2</h2>
-                <p className="text-sm text-gray-600">실시간 테마 편집 및 미리보기</p>
-              </div>
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-lg font-bold">v2</span>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">디자인 시스템 생성기 v2</h2>
+                    <p className="text-sm text-gray-600">실시간 테마 편집 및 컴포넌트 미리보기</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6">
+                {/* 테마 상태 */}
+                <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border border-gray-200">
                   <div className={cn(
-                    'w-3 h-3 rounded-full',
+                    'w-3 h-3 rounded-full animate-pulse',
                     themeState.isValid ? 'bg-green-500' : 'bg-red-500'
                   )}></div>
-                  <span className="text-sm font-medium">
-                    {themeState.isValid ? '테마 적용됨' : '테마 오류'}
+                  <span className={cn(
+                    'text-sm font-medium',
+                    themeState.isValid ? 'text-green-700' : 'text-red-700'
+                  )}>
+                    {themeState.isValid ? '테마 정상' : '테마 오류'}
+                  </span>
+                </div>
+                
+                {/* 선택된 컴포넌트 수 */}
+                <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span className="text-sm font-medium text-gray-700">
+                    컴포넌트 {selectedComponents.length}개 선택
                   </span>
                 </div>
               </div>
@@ -308,7 +353,7 @@ export default function DesignSystemV2() {
         </header>
 
         {/* 메인 레이아웃 */}
-        <div className="flex h-[calc(100vh-140px)]">
+        <div className="flex h-[calc(100vh-160px)]">
           {/* 왼쪽: 테마 에디터 */}
           <div className="w-1/3 border-r border-gray-200 bg-white">
             <ThemeErrorBoundary onThemeError={(error) => setThemeErrors([error.message])}>
