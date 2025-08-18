@@ -141,7 +141,10 @@ const PreviewComponents = {
       }
     )}>
       {src ? (
-        <img src={src} alt={name} className="w-full h-full rounded-full object-cover" />
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt={name} className="w-full h-full rounded-full object-cover" />
+        </>
       ) : (
         name.charAt(0).toUpperCase()
       )}
@@ -400,7 +403,7 @@ export default function DesignSystemV2() {
                   <PreviewComponents.Typography variant="h3">Heading 3</PreviewComponents.Typography>
                   <PreviewComponents.Typography variant="body">This is body text with normal weight and standard line height.</PreviewComponents.Typography>
                   <PreviewComponents.Typography variant="small">Small text for captions and secondary information.</PreviewComponents.Typography>
-                  <PreviewComponents.Typography variant="code">const example = 'code text';</PreviewComponents.Typography>
+                  <PreviewComponents.Typography variant="code">const example = &apos;code text&apos;;</PreviewComponents.Typography>
                 </div>
               )}
 
@@ -447,7 +450,7 @@ export default function DesignSystemV2() {
 
               {(template.id === 'toast' || template.name === 'Toast') && (
                 <div className="space-y-2">
-                  <PreviewComponents.Alert variant="success" title="토스트 알림" children="작업이 성공적으로 완료되었습니다." />
+                  <PreviewComponents.Alert variant="success" title="토스트 알림">작업이 성공적으로 완료되었습니다.</PreviewComponents.Alert>
                 </div>
               )}
 
