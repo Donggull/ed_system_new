@@ -128,11 +128,6 @@ export default function DesignSystemV2() {
     })
   }
 
-  // 선택된 컴포넌트 템플릿 필터링
-  const selectedTemplates = allComponentTemplates.filter(template => 
-    selectedComponents.includes(template.id)
-  )
-
   // 강제 리렌더링을 위한 상태
   const [renderKey, setRenderKey] = useState(0)
 
