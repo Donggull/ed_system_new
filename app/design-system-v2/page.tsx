@@ -14,6 +14,14 @@ import { ComponentTemplate } from '@/types/database'
 import { cn } from '@/lib/utils'
 import { ThemeErrorBoundary } from '@/components/ui/ErrorBoundary'
 import ExportModal from '@/components/export/ExportModal'
+import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemModal'
+import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
+import VersionHistoryModal from '@/components/design-system/VersionHistoryModal'
+import { DesignSystem, DesignSystemVersion } from '@/types/database'
+import { useDesignSystem } from '@/lib/hooks/useDesignSystem'
+import { useToast } from '@/hooks/useToast'
+import Toast from '@/components/ui/Toast'
+import { generateCssVariables, applyCssVariables } from '@/lib/theme-utils'
 
 // 컴포넌트 미리보기를 위한 예시 컴포넌트들
 const PreviewComponents = {
@@ -248,7 +256,14 @@ export default function DesignSystemV2() {
   const [themeErrors, setThemeErrors] = useState<string[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
+  const [showSaveDesignSystemModal, setShowSaveDesignSystemModal] = useState(false)
+  const [showSavedDesignSystems, setShowSavedDesignSystems] = useState(false)
+  const [currentDesignSystem, setCurrentDesignSystem] = useState<DesignSystem | null>(null)
+  const [showVersionHistory, setShowVersionHistory] = useState(false)
+  const [versionHistoryDesignSystem, setVersionHistoryDesignSystem] = useState<DesignSystem | null>(null)
   const { user } = useAuth()
+  const { toast, success, error: showError, hideToast } = useToast()
+  const { createVersion } = useDesignSystem()
 
   // 컴포넌트 마운트 시 테마 초기화
   useEffect(() => {
@@ -323,6 +338,71 @@ export default function DesignSystemV2() {
 
   // 강제 리렌더링을 위한 상태
   const [renderKey, setRenderKey] = useState(0)
+
+  // Design System handlers
+  const handleSaveDesignSystem = () => {
+    if (!user) {
+      showError('로그인이 필요합니다.')
+      return
+    }
+    setShowSaveDesignSystemModal(true)
+  }
+
+  const handleLoadDesignSystem = (designSystem: DesignSystem) => {
+    // 테마 상태 복원
+    themeManager.updateTheme(designSystem.theme_data as any, { animate: true })
+    
+    // 컴포넌트 선택 상태 복원
+    setSelectedComponents(designSystem.selected_components)
+    
+    // 현재 디자인 시스템 설정
+    setCurrentDesignSystem(designSystem)
+    
+    // 성공 메시지 표시
+    success(`디자인 시스템 "${designSystem.name}"을 불러왔습니다!`)
+    
+    // 강제 리렌더링
+    setRenderKey(prev => prev + 1)
+  }
+
+  const handleEditDesignSystem = (designSystem: DesignSystem) => {
+    setCurrentDesignSystem(designSystem)
+    setShowSaveDesignSystemModal(true)
+    setShowSavedDesignSystems(false)
+  }
+
+  const handleViewVersionHistory = (designSystem: DesignSystem) => {
+    setVersionHistoryDesignSystem(designSystem)
+    setShowVersionHistory(true)
+    setShowSavedDesignSystems(false)
+  }
+
+  const handleCreateVersion = async (changeNotes?: string) => {
+    if (!versionHistoryDesignSystem || !themeState.currentTheme) return
+
+    await createVersion(
+      versionHistoryDesignSystem.id,
+      themeState.currentTheme as any,
+      selectedComponents,
+      {}, // component_settings - v2에서는 빈 객체
+      changeNotes
+    )
+
+    success('새 버전이 생성되었습니다!')
+  }
+
+  const handleLoadVersion = (version: DesignSystemVersion) => {
+    // 테마 상태 복원
+    themeManager.updateTheme(version.theme_data as any, { animate: true })
+    
+    // 컴포넌트 선택 상태 복원
+    setSelectedComponents(version.selected_components)
+    
+    // 강제 리렌더링
+    setRenderKey(prev => prev + 1)
+    
+    success(`버전 ${version.version_number}을 불러왔습니다!`)
+  }
 
   // 컴포넌트 선택 변경 감지
   useEffect(() => {
@@ -598,6 +678,22 @@ export default function DesignSystemV2() {
               </div>
               
               <div className="flex items-center gap-6">
+                {/* 저장/로드 버튼들 */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleSaveDesignSystem}
+                    className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
+                  >
+                    💾 저장
+                  </button>
+                  <button
+                    onClick={() => setShowSavedDesignSystems(true)}
+                    className="px-4 py-2 bg-white text-purple-600 text-sm font-medium rounded-lg border border-purple-200 hover:bg-purple-50 transition-colors shadow-sm"
+                  >
+                    📁 불러오기
+                  </button>
+                </div>
+
                 {/* 테마 상태 */}
                 <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border border-gray-200">
                   <div className={cn(
@@ -815,6 +911,56 @@ export default function DesignSystemV2() {
           theme={themeState.currentTheme}
           projectName="My Design System"
         />
+
+        {/* Toast Notifications */}
+        <Toast 
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.isVisible}
+          onClose={hideToast}
+        />
+
+        {/* Save Design System Modal */}
+        <SaveDesignSystemModal
+          isOpen={showSaveDesignSystemModal}
+          onClose={() => {
+            setShowSaveDesignSystemModal(false)
+            setCurrentDesignSystem(null)
+          }}
+          themeData={themeState.currentTheme as any}
+          selectedComponents={selectedComponents}
+          componentSettings={{}}
+          existingDesignSystem={currentDesignSystem ? {
+            id: currentDesignSystem.id,
+            name: currentDesignSystem.name,
+            description: currentDesignSystem.description,
+            tags: currentDesignSystem.tags,
+            is_public: currentDesignSystem.is_public
+          } : undefined}
+        />
+
+        {/* Saved Design Systems Modal */}
+        <SavedDesignSystems
+          isOpen={showSavedDesignSystems}
+          onClose={() => setShowSavedDesignSystems(false)}
+          onLoadDesignSystem={handleLoadDesignSystem}
+          onEditDesignSystem={handleEditDesignSystem}
+          onViewVersionHistory={handleViewVersionHistory}
+        />
+
+        {/* Version History Modal */}
+        {versionHistoryDesignSystem && (
+          <VersionHistoryModal
+            isOpen={showVersionHistory}
+            onClose={() => {
+              setShowVersionHistory(false)
+              setVersionHistoryDesignSystem(null)
+            }}
+            designSystem={versionHistoryDesignSystem}
+            onLoadVersion={handleLoadVersion}
+            onCreateVersion={handleCreateVersion}
+          />
+        )}
       </div>
     </ProtectedRoute>
   )
