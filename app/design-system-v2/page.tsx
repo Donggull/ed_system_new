@@ -50,18 +50,184 @@ const PreviewComponents = {
     </div>
   ),
 
-  Input: ({ placeholder = 'Enter text...', variant = 'default' }: any) => (
-    <input
-      type="text"
-      placeholder={placeholder}
-      className={cn(
-        'w-full h-10 px-4 text-base rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1',
-        {
-          'border-[hsl(var(--color-secondary-300))] bg-white focus:border-[hsl(var(--color-primary-500))] focus:ring-[hsl(var(--color-primary-500))]': variant === 'default',
-          'border-transparent bg-[hsl(var(--color-secondary-100))] focus:bg-white focus:border-[hsl(var(--color-primary-500))] focus:ring-[hsl(var(--color-primary-500))]': variant === 'filled'
-        }
+  Input: ({ placeholder = 'Enter text...', variant = 'default', label }: any) => (
+    <div className="space-y-2">
+      {label && (
+        <label className="block text-sm font-medium text-[hsl(var(--color-secondary-700))]">
+          {label}
+        </label>
       )}
-    />
+      <input
+        type="text"
+        placeholder={placeholder}
+        className={cn(
+          'w-full h-10 px-4 text-base rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1',
+          {
+            'border-[hsl(var(--color-secondary-300))] bg-white focus:border-[hsl(var(--color-primary-500))] focus:ring-[hsl(var(--color-primary-500))]': variant === 'default',
+            'border-transparent bg-[hsl(var(--color-secondary-100))] focus:bg-white focus:border-[hsl(var(--color-primary-500))] focus:ring-[hsl(var(--color-primary-500))]': variant === 'filled'
+          }
+        )}
+      />
+    </div>
+  ),
+
+  Modal: ({ title = 'Modal Title', children = 'Modal content goes here.' }: any) => (
+    <div className="relative bg-white rounded-lg shadow-xl p-6 border border-gray-200 max-w-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <button className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+      </div>
+      <div className="text-gray-600">{children}</div>
+      <div className="flex gap-2 mt-4">
+        <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))]">
+          확인
+        </button>
+        <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300">
+          취소
+        </button>
+      </div>
+    </div>
+  ),
+
+  Typography: ({ variant = 'body', children }: any) => {
+    const componentMap: Record<string, keyof JSX.IntrinsicElements> = {
+      h1: 'h1',
+      h2: 'h2', 
+      h3: 'h3',
+      h4: 'h4',
+      body: 'p',
+      small: 'span',
+      code: 'code'
+    }
+
+    const classMap: Record<string, string> = {
+      h1: 'text-4xl font-bold text-gray-900 leading-tight',
+      h2: 'text-3xl font-bold text-gray-800 leading-tight',
+      h3: 'text-2xl font-semibold text-gray-700 leading-tight',
+      h4: 'text-xl font-medium text-gray-700 leading-tight',
+      body: 'text-base text-gray-600 leading-relaxed',
+      small: 'text-sm text-gray-500 leading-relaxed',
+      code: 'font-mono text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded'
+    }
+
+    const Component = componentMap[variant] || 'p'
+    const classes = classMap[variant] || classMap.body
+
+    return React.createElement(Component, { className: classes }, children)
+  },
+
+  Badge: ({ variant = 'default', children = 'Badge' }: any) => (
+    <span className={cn(
+      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+      {
+        'bg-[hsl(var(--color-secondary-100))] text-[hsl(var(--color-secondary-800))]': variant === 'default',
+        'bg-[hsl(var(--color-primary-100))] text-[hsl(var(--color-primary-800))]': variant === 'primary',
+        'bg-green-100 text-green-800': variant === 'success',
+        'bg-yellow-100 text-yellow-800': variant === 'warning',
+        'bg-red-100 text-red-800': variant === 'danger'
+      }
+    )}>
+      {children}
+    </span>
+  ),
+
+  Avatar: ({ size = 'md', src, name = 'User' }: any) => (
+    <div className={cn(
+      'rounded-full bg-[hsl(var(--color-primary-500))] flex items-center justify-center text-white font-medium',
+      {
+        'w-8 h-8 text-sm': size === 'sm',
+        'w-12 h-12 text-base': size === 'md',
+        'w-16 h-16 text-lg': size === 'lg'
+      }
+    )}>
+      {src ? (
+        <img src={src} alt={name} className="w-full h-full rounded-full object-cover" />
+      ) : (
+        name.charAt(0).toUpperCase()
+      )}
+    </div>
+  ),
+
+  Alert: ({ variant = 'info', title = 'Alert Title', children = 'This is an alert message.' }: any) => (
+    <div className={cn(
+      'p-4 rounded-lg border-l-4',
+      {
+        'bg-blue-50 border-blue-400': variant === 'info',
+        'bg-green-50 border-green-400': variant === 'success',
+        'bg-yellow-50 border-yellow-400': variant === 'warning',
+        'bg-red-50 border-red-400': variant === 'danger'
+      }
+    )}>
+      <div className="flex">
+        <div className="flex-shrink-0">
+          <span className={cn(
+            'text-sm',
+            {
+              'text-blue-400': variant === 'info',
+              'text-green-400': variant === 'success',
+              'text-yellow-400': variant === 'warning',
+              'text-red-400': variant === 'danger'
+            }
+          )}>
+            {variant === 'info' && 'ℹ️'}
+            {variant === 'success' && '✅'}
+            {variant === 'warning' && '⚠️'}
+            {variant === 'danger' && '❌'}
+          </span>
+        </div>
+        <div className="ml-3">
+          <h3 className={cn(
+            'text-sm font-medium',
+            {
+              'text-blue-800': variant === 'info',
+              'text-green-800': variant === 'success',
+              'text-yellow-800': variant === 'warning',
+              'text-red-800': variant === 'danger'
+            }
+          )}>
+            {title}
+          </h3>
+          <div className={cn(
+            'mt-1 text-sm',
+            {
+              'text-blue-700': variant === 'info',
+              'text-green-700': variant === 'success',
+              'text-yellow-700': variant === 'warning',
+              'text-red-700': variant === 'danger'
+            }
+          )}>
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+
+  Checkbox: ({ label = 'Checkbox label', checked = false }: any) => (
+    <label className="flex items-center space-x-2 cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        readOnly
+        className="rounded border-[hsl(var(--color-secondary-300))] text-[hsl(var(--color-primary-500))] focus:ring-[hsl(var(--color-primary-500))]"
+      />
+      <span className="text-sm text-gray-700">{label}</span>
+    </label>
+  ),
+
+  Switch: ({ label = 'Switch label', enabled = false }: any) => (
+    <label className="flex items-center space-x-2 cursor-pointer">
+      <div className={cn(
+        'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
+        enabled ? 'bg-[hsl(var(--color-primary-500))]' : 'bg-gray-200'
+      )}>
+        <span className={cn(
+          'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+          enabled ? 'translate-x-6' : 'translate-x-1'
+        )} />
+      </div>
+      <span className="text-sm text-gray-700">{label}</span>
+    </label>
   )
 }
 
@@ -215,14 +381,98 @@ export default function DesignSystemV2() {
               )}
 
               {template.id === 'input' && (
-                <div className="space-y-2 max-w-md">
-                  <PreviewComponents.Input placeholder="Default input" variant="default" />
-                  <PreviewComponents.Input placeholder="Filled input" variant="filled" />
+                <div className="space-y-3 max-w-md">
+                  <PreviewComponents.Input placeholder="Default input" variant="default" label="Default Input" />
+                  <PreviewComponents.Input placeholder="Filled input" variant="filled" label="Filled Input" />
                 </div>
               )}
 
-              {/* 다른 컴포넌트들을 위한 기본 미리보기 */}
-              {!['button', 'card', 'input'].includes(template.id) && (
+              {template.id === 'modal' && (
+                <div className="flex justify-center">
+                  <PreviewComponents.Modal title="예시 모달" />
+                </div>
+              )}
+
+              {template.id === 'typography' && (
+                <div className="space-y-3">
+                  <PreviewComponents.Typography variant="h1">Heading 1</PreviewComponents.Typography>
+                  <PreviewComponents.Typography variant="h2">Heading 2</PreviewComponents.Typography>
+                  <PreviewComponents.Typography variant="h3">Heading 3</PreviewComponents.Typography>
+                  <PreviewComponents.Typography variant="body">This is body text with normal weight and standard line height.</PreviewComponents.Typography>
+                  <PreviewComponents.Typography variant="small">Small text for captions and secondary information.</PreviewComponents.Typography>
+                  <PreviewComponents.Typography variant="code">const example = 'code text';</PreviewComponents.Typography>
+                </div>
+              )}
+
+              {(template.id === 'badge' || template.name === 'Badge') && (
+                <div className="flex flex-wrap gap-2">
+                  <PreviewComponents.Badge variant="default">Default</PreviewComponents.Badge>
+                  <PreviewComponents.Badge variant="primary">Primary</PreviewComponents.Badge>
+                  <PreviewComponents.Badge variant="success">Success</PreviewComponents.Badge>
+                  <PreviewComponents.Badge variant="warning">Warning</PreviewComponents.Badge>
+                  <PreviewComponents.Badge variant="danger">Danger</PreviewComponents.Badge>
+                </div>
+              )}
+
+              {(template.id === 'avatar' || template.name === 'Avatar') && (
+                <div className="flex items-center gap-4">
+                  <PreviewComponents.Avatar size="sm" name="Small" />
+                  <PreviewComponents.Avatar size="md" name="Medium" />
+                  <PreviewComponents.Avatar size="lg" name="Large" />
+                </div>
+              )}
+
+              {(template.id === 'alert' || template.name === 'Alert') && (
+                <div className="space-y-3">
+                  <PreviewComponents.Alert variant="info" title="정보" />
+                  <PreviewComponents.Alert variant="success" title="성공" />
+                  <PreviewComponents.Alert variant="warning" title="경고" />
+                  <PreviewComponents.Alert variant="danger" title="오류" />
+                </div>
+              )}
+
+              {(template.id === 'checkbox' || template.name === 'Checkbox') && (
+                <div className="space-y-2">
+                  <PreviewComponents.Checkbox label="체크박스 옵션 1" />
+                  <PreviewComponents.Checkbox label="체크박스 옵션 2" checked={true} />
+                </div>
+              )}
+
+              {(template.id === 'switch' || template.name === 'Switch') && (
+                <div className="space-y-2">
+                  <PreviewComponents.Switch label="스위치 옵션 1" />
+                  <PreviewComponents.Switch label="스위치 옵션 2" enabled={true} />
+                </div>
+              )}
+
+              {(template.id === 'toast' || template.name === 'Toast') && (
+                <div className="space-y-2">
+                  <PreviewComponents.Alert variant="success" title="토스트 알림" children="작업이 성공적으로 완료되었습니다." />
+                </div>
+              )}
+
+              {(template.id === 'loading-spinner' || template.name === 'Loading Spinner') && (
+                <div className="flex items-center justify-center p-8">
+                  <div className="w-8 h-8 border-4 border-[hsl(var(--color-primary-500))] border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+
+              {(template.id === 'tabs' || template.name === 'Tabs') && (
+                <div className="space-y-4">
+                  <div className="flex space-x-1 border-b">
+                    <button className="px-4 py-2 text-sm font-medium border-b-2 border-[hsl(var(--color-primary-500))] text-[hsl(var(--color-primary-600))]">탭 1</button>
+                    <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">탭 2</button>
+                    <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">탭 3</button>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded">
+                    <p className="text-sm text-gray-600">탭 1의 내용입니다.</p>
+                  </div>
+                </div>
+              )}
+
+              {/* 기타 컴포넌트들을 위한 기본 미리보기 */}
+              {!['button', 'card', 'input', 'modal', 'typography', 'badge', 'avatar', 'alert', 'checkbox', 'switch', 'toast', 'loading-spinner', 'tabs'].includes(template.id) && 
+               !['Badge', 'Avatar', 'Alert', 'Checkbox', 'Switch', 'Toast', 'Loading Spinner', 'Tabs'].includes(template.name) && (
                 <div className="p-4 bg-white rounded border border-gray-200">
                   <p className="text-sm text-gray-600">
                     <strong>{template.name}</strong> 컴포넌트 미리보기
