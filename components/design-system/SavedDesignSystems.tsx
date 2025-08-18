@@ -42,19 +42,54 @@ export default function SavedDesignSystems({
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [sortBy, setSortBy] = useState<'updated' | 'name' | 'created'>('updated')
   const [userFavoriteIds, setUserFavoriteIds] = useState<Set<string>>(new Set())
+  const [forceRefresh, setForceRefresh] = useState(0)
 
   useEffect(() => {
     if (isOpen && user) {
-      console.log('Loading design systems for user:', user.id)
-      loadUserDesignSystems(user.id)
-      loadFavorites()
+      console.log('Modal opened - Loading design systems for user:', user.id)
+      
+      const loadData = async () => {
+        try {
+          // Reset filters to avoid UI state issues
+          setSelectedTag('')
+          setShowFavoritesOnly(false)
+          
+          // Load user design systems first
+          console.log('Calling loadUserDesignSystems...')
+          const systems = await loadUserDesignSystems(user.id)
+          console.log('loadUserDesignSystems returned:', systems?.length || 0, 'systems')
+          
+          // Load favorites separately
+          console.log('Loading favorites...')
+          await loadFavorites()
+          console.log('Favorites loaded successfully')
+          
+        } catch (error) {
+          console.error('Failed to load data:', error)
+        }
+      }
+      
+      loadData()
+    } else {
+      console.log('Modal not open or user not available:', { isOpen, user: !!user })
     }
-  }, [isOpen, user, loadUserDesignSystems]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isOpen, user, forceRefresh]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Debug: log design systems when they change
   useEffect(() => {
-    console.log('Design systems updated:', designSystems.length, designSystems)
-  }, [designSystems])
+    console.log('Design systems state updated:', {
+      count: designSystems.length,
+      systems: designSystems.map(ds => ({ id: ds.id, name: ds.name })),
+      isLoading,
+      error,
+      isOpen,
+      hasUser: !!user
+    })
+    
+    if (designSystems.length === 0 && !isLoading && !error && isOpen && user) {
+      console.log('🚨 ISSUE: No design systems found despite user being authenticated and no loading/error state')
+    }
+  }, [designSystems, isLoading, error, isOpen, user])
 
   const loadFavorites = async () => {
     if (!user) return
@@ -233,12 +268,64 @@ export default function SavedDesignSystems({
                   : 'No Matching Design Systems'
                 }
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-4">
                 {designSystems.length === 0 
                   ? "You haven't saved any design systems yet. Create and save your first design system!"
                   : 'Try adjusting your filters to see more results.'
                 }
               </p>
+              {designSystems.length === 0 && !isLoading && user && (
+                <div className="space-y-3">
+                  <button
+                    onClick={() => {
+                      console.log('Manual refresh triggered - forcing reload...')
+                      setForceRefresh(prev => prev + 1)
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm mr-2"
+                  >
+                    🔄 새로고침
+                  </button>
+                  <button
+                    onClick={async () => {
+                      console.log('Direct database call - bypassing hook state...')
+                      try {
+                        const { getUserDesignSystems } = await import('@/lib/supabase/design-systems')
+                        const result = await getUserDesignSystems(user.id)
+                        console.log('Direct DB call result:', result)
+                        if (result.data) {
+                          console.log('Found systems via direct call:', result.data.length)
+                        }
+                      } catch (error) {
+                        console.error('Direct DB call failed:', error)
+                      }
+                    }}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm mr-2"
+                  >
+                    🔍 직접 조회
+                  </button>
+                  <button
+                    onClick={async () => {
+                      console.log('Running connection test...')
+                      try {
+                        const { testSupabaseConnection } = await import('@/lib/supabase/design-systems')
+                        const result = await testSupabaseConnection()
+                        console.log('Connection test result:', result)
+                        if (result.success) {
+                          alert(`연결 성공! 사용자: ${result.userId}, 시스템 수: ${result.userSystemsCount}`)
+                        } else {
+                          alert(`연결 실패: ${result.error}`)
+                        }
+                      } catch (error) {
+                        console.error('Connection test failed:', error)
+                        alert(`연결 테스트 오류: ${error}`)
+                      }
+                    }}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
+                  >
+                    🧪 연결 테스트
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

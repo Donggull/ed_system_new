@@ -10,6 +10,72 @@ import {
   ComponentSettings 
 } from '@/types/database'
 
+// Test Supabase connection and authentication
+export async function testSupabaseConnection() {
+  console.log('🧪 Testing Supabase connection and authentication...')
+  
+  if (!supabase) {
+    console.error('❌ Supabase client is null')
+    return { success: false, error: 'Supabase client not available' }
+  }
+
+  try {
+    // Test 1: Basic connection
+    console.log('🔍 Testing basic connection...')
+    const { data: authData, error: authError } = await supabase.auth.getUser()
+    
+    if (authError) {
+      console.error('❌ Auth test failed:', authError)
+      return { success: false, error: `Auth error: ${authError.message}` }
+    }
+
+    if (!authData.user) {
+      console.log('ℹ️ User not authenticated')
+      return { success: false, error: 'User not authenticated' }
+    }
+
+    console.log('✅ User authenticated:', authData.user.id)
+
+    // Test 2: Database access
+    console.log('🔍 Testing database access...')
+    const { data: testData, error: dbError } = await supabase
+      .from('design_systems')
+      .select('id')
+      .limit(1)
+
+    if (dbError) {
+      console.error('❌ Database test failed:', dbError)
+      return { success: false, error: `Database error: ${dbError.message}` }
+    }
+
+    console.log('✅ Database access successful')
+
+    // Test 3: User-specific query
+    console.log('🔍 Testing user-specific query...')
+    const { data: userSystems, error: userError } = await supabase
+      .from('design_systems')
+      .select('id, name')
+      .eq('user_id', authData.user.id)
+      .limit(5)
+
+    if (userError) {
+      console.error('❌ User query test failed:', userError)
+      return { success: false, error: `User query error: ${userError.message}` }
+    }
+
+    console.log(`✅ User query successful - found ${userSystems?.length || 0} design systems`)
+
+    return { 
+      success: true, 
+      userId: authData.user.id,
+      userSystemsCount: userSystems?.length || 0
+    }
+  } catch (error) {
+    console.error('💥 Connection test exception:', error)
+    return { success: false, error: `Exception: ${error}` }
+  }
+}
+
 // supabase is already imported from the client
 
 // Design System CRUD Operations
@@ -114,19 +180,40 @@ export async function getUserDesignSystems(
   limit: number = 50,
   offset: number = 0
 ): Promise<{ data: DesignSystem[] | null; error: any }> {
+  console.log('📡 getUserDesignSystems called:', { userId, limit, offset })
+  
   if (!supabase) {
+    console.error('❌ Supabase client not available')
     return { data: null, error: 'Supabase client not available' }
   }
 
   // Get current user if userId is not provided
   let targetUserId = userId
   if (!targetUserId) {
-    const { data: { user } } = await supabase.auth.getUser()
+    console.log('🔐 No userId provided, getting current user...')
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError) {
+      console.error('❌ Auth error:', authError)
+      return { data: null, error: authError }
+    }
+    
     if (!user) {
+      console.error('❌ User not authenticated')
       return { data: null, error: 'User not authenticated' }
     }
+    
     targetUserId = user.id
+    console.log('✅ Current user ID:', targetUserId)
+  } else {
+    console.log('✅ Using provided userId:', targetUserId)
   }
+
+  console.log('🔍 Querying design_systems table with params:', {
+    user_id: targetUserId,
+    limit,
+    offset: `${offset} to ${offset + limit - 1}`
+  })
 
   const { data, error } = await supabase
     .from('design_systems')
@@ -134,6 +221,27 @@ export async function getUserDesignSystems(
     .eq('user_id', targetUserId)
     .order('updated_at', { ascending: false })
     .range(offset, offset + limit - 1)
+
+  console.log('📊 Database query result:', {
+    hasData: !!data,
+    dataCount: data?.length || 0,
+    hasError: !!error,
+    errorCode: error?.code,
+    errorMessage: error?.message,
+    errorDetails: error?.details
+  })
+
+  if (data && data.length > 0) {
+    console.log('✅ Found design systems:', data.map(ds => ({
+      id: ds.id,
+      name: ds.name,
+      user_id: ds.user_id,
+      created_at: ds.created_at,
+      updated_at: ds.updated_at
+    })))
+  } else if (!error) {
+    console.log('ℹ️ No design systems found for user:', targetUserId)
+  }
 
   return { data, error }
 }

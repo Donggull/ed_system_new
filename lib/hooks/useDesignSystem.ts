@@ -176,36 +176,70 @@ export function useDesignSystem() {
   }, [handleError, currentDesignSystem])
 
   // Load user's design systems
-  const loadUserDesignSystems = useCallback(async (userId?: string, limit = 50, offset = 0) => {
+  const loadUserDesignSystems = useCallback(async (userId?: string, limit = 50, offset = 0, retryCount = 0) => {
+    console.log(`🔄 loadUserDesignSystems called: userId=${userId}, limit=${limit}, offset=${offset}, retry=${retryCount}`)
+    
     setIsLoading(true)
     setError(null)
 
     try {
-      console.log('Loading design systems for userId:', userId)
+      console.log('Calling getUserDesignSystems from database layer...')
       const { data: result, error } = await getUserDesignSystems(userId, limit, offset)
       
+      console.log('Database response:', { 
+        hasData: !!result, 
+        dataLength: result?.length || 0, 
+        hasError: !!error,
+        errorMessage: error?.message 
+      })
+      
       if (error) {
-        console.error('Error loading design systems:', error)
+        console.error('❌ Database error loading design systems:', error)
         handleError(error)
+        
+        // Retry logic for transient errors
+        if (retryCount < 2 && error.message?.includes('network')) {
+          console.log(`🔄 Retrying due to network error (attempt ${retryCount + 1}/3)`)
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          return loadUserDesignSystems(userId, limit, offset, retryCount + 1)
+        }
+        
         return []
       }
 
       const systems = result || []
-      console.log('Loaded design systems:', systems.length, systems)
+      console.log(`✅ Successfully loaded ${systems.length} design systems:`, 
+        systems.map(s => ({ id: s.id, name: s.name, user_id: s.user_id })))
       
       if (offset === 0) {
+        console.log('🔄 Setting design systems (fresh load)')
         setDesignSystems(systems)
       } else {
+        console.log('🔄 Appending design systems (pagination)')
         setDesignSystems(prev => [...prev, ...systems])
       }
 
+      // Force a state update to ensure component re-renders
+      setTimeout(() => {
+        console.log('🔄 Post-load state verification - current designSystems count:', systems.length)
+      }, 100)
+
       return systems
     } catch (err) {
-      console.error('Exception loading design systems:', err)
+      console.error('💥 Exception loading design systems:', err)
       handleError(err)
+      
+      // Retry logic for exceptions too
+      if (retryCount < 2) {
+        console.log(`🔄 Retrying due to exception (attempt ${retryCount + 1}/3)`)
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        return loadUserDesignSystems(userId, limit, offset, retryCount + 1)
+      }
+      
       return []
     } finally {
       setIsLoading(false)
+      console.log('🏁 loadUserDesignSystems completed, isLoading set to false')
     }
   }, [handleError])
 
