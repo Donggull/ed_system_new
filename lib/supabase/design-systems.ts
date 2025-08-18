@@ -34,6 +34,12 @@ export async function saveDesignSystem({
     return { data: null, error: 'Supabase client not available' }
   }
 
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return { data: null, error: 'User not authenticated' }
+  }
+
   // Generate share token for potential sharing
   const share_token = Math.random().toString(36).substr(2, 10)
 
@@ -48,7 +54,8 @@ export async function saveDesignSystem({
       tags,
       is_public,
       share_token,
-      version: 1
+      version: 1,
+      user_id: user.id
     })
     .select()
     .single()
