@@ -1,5 +1,6 @@
 // 실시간 테마 관리 시스템
 import { Theme, parseTheme, generateCSSVariables, mergeWithDefaultTheme, DEFAULT_THEME } from './theme-parser'
+import { convertSimpleJsonToTheme, isSimpleJsonFormat } from './simple-theme-converter'
 
 export interface ThemeState {
   currentTheme: Theme
@@ -74,36 +75,61 @@ class ThemeManager {
     // 이전 상태 저장
     const previousTheme = { ...this.state.currentTheme }
     
-    // JSON 파싱 및 검증
-    const parseResult = parseTheme(jsonString)
+    try {
+      // 먼저 JSON 파싱 시도
+      const parsedJson = JSON.parse(jsonString)
+      
+      let finalTheme: Theme
+      
+      // 단순한 JSON 형식인지 확인
+      if (isSimpleJsonFormat(parsedJson)) {
+        console.log('Detected simple JSON format, converting to standard theme format')
+        finalTheme = convertSimpleJsonToTheme(parsedJson)
+      } else {
+        // 표준 형식으로 파싱 시도
+        const parseResult = parseTheme(jsonString)
+        
+        if (!parseResult.success) {
+          this.state = {
+            ...this.state,
+            isValid: false,
+            errors: parseResult.errors?.map(e => e.message) || ['Unknown error']
+          }
+          this.notifyListeners()
+          return false
+        }
+
+        // 기본 테마와 병합
+        finalTheme = mergeWithDefaultTheme(parseResult.data!)
+      }
+
+      // 최종 테마 적용
+      const mergedTheme = finalTheme
     
-    if (!parseResult.success) {
+      // 상태 업데이트
+      this.state = {
+        currentTheme: mergedTheme,
+        previousTheme,
+        isValid: true,
+        errors: [],
+        isTransitioning: animate
+      }
+
+      // CSS 변수 업데이트
+      this.updateCSSVariables(mergedTheme, { animate, animationDuration })
+      
+      this.notifyListeners()
+      return true
+    } catch (error) {
+      // JSON 파싱 오류 처리
       this.state = {
         ...this.state,
         isValid: false,
-        errors: parseResult.errors?.map(e => e.message) || ['Unknown error']
+        errors: [error instanceof Error ? `JSON parsing error: ${error.message}` : 'Invalid JSON format']
       }
       this.notifyListeners()
       return false
     }
-
-    // 기본 테마와 병합
-    const mergedTheme = mergeWithDefaultTheme(parseResult.data!)
-    
-    // 상태 업데이트
-    this.state = {
-      currentTheme: mergedTheme,
-      previousTheme,
-      isValid: true,
-      errors: [],
-      isTransitioning: animate
-    }
-
-    // CSS 변수 업데이트
-    this.updateCSSVariables(mergedTheme, { animate, animationDuration })
-    
-    this.notifyListeners()
-    return true
   }
 
   // 테마 객체로부터 직접 업데이트

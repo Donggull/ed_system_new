@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { themeManager, createDebouncedThemeUpdater, ThemeState } from '@/lib/theme-manager'
 import { DEFAULT_THEME } from '@/lib/theme-parser'
+import { convertSimpleJsonToTheme, isSimpleJsonFormat } from '@/lib/simple-theme-converter'
 
 interface ThemeEditorProps {
   className?: string
@@ -92,6 +93,58 @@ export default function ThemeEditor({
     }
   }, [jsonInput])
 
+  // 간단한 예시 JSON 적용
+  const handleLoadSimpleExample = useCallback(() => {
+    const simpleExample = {
+      "colors": {
+        "primary": "#04bcb4",
+        "primaryDark": "#02938c",
+        "secondary": "#e2f6f5",
+        "secondaryMedium": "#b8ede8",
+        "accent": "#FF6B35",
+        "background": "#FAFBFB",
+        "foreground": "#1A202C",
+        "muted": "#F5F7F7",
+        "mutedForeground": "#8B9898",
+        "border": "#e2e8f0",
+        "input": "#e2e8f0",
+        "ring": "#04bcb4",
+        "destructive": "#ef4444",
+        "destructiveForeground": "#ffffff"
+      },
+      "typography": {
+        "fontFamily": {
+          "primary": "Pretendard Variable, sans-serif",
+          "heading": "Manrope, sans-serif",
+          "accent": "Noto Serif KR, serif",
+          "display": "Custom Brutalist, sans-serif"
+        },
+        "fontSize": {
+          "xs": "0.75rem",
+          "sm": "0.875rem",
+          "base": "1rem",
+          "lg": "1.125rem",
+          "xl": "1.25rem",
+          "2xl": "1.5rem",
+          "3xl": "1.875rem",
+          "4xl": "2.25rem"
+        },
+        "fontWeight": {
+          "light": "300",
+          "normal": "400",
+          "medium": "500",
+          "semibold": "600",
+          "bold": "700",
+          "extrabold": "800"
+        }
+      }
+    }
+    
+    const formatted = JSON.stringify(simpleExample, null, 2)
+    setJsonInput(formatted)
+    handleInputChange(formatted)
+  }, [handleInputChange])
+
   // 텍스트 영역 자동 크기 조정
   const adjustTextareaHeight = useCallback(() => {
     const textarea = textareaRef.current
@@ -135,6 +188,13 @@ export default function ThemeEditor({
         </div>
         
         <div className="flex items-center gap-2">
+          <button
+            onClick={handleLoadSimpleExample}
+            className="px-3 py-1 text-sm bg-green-200 hover:bg-green-300 rounded-md transition-colors"
+            title="간단한 JSON 예시 로드"
+          >
+            간단 예시
+          </button>
           <button
             onClick={handleFormat}
             className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
