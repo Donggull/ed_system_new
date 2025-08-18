@@ -159,13 +159,7 @@ export async function getPublicDesignSystems(
 
   let query = supabase
     .from('design_systems')
-    .select(`
-      *,
-      profiles:user_id (
-        full_name,
-        avatar_url
-      )
-    `)
+    .select('*')
     .eq('is_public', true)
     .order(sortBy, { ascending: sortOrder === 'asc' })
     .range(offset, offset + limit - 1)
@@ -328,8 +322,7 @@ export async function getSharedDesignSystem(
     .from('shared_design_systems')
     .select(`
       *,
-      design_system:design_systems(*),
-      shared_by:shared_by_user_id(full_name, avatar_url)
+      design_system:design_systems(*)
     `)
     .eq('share_token', share_token)
     .single()

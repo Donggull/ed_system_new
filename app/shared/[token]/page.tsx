@@ -191,7 +191,7 @@ export default function SharedDesignSystemPage() {
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <span>👤 Shared by</span>
                   <span className="font-medium">
-                    {sharedData.shared_by?.full_name || 'Anonymous'}
+                    Anonymous
                   </span>
                 </div>
               </div>
