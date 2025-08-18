@@ -101,6 +101,15 @@ export default function ThemeEditor({
     }
   }, [])
 
+  // 라인 넘버 스크롤 동기화
+  const handleTextareaScroll = useCallback((e: React.UIEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target as HTMLTextAreaElement
+    const lineNumbersElement = textarea.parentElement?.querySelector('.line-numbers-container')
+    if (lineNumbersElement) {
+      lineNumbersElement.scrollTop = textarea.scrollTop
+    }
+  }, [])
+
   useEffect(() => {
     adjustTextareaHeight()
   }, [jsonInput, adjustTextareaHeight])
@@ -192,39 +201,47 @@ export default function ThemeEditor({
 
       {/* JSON 에디터 */}
       <div className="flex-1 p-4">
-        <div className="relative h-full flex">
-          {/* 줄 번호 */}
-          <div className="flex-shrink-0 w-12 bg-gray-50 border-r border-gray-200 rounded-l-lg overflow-hidden">
-            <div className="h-full p-2 overflow-y-auto">
-              <div className="text-xs text-gray-400 font-mono leading-5">
-                {jsonInput.split('\n').map((_, index) => (
-                  <div key={index} className="text-right pr-2 h-5 flex items-center justify-end">
-                    {index + 1}
-                  </div>
-                ))}
+        <div className="relative h-full">
+          <div className="h-full max-h-[400px] flex border rounded-lg overflow-hidden">
+            {/* 줄 번호 */}
+            <div className="flex-shrink-0 w-12 bg-gray-50 border-r border-gray-200 overflow-hidden">
+              <div 
+                className="line-numbers-container h-full p-2 pt-4 overflow-y-hidden"
+                style={{ 
+                  maxHeight: '400px'
+                }}
+              >
+                <div className="text-xs text-gray-400 font-mono leading-5">
+                  {jsonInput.split('\n').slice(0, 20).map((_, index) => (
+                    <div key={index} className="text-right pr-2 h-5 flex items-center justify-end">
+                      {index + 1}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+            
+            {/* 텍스트 에디터 */}
+            <textarea
+              ref={textareaRef}
+              value={jsonInput}
+              onChange={(e) => handleInputChange(e.target.value)}
+              onScroll={handleTextareaScroll}
+              className={cn(
+                'flex-1 h-full max-h-[400px] p-4 font-mono text-sm resize-none border-none',
+                'focus:outline-none focus:ring-0',
+                'transition-colors duration-200',
+                themeState.isValid 
+                  ? 'bg-white' 
+                  : 'bg-red-50'
+              )}
+              placeholder="JSON 테마 설정을 입력하세요..."
+              spellCheck={false}
+              style={{ 
+                lineHeight: '1.25rem' // 줄 번호와 맞추기 위해
+              }}
+            />
           </div>
-          
-          {/* 텍스트 에디터 */}
-          <textarea
-            ref={textareaRef}
-            value={jsonInput}
-            onChange={(e) => handleInputChange(e.target.value)}
-            className={cn(
-              'flex-1 h-full min-h-[400px] p-4 border-y border-r rounded-r-lg font-mono text-sm resize-none',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-              'transition-colors duration-200',
-              themeState.isValid 
-                ? 'border-gray-300 bg-white' 
-                : 'border-red-300 bg-red-50'
-            )}
-            placeholder="JSON 테마 설정을 입력하세요..."
-            spellCheck={false}
-            style={{ 
-              lineHeight: '1.25rem' // 줄 번호와 맞추기 위해
-            }}
-          />
         </div>
       </div>
 
