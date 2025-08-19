@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, MinusIcon } from '@heroicons/react/24/outline'
 
 export default function CardThemePage() {
   const [theme, setTheme] = useState({
@@ -35,12 +34,12 @@ export default function CardThemePage() {
       const root = document.documentElement
       if (parsed.colors) {
         Object.entries(parsed.colors).forEach(([key, value]) => {
-          if (typeof value === 'object') {
+          if (typeof value === 'object' && value !== null) {
             Object.entries(value).forEach(([shade, color]) => {
-              root.style.setProperty(`--color-${key}-${shade}`, color)
+              root.style.setProperty(`--color-${key}-${shade}`, color as string)
             })
           } else {
-            root.style.setProperty(`--color-${key}`, value)
+            root.style.setProperty(`--color-${key}`, value as string)
           }
         })
       }
@@ -128,8 +127,12 @@ export default function CardThemePage() {
                   June 2025
                 </h3>
                 <div className="flex space-x-2">
-                  <ChevronLeftIcon className="h-5 w-5 text-gray-400" />
-                  <ChevronRightIcon className="h-5 w-5 text-gray-400" />
+                  <svg className="h-5 w-5 text-gray-400 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <svg className="h-5 w-5 text-gray-400 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
               <div className="grid grid-cols-7 gap-1 text-sm">
@@ -173,14 +176,22 @@ export default function CardThemePage() {
               </h3>
               <p className="text-sm text-gray-600 mb-4">Set your daily activity goal</p>
               <div className="flex items-center justify-between mb-4">
-                <MinusIcon className="h-8 w-8 p-2 rounded-full bg-gray-100 cursor-pointer" />
+                <div className="h-8 w-8 rounded-full bg-gray-100 cursor-pointer flex items-center justify-center">
+                  <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                  </svg>
+                </div>
                 <div className="text-center">
                   <div className="text-4xl font-bold" style={{ color: theme.colors?.primary?.[500] || '#0ea5e9' }}>
                     350
                   </div>
                   <div className="text-sm text-gray-500">CALORIES/DAY</div>
                 </div>
-                <PlusIcon className="h-8 w-8 p-2 rounded-full bg-gray-100 cursor-pointer" />
+                <div className="h-8 w-8 rounded-full bg-gray-100 cursor-pointer flex items-center justify-center">
+                  <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
               </div>
               <div className="flex justify-center space-x-1">
                 {Array.from({ length: 14 }, (_, i) => (
