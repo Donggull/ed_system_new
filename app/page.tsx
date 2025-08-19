@@ -934,13 +934,25 @@ export default function Home() {
                         >
                           Primary Button (CSS Var Direct)
                         </button>
-                        <button className={`${sizeClasses[size as keyof typeof sizeClasses]} bg-[hsl(var(--color-primary-500-rgb))] text-white rounded-xl hover:bg-[hsl(var(--color-primary-600-rgb))] font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
+                        <button 
+                          style={{ 
+                            backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                            color: 'white',
+                          }}
+                          className={`${sizeClasses[size as keyof typeof sizeClasses]} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5 hover:opacity-90`}
+                        >
                           Primary Button (CSS Var RGB)
                         </button>
                         <button className={`${sizeClasses[size as keyof typeof sizeClasses]} bg-[hsl(var(--color-secondary-500))] text-white rounded-xl hover:bg-[hsl(var(--color-secondary-600))] font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
                           Secondary Button
                         </button>
-                        <button className={`${sizeClasses[size as keyof typeof sizeClasses]} border-2 border-[hsl(var(--color-primary-500))] text-[hsl(var(--color-primary-500))] rounded-xl hover:bg-[hsl(var(--color-primary-50))] font-semibold transition-all transform hover:-translate-y-0.5`}>
+                        <button 
+                          style={{ 
+                            borderColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                            color: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                          }}
+                          className={`${sizeClasses[size as keyof typeof sizeClasses]} border-2 rounded-xl hover:bg-blue-50 font-semibold transition-all transform hover:-translate-y-0.5`}
+                        >
                           Outline Button
                         </button>
                       </div>
@@ -1015,7 +1027,13 @@ export default function Home() {
                         <div className={getCardClasses(variant)}>
                           <h4 className="font-bold text-gray-900 mb-3">액션 카드</h4>
                           <p className="text-sm text-gray-600 leading-relaxed mb-4">버튼이 포함된 카드입니다.</p>
-                          <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm font-medium hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                          >
                             액션
                           </button>
                         </div>
@@ -1040,7 +1058,15 @@ export default function Home() {
                           <p className="text-gray-600 text-sm mb-6">이 작업을 계속 진행하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
                           <div className="flex gap-3 justify-end">
                             <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors">취소</button>
-                            <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))] transition-colors">확인</button>
+                            <button 
+                              style={{ 
+                                backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                color: 'white',
+                              }}
+                              className="px-4 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity"
+                            >
+                              확인
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -1081,7 +1107,15 @@ export default function Home() {
                             </div>
                             <h4 className="text-lg font-bold text-gray-900 mb-2">작업 완료!</h4>
                             <p className="text-gray-600 text-sm mb-6">모든 작업이 성공적으로 완료되었습니다.</p>
-                            <button className="w-full px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))] transition-colors">확인</button>
+                            <button 
+                              style={{ 
+                                backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                color: 'white',
+                              }}
+                              className="w-full px-4 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity"
+                            >
+                              확인
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -1127,7 +1161,15 @@ export default function Home() {
                           </div>
                           <div className="flex gap-3 justify-end">
                             <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors">취소</button>
-                            <button className="px-4 py-2 bg-[hsl(var(--color-primary-500))] text-white rounded-lg text-sm hover:bg-[hsl(var(--color-primary-600))] transition-colors">추가</button>
+                            <button 
+                              style={{ 
+                                backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                color: 'white',
+                              }}
+                              className="px-4 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity"
+                            >
+                              추가
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -1468,7 +1510,15 @@ export default function Home() {
                           <div className="flex items-center justify-between mb-4">
                             <h5 className="text-lg font-semibold text-gray-900">방문자 추이</h5>
                             <div className="flex gap-2">
-                              <button className="px-3 py-1 text-xs bg-[hsl(var(--color-primary-500))] text-white rounded-full">7일</button>
+                              <button 
+                                style={{ 
+                                  backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                  color: 'white',
+                                }}
+                                className="px-3 py-1 text-xs rounded-full hover:opacity-90 transition-opacity"
+                              >
+                                7일
+                              </button>
                               <button className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-full transition-colors">30일</button>
                               <button className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-full transition-colors">90일</button>
                             </div>
@@ -2070,7 +2120,13 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">아이콘 전용 버튼</h4>
                         <div className="flex items-center gap-3">
-                          <button className="p-2 text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-all">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="p-2 rounded-lg transition-all hover:opacity-90"
+                          >
                             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
@@ -2121,7 +2177,13 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">플로팅 액션 버튼</h4>
                         <div className="flex items-center gap-4">
-                          <button className="w-14 h-14 bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] text-white rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 flex items-center justify-center">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 flex items-center justify-center"
+                          >
                             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                             </svg>
@@ -3235,7 +3297,13 @@ export default function Home() {
                               <div className="flex items-center gap-2">
                                 <span className="text-2xl font-bold text-[hsl(var(--color-primary-600))]">₩3,590,000</span>
                               </div>
-                              <button className="bg-[hsl(var(--color-primary-500))] text-white px-4 py-2 rounded-lg hover:bg-[hsl(var(--color-primary-600))] transition-colors">
+                              <button 
+                                style={{ 
+                                  backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                  color: 'white',
+                                }}
+                                className="px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                              >
                                 구매하기
                               </button>
                             </div>
