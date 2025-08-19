@@ -203,8 +203,12 @@ interface FlatThemeJSON {
 
 // Flat 색상을 TailwindCSS palette로 변환
 function flatColorToPalette(color: string): ColorPalette {
-  const base = hexToRgb(color)
-  if (!base) {
+  console.log('🎨 Converting color to palette:', color)
+  
+  // HSL을 사용한 더 정확한 색상 팔레트 생성
+  const rgb = hexToRgb(color)
+  if (!rgb) {
+    console.warn('❌ Invalid color, using fallback palette')
     return {
       '50': '#f8fafc',
       '100': '#f1f5f9', 
@@ -219,35 +223,83 @@ function flatColorToPalette(color: string): ColorPalette {
     }
   }
 
-  // 색상 변형 생성 (올바른 밝기/어둡기 조절)
-  const generateLightShade = (factor: number) => {
-    // factor가 클수록 더 밝아짐 (0에 가까우면 원본 색상, 1에 가까우면 흰색)
-    const r = Math.round(base.r + (255 - base.r) * factor)
-    const g = Math.round(base.g + (255 - base.g) * factor)
-    const b = Math.round(base.b + (255 - base.b) * factor)
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  // RGB를 HSL로 변환
+  const { h, s, l } = rgbToHsl(rgb.r, rgb.g, rgb.b)
+  
+  // HSL 기반으로 정확한 shade 생성
+  const palette = {
+    '50': hslToHex(h, s, Math.min(95, l + (95 - l) * 0.8)),
+    '100': hslToHex(h, s, Math.min(90, l + (90 - l) * 0.6)),
+    '200': hslToHex(h, s, Math.min(80, l + (80 - l) * 0.4)),
+    '300': hslToHex(h, s, Math.min(70, l + (70 - l) * 0.2)),
+    '400': hslToHex(h, s, Math.min(60, l + (60 - l) * 0.1)),
+    '500': color, // 원본 색상
+    '600': hslToHex(h, s, Math.max(20, l * 0.85)),
+    '700': hslToHex(h, s, Math.max(15, l * 0.7)),
+    '800': hslToHex(h, s, Math.max(10, l * 0.55)),
+    '900': hslToHex(h, s, Math.max(5, l * 0.4))
   }
+  
+  console.log('✅ Generated palette:', palette)
+  return palette
+}
 
-  const generateDarkShade = (factor: number) => {
-    // factor가 클수록 더 어두워짐 (0에 가까우면 원본 색상, 1에 가까우면 검정색)
-    const r = Math.round(base.r * (1 - factor))
-    const g = Math.round(base.g * (1 - factor))
-    const b = Math.round(base.b * (1 - factor))
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+// RGB를 HSL로 변환
+function rgbToHsl(r: number, g: number, b: number): { h: number, s: number, l: number } {
+  r /= 255
+  g /= 255
+  b /= 255
+  
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  let h = 0, s = 0, l = (max + min) / 2
+  
+  if (max !== min) {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break
+      case g: h = (b - r) / d + 2; break
+      case b: h = (r - g) / d + 4; break
+    }
+    h /= 6
   }
+  
+  return { h: h * 360, s: s * 100, l: l * 100 }
+}
 
-  return {
-    '50': generateLightShade(0.9),   // 매우 밝음
-    '100': generateLightShade(0.8),  // 밝음
-    '200': generateLightShade(0.6),  // 조금 밝음
-    '300': generateLightShade(0.4),  // 살짝 밝음
-    '400': generateLightShade(0.2),  // 약간 밝음
-    '500': color,                    // 원본 색상
-    '600': generateDarkShade(0.1),   // 약간 어둠
-    '700': generateDarkShade(0.2),   // 조금 어둠
-    '800': generateDarkShade(0.4),   // 어둠
-    '900': generateDarkShade(0.6)    // 매우 어둠
+// HSL을 HEX로 변환
+function hslToHex(h: number, s: number, l: number): string {
+  h /= 360
+  s /= 100
+  l /= 100
+  
+  const c = (1 - Math.abs(2 * l - 1)) * s
+  const x = c * (1 - Math.abs((h * 6) % 2 - 1))
+  const m = l - c / 2
+  
+  let r = 0, g = 0, b = 0
+  
+  if (0 <= h && h < 1/6) {
+    r = c; g = x; b = 0
+  } else if (1/6 <= h && h < 2/6) {
+    r = x; g = c; b = 0
+  } else if (2/6 <= h && h < 3/6) {
+    r = 0; g = c; b = x
+  } else if (3/6 <= h && h < 4/6) {
+    r = 0; g = x; b = c
+  } else if (4/6 <= h && h < 5/6) {
+    r = x; g = 0; b = c
+  } else if (5/6 <= h && h < 1) {
+    r = c; g = 0; b = x
   }
+  
+  r = Math.round((r + m) * 255)
+  g = Math.round((g + m) * 255)
+  b = Math.round((b + m) * 255)
+  
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
 }
 
 // Flat JSON을 기존 ThemeData 구조로 변환
@@ -258,6 +310,7 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
     // Primary 색상 설정
     if (flatTheme.colors.primary) {
       colors.primary = flatColorToPalette(flatTheme.colors.primary)
+      console.log('🎨 Primary color palette generated:', colors.primary)
     } else {
       colors.primary = defaultTheme.colors.primary
     }
@@ -265,6 +318,7 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
     // Secondary 색상 설정 - secondary 또는 secondaryMedium 사용
     if (flatTheme.colors.secondary) {
       colors.secondary = flatColorToPalette(flatTheme.colors.secondary)
+      console.log('🎨 Secondary color palette generated:', colors.secondary)
     } else if (flatTheme.colors.secondaryMedium) {
       colors.secondary = flatColorToPalette(flatTheme.colors.secondaryMedium)
     } else {
@@ -440,6 +494,8 @@ export function parseThemeJson(jsonString: string): { theme: ThemeData | null, e
 export function generateCssVariables(theme: ThemeData): Record<string, string> {
   const variables: Record<string, string> = {}
   
+  console.log('🔄 Generating CSS variables from theme:', theme)
+  
   // 컬러 변수 생성
   Object.entries(theme.colors).forEach(([colorName, colorPalette]) => {
     if (colorPalette && typeof colorPalette === 'object') {
@@ -448,12 +504,19 @@ export function generateCssVariables(theme: ThemeData): Record<string, string> {
           // #ffffff -> 255 255 255 형태로 변환
           const rgb = hexToRgb(value)
           if (rgb) {
-            variables[`--color-${colorName}-${shade}`] = `${rgb.r} ${rgb.g} ${rgb.b}`
+            const varName = `--color-${colorName}-${shade}`
+            const varValue = `${rgb.r} ${rgb.g} ${rgb.b}`
+            variables[varName] = varValue
+            if (colorName === 'primary' && shade === '500') {
+              console.log(`🎯 Primary-500 CSS variable: ${varName} = ${varValue}`)
+            }
           }
         }
       })
     }
   })
+  
+  console.log('✅ CSS variables generated:', Object.keys(variables).length, 'variables')
   
   // 타이포그래피 변수 생성
   if (theme.typography) {
@@ -491,9 +554,17 @@ export function generateCssVariables(theme: ThemeData): Record<string, string> {
 export function applyCssVariables(variables: Record<string, string>, element?: HTMLElement) {
   const target = element || document.documentElement
   
+  console.log('🎨 Applying CSS variables to DOM:', Object.keys(variables).length, 'variables')
+  
   Object.entries(variables).forEach(([property, value]) => {
     target.style.setProperty(property, value)
+    if (property === '--color-primary-500') {
+      console.log(`🎯 Applied ${property}: ${value}`)
+      console.log('🔍 Verification:', target.style.getPropertyValue(property))
+    }
   })
+  
+  console.log('✅ CSS variables applied to:', target === document.documentElement ? 'document.documentElement' : 'custom element')
 }
 
 // HEX 색상을 RGB로 변환
