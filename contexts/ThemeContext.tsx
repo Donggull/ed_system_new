@@ -5,6 +5,7 @@ import { parseThemeJson, applyCssVariables, sampleThemes } from '@/lib/theme-uti
 
 // Simple theme interface for runtime use
 export interface SimpleTheme {
+  name?: string
   colors?: {
     primary?: Record<string, string>
     secondary?: Record<string, string>
@@ -14,6 +15,16 @@ export interface SimpleTheme {
     background?: string
     surface?: string
     text?: string
+  }
+  typography?: {
+    fontFamily?: {
+      sans?: string[]
+      mono?: string[]
+      heading?: string[]
+      display?: string[]
+    }
+    fontSize?: Record<string, string>
+    fontWeight?: Record<string, string>
   }
   borderRadius?: string
   spacing?: string
@@ -40,6 +51,7 @@ interface ThemeProviderProps {
 }
 
 const defaultSimpleTheme: SimpleTheme = {
+  name: 'Default Theme',
   colors: {
     primary: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' },
     secondary: { 50: '#fafafa', 100: '#f4f4f5', 500: '#71717a', 600: '#52525b', 900: '#18181b' },
@@ -49,6 +61,20 @@ const defaultSimpleTheme: SimpleTheme = {
     background: '#ffffff',
     surface: '#f8fafc',
     text: '#1e293b'
+  },
+  typography: {
+    fontFamily: {
+      sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
+    },
+    fontSize: {
+      xs: '0.75rem',
+      sm: '0.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+      xl: '1.25rem',
+      '2xl': '1.5rem'
+    }
   },
   borderRadius: '12px',
   spacing: '16px',

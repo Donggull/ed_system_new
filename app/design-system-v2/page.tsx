@@ -4,15 +4,12 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import Navigation from '@/components/Navigation'
-import ThemeEditor from '@/components/editor/ThemeEditor'
 import EnhancedPreview from '@/components/preview/EnhancedPreview'
 import ResponsivePreview from '@/components/preview/ResponsivePreview'
-import { themeManager, ThemeState } from '@/lib/theme-manager'
-import { DEFAULT_THEME } from '@/lib/theme-parser'
+import { useTheme } from '@/contexts/ThemeContext'
 import { allComponentTemplates } from '@/lib/component-templates'
 import { ComponentTemplate } from '@/types/database'
 import { cn } from '@/lib/utils'
-import { ThemeErrorBoundary } from '@/components/ui/ErrorBoundary'
 import ExportModal from '@/components/export/ExportModal'
 import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemModal'
 import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
@@ -254,9 +251,8 @@ export default function DesignSystemV2() {
       .map(template => template.id)
   })
   const [viewMode, setViewMode] = useState<'enhanced' | 'responsive'>('enhanced')
-  const [themeState, setThemeState] = useState<ThemeState>(themeManager.getState())
-  const [themeErrors, setThemeErrors] = useState<string[]>([])
-  const [isInitialized, setIsInitialized] = useState(false)
+  // Use global theme context
+  const { theme, jsonInput, jsonError, updateTheme, loadSampleTheme } = useTheme()
   const [showExportModal, setShowExportModal] = useState(false)
   const [showSaveDesignSystemModal, setShowSaveDesignSystemModal] = useState(false)
   const [showSavedDesignSystems, setShowSavedDesignSystems] = useState(false)
@@ -270,40 +266,21 @@ export default function DesignSystemV2() {
   const { toast, success, error: showError, hideToast } = useToast()
   const { createVersion } = useDesignSystem()
 
-  // 컴포넌트 마운트 시 테마 초기화
+  // 컴포넌트 마운트 시 테마 초기화 (ThemeProvider에서 자동 처리됨)
   useEffect(() => {
-    // 기본 테마로 초기화 및 CSS 변수 강제 주입
-    themeManager.updateTheme(DEFAULT_THEME, { animate: false })
-    
-    // CSS 변수가 제대로 적용되는지 확인하기 위한 약간의 지연
-    setTimeout(() => {
-      setIsInitialized(true)
-    }, 100)
-  }, [])
+    // CSS 변수 적용 (ThemeProvider에서 자동 처리됨)
+    const variables = generateCssVariables(theme as any)
+    applyCssVariables(variables)
+  }, [theme])
 
-  // 테마 상태 구독
-  useEffect(() => {
-    const unsubscribe = themeManager.subscribe((newState) => {
-      setThemeState(newState)
-      
-      // 테마 변경 시 컴포넌트 강제 리렌더링을 위한 상태 업데이트
-      if (newState.isValid) {
-        // CSS 변수가 적용될 시간을 주기 위한 짧은 지연
-        setTimeout(() => {
-          setIsInitialized(prev => !prev ? prev : true) // 이미 true면 그대로, false면 true로
-        }, 50)
-      }
-    })
-    return unsubscribe
-  }, [])
+  // 테마 상태는 전역 컨텍스트에서 관리됨
+  // 추가 구독이나 상태 관리 불필요
 
   // 컴포넌트 선택 변경 감지 및 리렌더링
   useEffect(() => {
     // 컴포넌트 선택이 변경되면 미리보기를 다시 렌더링하기 위해 상태 업데이트
-    if (isInitialized) {
-      console.log('Selected components changed:', selectedComponents)
-    }
-  }, [selectedComponents, isInitialized])
+    console.log('Selected components changed:', selectedComponents)
+  }, [selectedComponents])
 
   // 컴포넌트 선택 토글
   const toggleComponent = (componentId: string) => {
@@ -354,8 +331,9 @@ export default function DesignSystemV2() {
   }
 
   const handleLoadDesignSystem = (designSystem: DesignSystem) => {
-    // 테마 상태 복원
-    themeManager.updateTheme(designSystem.theme_data as any, { animate: true })
+    // 테마 상태 복원 (전역 컨텍스트 사용)
+    const themeJson = JSON.stringify(designSystem.theme_data, null, 2)
+    updateTheme(themeJson)
     
     // 컴포넌트 선택 상태 복원
     setSelectedComponents(designSystem.selected_components)
@@ -383,11 +361,11 @@ export default function DesignSystemV2() {
   }
 
   const handleCreateVersion = async (changeNotes?: string) => {
-    if (!versionHistoryDesignSystem || !themeState.currentTheme) return
+    if (!versionHistoryDesignSystem || !theme) return
 
     await createVersion(
       versionHistoryDesignSystem.id,
-      themeState.currentTheme as any,
+      theme as any,
       selectedComponents,
       {}, // component_settings - v2에서는 빈 객체
       changeNotes
@@ -397,8 +375,9 @@ export default function DesignSystemV2() {
   }
 
   const handleLoadVersion = (version: DesignSystemVersion) => {
-    // 테마 상태 복원
-    themeManager.updateTheme(version.theme_data as any, { animate: true })
+    // 테마 상태 복원 (전역 컨텍스트 사용)
+    const themeJson = JSON.stringify(version.theme_data, null, 2)
+    updateTheme(themeJson)
     
     // 컴포넌트 선택 상태 복원
     setSelectedComponents(version.selected_components)
@@ -467,7 +446,7 @@ export default function DesignSystemV2() {
           )}
           
           {/* 동적 컴포넌트 렌더링 */}
-          {selectedTemplates.map((template, index) => (
+          {selectedComponents.length > 0 && selectedTemplates.map((template, index) => (
             <div key={`${template.id}-${renderKey}`} className="space-y-3 border border-indigo-200 p-4 rounded-lg bg-indigo-50">
               <div className="flex items-center gap-2">
                 <span className="text-indigo-600 text-lg">✅</span>
@@ -667,19 +646,6 @@ export default function DesignSystemV2() {
     )
   }, [selectedComponents, renderKey, selectedTemplates])
 
-  // 초기화 중일 때 로딩 표시
-  if (!isInitialized) {
-    return (
-      <ProtectedRoute>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">테마 시스템 초기화 중...</p>
-          </div>
-        </div>
-      </ProtectedRoute>
-    )
-  }
 
   return (
     <ProtectedRoute>
@@ -730,13 +696,13 @@ export default function DesignSystemV2() {
                 <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border border-gray-200">
                   <div className={cn(
                     'w-3 h-3 rounded-full animate-pulse',
-                    themeState.isValid ? 'bg-green-500' : 'bg-red-500'
+                    !jsonError ? 'bg-green-500' : 'bg-red-500'
                   )}></div>
                   <span className={cn(
                     'text-sm font-medium',
-                    themeState.isValid ? 'text-green-700' : 'text-red-700'
+                    !jsonError ? 'text-green-700' : 'text-red-700'
                   )}>
-                    {themeState.isValid ? '테마 정상' : '테마 오류'}
+                    {!jsonError ? '테마 정상' : '테마 오류'}
                   </span>
                 </div>
                 
@@ -756,14 +722,66 @@ export default function DesignSystemV2() {
         <div className="flex h-[calc(100vh-160px)]">
           {/* 왼쪽: 테마 에디터 */}
           <div className="w-1/3 border-r border-gray-200 bg-white">
-            <ThemeErrorBoundary onThemeError={(error) => setThemeErrors([error.message])}>
-              <ThemeEditor 
-                onThemeChange={(theme) => {
-                  // 테마 변경 처리는 ThemeManager에서 자동으로 처리됨
-                }}
-                onError={setThemeErrors}
-              />
-            </ThemeErrorBoundary>
+            <div className="h-full overflow-auto">
+              <div className="p-4">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">JSON 테마 편집기</h3>
+                    <p className="text-sm text-gray-600 mb-4">아래 JSON을 편집하여 실시간으로 테마를 변경해보세요.</p>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      테마 JSON
+                    </label>
+                    <textarea
+                      value={jsonInput}
+                      onChange={(e) => updateTheme(e.target.value)}
+                      className="w-full h-96 px-3 py-2 border border-gray-300 rounded-md resize-none font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="JSON 테마 데이터를 입력하세요..."
+                    />
+                  </div>
+                  
+                  {jsonError && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                      <p className="text-sm text-red-600">
+                        <strong>오류:</strong> {jsonError}
+                      </p>
+                    </div>
+                  )}
+                  
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">샘플 테마</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => loadSampleTheme('flat')}
+                        className="px-3 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                      >
+                        Flat
+                      </button>
+                      <button
+                        onClick={() => loadSampleTheme('modern')}
+                        className="px-3 py-2 text-sm bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
+                      >
+                        Modern
+                      </button>
+                      <button
+                        onClick={() => loadSampleTheme('dark')}
+                        className="px-3 py-2 text-sm bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"
+                      >
+                        Dark
+                      </button>
+                      <button
+                        onClick={() => loadSampleTheme('vibrant')}
+                        className="px-3 py-2 text-sm bg-pink-500 text-white rounded hover:bg-pink-600 transition-colors"
+                      >
+                        Vibrant
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* 가운데: 컴포넌트 선택 */}
@@ -909,7 +927,7 @@ export default function DesignSystemV2() {
         </div>
 
         {/* 오류 토스트 */}
-        {themeErrors.length > 0 && (
+        {jsonError && (
           <div className="fixed bottom-4 left-4 bg-red-50 border border-red-200 rounded-lg p-4 shadow-lg z-50">
             <div className="flex items-start gap-2">
               <div className="w-5 h-5 text-red-500 flex-shrink-0">
@@ -919,18 +937,8 @@ export default function DesignSystemV2() {
               </div>
               <div className="flex-1">
                 <h4 className="text-sm font-medium text-red-800">테마 오류</h4>
-                <ul className="text-sm text-red-700 mt-1">
-                  {themeErrors.map((error, index) => (
-                    <li key={index}>• {error}</li>
-                  ))}
-                </ul>
+                <p className="text-sm text-red-700 mt-1">• {jsonError}</p>
               </div>
-              <button
-                onClick={() => setThemeErrors([])}
-                className="text-red-500 hover:text-red-700"
-              >
-                ✕
-              </button>
             </div>
           </div>
         )}
@@ -940,7 +948,7 @@ export default function DesignSystemV2() {
           isOpen={showExportModal}
           onClose={() => setShowExportModal(false)}
           selectedComponents={selectedTemplates}
-          theme={themeState.currentTheme}
+          theme={theme as any}
           projectName="My Design System"
         />
 
@@ -959,7 +967,7 @@ export default function DesignSystemV2() {
             setShowSaveDesignSystemModal(false)
             setCurrentDesignSystem(null)
           }}
-          themeData={themeState.currentTheme as any}
+          themeData={theme as any}
           selectedComponents={selectedComponents}
           componentSettings={{}}
           existingDesignSystem={currentDesignSystem ? {

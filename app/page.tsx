@@ -16,9 +16,9 @@ import {
   parseThemeJson, 
   generateCssVariables, 
   applyCssVariables, 
-  defaultTheme,
   sampleThemes 
 } from '@/lib/theme-utils'
+import { useTheme } from '@/contexts/ThemeContext'
 import { allComponentTemplates } from '@/lib/component-templates'
 import { useToast } from '@/hooks/useToast'
 import Toast from '@/components/ui/Toast'
@@ -44,9 +44,8 @@ export default function Home() {
   const [expandedSettings, setExpandedSettings] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [currentTheme, setCurrentTheme] = useState(defaultTheme)
-  const [jsonInput, setJsonInput] = useState(JSON.stringify(sampleThemes.flat, null, 2))
-  const [jsonError, setJsonError] = useState<string | null>(null)
+  // Use global theme context
+  const { theme: currentTheme, jsonInput, jsonError, updateTheme, loadSampleTheme } = useTheme()
   const [userThemes, setUserThemes] = useState<Theme[]>([])
   const [saveLoading, setSaveLoading] = useState(false)
   const [showUserThemes, setShowUserThemes] = useState(false)
@@ -128,14 +127,8 @@ export default function Home() {
       
       if (sharedThemeData && sharedThemeJson) {
         try {
-          const parsedTheme = JSON.parse(sharedThemeData)
-          setCurrentTheme(parsedTheme)
-          setJsonInput(sharedThemeJson)
-          setJsonError(null)
-          
-          // CSS 변수 적용
-          const cssVars = generateCssVariables(parsedTheme)
-          applyCssVariables(cssVars)
+          // Use global theme context to apply shared theme
+          updateTheme(sharedThemeJson)
           
           // 사용 후 localStorage 정리
           localStorage.removeItem('shared-theme-data')
@@ -157,26 +150,7 @@ export default function Home() {
     return () => window.removeEventListener('focus', handleFocus)
   }, [success])
 
-  // JSON 입력 핸들러
-  const handleJsonChange = (value: string) => {
-    setJsonInput(value)
-    const { theme, error } = parseThemeJson(value)
-    
-    if (error) {
-      setJsonError(error)
-    } else if (theme) {
-      setJsonError(null)
-      setCurrentTheme(theme)
-      
-      // CSS 변수 적용
-      const cssVars = generateCssVariables(theme)
-      applyCssVariables(cssVars)
-      
-      // v2 페이지와 공유
-      localStorage.setItem('main-theme-data', JSON.stringify(theme))
-      localStorage.setItem('main-theme-json', value)
-    }
-  }
+  // Note: handleJsonChange removed - now using global updateTheme from ThemeProvider
 
   // 컴포넌트 선택 토글
   const toggleComponent = (componentId: string) => {
@@ -226,11 +200,7 @@ export default function Home() {
     )
   }
 
-  // 템플릿 로드
-  const loadSampleTheme = (themeName: keyof typeof sampleThemes) => {
-    const themeJson = JSON.stringify(sampleThemes[themeName], null, 2)
-    handleJsonChange(themeJson)
-  }
+  // Note: loadSampleTheme now uses global function from ThemeProvider
 
   // 선택된 컴포넌트 템플릿 가져오기
   const getSelectedTemplates = () => {
@@ -287,8 +257,9 @@ export default function Home() {
 
   // 저장된 테마 불러오기 (컴포넌트 정보 포함)
   const handleLoadTheme = (theme: Theme) => {
-    setCurrentTheme(theme.theme_data)
-    setJsonInput(JSON.stringify(theme.theme_data, null, 2))
+    // Use global theme context to apply theme
+    const themeJson = JSON.stringify(theme.theme_data, null, 2)
+    updateTheme(themeJson)
     
     // 컴포넌트 선택 상태 복원
     if (theme.selected_components) {
@@ -299,10 +270,6 @@ export default function Home() {
     if (theme.component_settings) {
       setComponentSettings(theme.component_settings)
     }
-    
-    // CSS 변수 적용
-    const cssVars = generateCssVariables(theme.theme_data)
-    applyCssVariables(cssVars)
     
     // 성공 메시지 표시
     const componentCount = theme.selected_components?.length || 0
@@ -319,8 +286,9 @@ export default function Home() {
   }
 
   const handleLoadDesignSystem = (designSystem: DesignSystem) => {
-    setCurrentTheme(designSystem.theme_data)
-    setJsonInput(JSON.stringify(designSystem.theme_data, null, 2))
+    // Use global theme context to apply theme
+    const themeJson = JSON.stringify(designSystem.theme_data, null, 2)
+    updateTheme(themeJson)
     
     // 컴포넌트 선택 상태 복원
     setSelectedComponents(designSystem.selected_components)
@@ -329,10 +297,6 @@ export default function Home() {
     if (designSystem.component_settings) {
       setComponentSettings(designSystem.component_settings)
     }
-    
-    // CSS 변수 적용
-    const cssVars = generateCssVariables(designSystem.theme_data)
-    applyCssVariables(cssVars)
     
     // 현재 디자인 시스템 설정
     setCurrentDesignSystem(designSystem)
@@ -371,8 +335,9 @@ export default function Home() {
   }
 
   const handleLoadVersion = (version: DesignSystemVersion) => {
-    setCurrentTheme(version.theme_data)
-    setJsonInput(JSON.stringify(version.theme_data, null, 2))
+    // Use global theme context to apply theme
+    const themeJson = JSON.stringify(version.theme_data, null, 2)
+    updateTheme(themeJson)
     
     // Restore component selection state
     setSelectedComponents(version.selected_components)
@@ -381,10 +346,6 @@ export default function Home() {
     if (version.component_settings) {
       setComponentSettings(version.component_settings)
     }
-    
-    // Apply CSS variables
-    const cssVars = generateCssVariables(version.theme_data)
-    applyCssVariables(cssVars)
     
     success(`Loaded version ${version.version_number} successfully!`)
   }
@@ -404,15 +365,12 @@ export default function Home() {
 
   const handleAIThemeUpdate = (themeUpdate: Partial<any>) => {
     const updatedTheme = { ...currentTheme, ...themeUpdate }
-    setCurrentTheme(updatedTheme)
     
-    // JSON input 업데이트
-    setJsonInput(JSON.stringify(updatedTheme, null, 2))
+    // Use global theme context to apply updated theme
+    const themeJson = JSON.stringify(updatedTheme, null, 2)
+    updateTheme(themeJson)
     
-    // CSS 변수 적용
     try {
-      const cssVariables = generateCssVariables(updatedTheme)
-      applyCssVariables(cssVariables)
       success('AI 추천이 적용되었습니다!')
     } catch (error) {
       console.error('Failed to apply AI recommendation:', error)
@@ -583,7 +541,7 @@ export default function Home() {
             <div className="relative">
               <textarea
                 value={jsonInput}
-                onChange={(e) => handleJsonChange(e.target.value)}
+                onChange={(e) => updateTheme(e.target.value)}
                 className="w-full h-64 p-3 text-xs font-mono rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
                 placeholder="JSON 테마를 입력하세요..."
               />
