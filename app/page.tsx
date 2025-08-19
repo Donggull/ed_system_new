@@ -1963,10 +1963,23 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 버튼 변형</h4>
                         <div className="flex flex-wrap gap-3">
-                          <button className="px-6 py-3 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-all transform hover:scale-105 shadow-lg">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-6 py-3 text-sm font-medium rounded-lg transition-all transform hover:scale-105 shadow-lg hover:opacity-90"
+                          >
                             Primary
                           </button>
-                          <button className="px-6 py-3 text-sm font-medium text-[hsl(var(--color-primary-500))] border-2 border-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))] rounded-lg transition-all">
+                          <button 
+                            style={{ 
+                              color: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              borderColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: 'transparent'
+                            }}
+                            className="px-6 py-3 text-sm font-medium border-2 hover:bg-gray-50 rounded-lg transition-all"
+                          >
                             Outline
                           </button>
                           <button className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all">
@@ -1982,16 +1995,40 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">크기 변형</h4>
                         <div className="flex items-center flex-wrap gap-3">
-                          <button className="px-3 py-1.5 text-xs font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-md">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-3 py-1.5 text-xs font-medium rounded-md hover:opacity-90 transition-opacity"
+                          >
                             Extra Small
                           </button>
-                          <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+                          >
                             Small
                           </button>
-                          <button className="px-6 py-3 text-base font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-6 py-3 text-base font-medium rounded-lg hover:opacity-90 transition-opacity"
+                          >
                             Medium
                           </button>
-                          <button className="px-8 py-4 text-lg font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-xl">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-8 py-4 text-lg font-medium rounded-xl hover:opacity-90 transition-opacity"
+                          >
                             Large
                           </button>
                         </div>
@@ -2001,7 +2038,13 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">아이콘 버튼</h4>
                         <div className="flex flex-wrap gap-3">
-                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-all">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all hover:opacity-90"
+                          >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                             </svg>
@@ -2052,7 +2095,13 @@ export default function Home() {
                           <button className="px-4 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed" disabled>
                             비활성화
                           </button>
-                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+                          >
                             <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
@@ -2682,10 +2731,23 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">기본 버튼</h4>
                         <div className="flex flex-wrap gap-3">
-                          <button className="px-6 py-3 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-600))] rounded-lg transition-all transform hover:scale-105 shadow-lg">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-6 py-3 text-sm font-medium rounded-lg transition-all transform hover:scale-105 shadow-lg hover:opacity-90"
+                          >
                             Primary Button
                           </button>
-                          <button className="px-6 py-3 text-sm font-medium text-[hsl(var(--color-primary-500))] border-2 border-[hsl(var(--color-primary-500))] hover:bg-[hsl(var(--color-primary-50))] rounded-lg transition-all">
+                          <button 
+                            style={{ 
+                              color: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              borderColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: 'transparent'
+                            }}
+                            className="px-6 py-3 text-sm font-medium border-2 hover:bg-gray-50 rounded-lg transition-all"
+                          >
                             Outline Button
                           </button>
                           <button className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all">
@@ -2698,16 +2760,39 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">크기별 버튼</h4>
                         <div className="flex items-center flex-wrap gap-3">
-                          <button className="px-3 py-1.5 text-xs font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-md">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-3 py-1.5 text-xs font-medium rounded-md hover:opacity-90 transition-opacity"
+                          >
                             Small
                           </button>
-                          <button className="px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+                          >
                             Medium
                           </button>
-                          <button className="px-6 py-3 text-base font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-6 py-3 text-base font-medium rounded-lg hover:opacity-90 transition-opacity">
                             Large
                           </button>
-                          <button className="px-8 py-4 text-lg font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-xl">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="px-8 py-4 text-lg font-medium rounded-xl hover:opacity-90 transition-opacity"
+                          >
                             Extra Large
                           </button>
                         </div>
@@ -2754,7 +2839,13 @@ export default function Home() {
                           <button className="px-4 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed" disabled>
                             비활성화
                           </button>
-                          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[hsl(var(--color-primary-500))] rounded-lg">
+                          <button 
+                            style={{ 
+                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: 'white',
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+                          >
                             <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
