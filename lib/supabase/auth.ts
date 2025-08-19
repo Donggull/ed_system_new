@@ -44,7 +44,7 @@ export async function signUp({ email, password }: SignUpData) {
       email,
       password,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`,
+        emailRedirectTo: 'https://ed-system-new.vercel.app/auth/callback',
         data: {
           email: email,
           full_name: email.split('@')[0] // 기본 이름으로 이메일 앞부분 사용
@@ -146,7 +146,7 @@ export async function resetPassword(email: string) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/auth/reset-password`
+    redirectTo: 'https://ed-system-new.vercel.app/auth/reset-password'
   })
 
   if (error) throw error
