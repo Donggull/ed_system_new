@@ -135,12 +135,20 @@ export default function ExportModal({
 
   if (!isOpen) return null
 
+  // 디버깅을 위한 상태 출력
+  console.log('ExportModal opened with:', {
+    exportType,
+    selectedComponentsCount: selectedComponents.length,
+    isExporting,
+    currentProjectName
+  })
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
+      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
           <h2 className="text-xl font-semibold text-gray-900">Export Design System</h2>
           <button
             onClick={onClose}
@@ -150,7 +158,7 @@ export default function ExportModal({
           </button>
         </div>
 
-        <div className="flex h-[calc(90vh-80px)]">
+        <div className="flex flex-1 overflow-hidden">
           {/* Sidebar - Export Options */}
           <div className="w-1/3 border-r bg-gray-50 p-6 overflow-y-auto">
             <div className="space-y-6">
@@ -403,7 +411,7 @@ export default function ExportModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t bg-gray-50">
+        <div className="flex items-center justify-between p-6 border-t bg-gray-50 flex-shrink-0">
           <button
             onClick={onClose}
             className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
@@ -411,6 +419,11 @@ export default function ExportModal({
             Cancel
           </button>
           <div className="flex space-x-3">
+            {exportType === 'individual' && (
+              <div className="text-sm text-gray-600">
+                클립보드에 복사하려면 위의 &ldquo;Copy Code&rdquo; 버튼을 사용하세요
+              </div>
+            )}
             {exportType === 'npm' && (
               <button
                 onClick={handleExportAsNPM}
