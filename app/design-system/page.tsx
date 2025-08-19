@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import Navigation from '@/components/Navigation'
@@ -280,78 +280,45 @@ export default function DesignSystemPage() {
     }
   }, [validateAndParseJson])
 
-  // v2 테마를 메인 페이지 형식으로 변환하는 함수
-  const convertToThemeData = useCallback((designTheme: DesignTheme): any => {
-    const convertColorToPalette = (color: string) => {
-      // 간단한 색상 팔레트 생성
-      const base = color
-      return {
-        '50': adjustBrightness(base, 0.95),
-        '100': adjustBrightness(base, 0.9),
-        '200': adjustBrightness(base, 0.8),
-        '300': adjustBrightness(base, 0.6),
-        '400': adjustBrightness(base, 0.4),
-        '500': base,
-        '600': adjustBrightness(base, -0.2),
-        '700': adjustBrightness(base, -0.4),
-        '800': adjustBrightness(base, -0.6),
-        '900': adjustBrightness(base, -0.8),
-      }
-    }
-
-    const adjustBrightness = (hex: string, percent: number) => {
-      const num = parseInt(hex.replace('#', ''), 16)
-      const amt = Math.round(2.55 * percent * 100)
-      const R = (num >> 16) + amt
-      const G = (num >> 8 & 0x00FF) + amt
-      const B = (num & 0x0000FF) + amt
-      return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-        (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1)
-    }
-
+  // Convert v2 theme to main page theme format
+  const convertToThemeData = useCallback((designTheme: DesignTheme) => {
     return {
-      name: "Converted Theme",
+      name: 'V2 Design System',
       colors: {
-        primary: convertColorToPalette(designTheme.colors.primary || '#6C63FF'),
-        secondary: convertColorToPalette(designTheme.colors.secondary || '#E9E6FF'),
-        success: convertColorToPalette(designTheme.colors.accent || '#FF6B9D'),
-        warning: convertColorToPalette('#F59E0B'),
-        error: convertColorToPalette(designTheme.colors.destructive || '#E63946'),
-        neutral: convertColorToPalette('#6B7280'),
-        gray: convertColorToPalette('#9CA3AF'),
+        primary: {
+          '50': '#eff6ff',
+          '100': '#dbeafe',
+          '200': '#bfdbfe',
+          '300': '#93c5fd',
+          '400': '#60a5fa',
+          '500': designTheme.colors.primary,
+          '600': '#2563eb',
+          '700': '#1d4ed8',
+          '800': '#1e40af',
+          '900': '#1e3a8a',
+        },
+        secondary: {
+          '50': '#f8fafc',
+          '100': '#f1f5f9',
+          '200': '#e2e8f0',
+          '300': '#cbd5e1',
+          '400': '#94a3b8',
+          '500': designTheme.colors.secondary,
+          '600': '#475569',
+          '700': '#334155',
+          '800': '#1e293b',
+          '900': '#0f172a',
+        }
       },
       typography: {
         fontFamily: {
-          sans: designTheme.typography?.fontFamily?.primary?.split(',').map(f => f.trim()) || ['Inter', 'sans-serif'],
+          sans: [designTheme.typography.fontFamily, 'system-ui', 'sans-serif'],
           mono: ['JetBrains Mono', 'monospace']
         },
-        fontSize: designTheme.typography?.fontSize || {
-          xs: '0.75rem',
-          sm: '0.875rem',
-          base: '1rem',
-          lg: '1.125rem',
-          xl: '1.25rem',
-          '2xl': '1.5rem',
-          '3xl': '1.875rem',
-          '4xl': '2.25rem'
-        }
+        fontSize: designTheme.typography.fontSize
       },
-      spacing: designTheme.spacing || {
-        xs: '0.25rem',
-        sm: '0.5rem',
-        md: '1rem',
-        lg: '1.5rem',
-        xl: '2rem',
-        '2xl': '3rem'
-      },
-      borderRadius: designTheme.borderRadius || {
-        none: '0',
-        sm: '0.125rem',
-        md: '0.375rem',
-        lg: '0.5rem',
-        full: '9999px'
-      }
+      spacing: designTheme.spacing,
+      borderRadius: designTheme.borderRadius
     }
   }, [])
 
@@ -432,48 +399,6 @@ export default function DesignSystemPage() {
     const jsonString = JSON.stringify(template, null, 2)
     setJsonInput(jsonString)
     setTheme(template)
-  }, [])
-
-  // Convert v2 theme to main page theme format
-  const convertToThemeData = useCallback((designTheme: DesignTheme) => {
-    return {
-      name: 'V2 Design System',
-      colors: {
-        primary: {
-          '50': '#eff6ff',
-          '100': '#dbeafe',
-          '200': '#bfdbfe',
-          '300': '#93c5fd',
-          '400': '#60a5fa',
-          '500': designTheme.colors.primary,
-          '600': '#2563eb',
-          '700': '#1d4ed8',
-          '800': '#1e40af',
-          '900': '#1e3a8a',
-        },
-        secondary: {
-          '50': '#f8fafc',
-          '100': '#f1f5f9',
-          '200': '#e2e8f0',
-          '300': '#cbd5e1',
-          '400': '#94a3b8',
-          '500': designTheme.colors.secondary,
-          '600': '#475569',
-          '700': '#334155',
-          '800': '#1e293b',
-          '900': '#0f172a',
-        }
-      },
-      typography: {
-        fontFamily: {
-          sans: [designTheme.typography.fontFamily, 'system-ui', 'sans-serif'],
-          mono: ['JetBrains Mono', 'monospace']
-        },
-        fontSize: designTheme.typography.fontSize
-      },
-      spacing: designTheme.spacing,
-      borderRadius: designTheme.borderRadius
-    }
   }, [])
 
   // Advanced features handlers

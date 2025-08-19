@@ -57,6 +57,9 @@ export interface ThemeData {
       '3xl': string
       '4xl': string
     }
+    fontWeight?: {
+      [key: string]: string
+    }
   }
   spacing: {
     xs: string

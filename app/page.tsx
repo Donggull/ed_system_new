@@ -22,6 +22,7 @@ import {
 import { allComponentTemplates } from '@/lib/component-templates'
 import { useToast } from '@/hooks/useToast'
 import Toast from '@/components/ui/Toast'
+import { cn } from '@/lib/utils'
 import SaveThemeModal from '@/components/ui/SaveThemeModal'
 import SaveDesignSystemModal from '@/components/design-system/SaveDesignSystemModal'
 import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'

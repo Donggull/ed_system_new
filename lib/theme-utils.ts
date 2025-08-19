@@ -316,15 +316,31 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
 
     if (flatTheme.typography.fontWeight) {
       typography.fontWeight = {
-        ...defaultTheme.typography.fontWeight,
-        ...flatTheme.typography.fontWeight
+        ...defaultTheme.typography.fontWeight
       }
+      // fontWeight 속성들을 안전하게 복사
+      Object.entries(flatTheme.typography.fontWeight).forEach(([key, value]) => {
+        if (value) {
+          typography.fontWeight[key] = value
+        }
+      })
     }
   }
 
-  // spacing과 borderRadius 처리
-  const spacing = flatTheme.spacing || defaultTheme.spacing
-  const borderRadius = flatTheme.borderRadius || defaultTheme.borderRadius
+  // spacing과 borderRadius 처리 - 타입 안전성 확보
+  const spacing = flatTheme.spacing ? {
+    ...defaultTheme.spacing,
+    ...Object.fromEntries(
+      Object.entries(flatTheme.spacing).filter(([, value]) => value !== undefined)
+    )
+  } : defaultTheme.spacing
+
+  const borderRadius = flatTheme.borderRadius ? {
+    ...defaultTheme.borderRadius,
+    ...Object.fromEntries(
+      Object.entries(flatTheme.borderRadius).filter(([, value]) => value !== undefined)
+    )
+  } : defaultTheme.borderRadius
 
   return {
     name: "Custom Theme",
