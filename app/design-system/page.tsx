@@ -4,6 +4,14 @@ import React, { useState, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import Navigation from '@/components/Navigation'
+import AIRecommendations from '@/components/ai/AIRecommendations'
+import CollaborationHub from '@/components/collaboration/CollaborationHub'
+import PerformanceHub from '@/components/performance/PerformanceHub'
+import ToolsHub from '@/components/tools/ToolsHub'
+import { allComponentTemplates } from '@/lib/component-templates'
+import { parseThemeJson, generateCssVariables, applyCssVariables } from '@/lib/theme-utils'
+import { useToast } from '@/hooks/useToast'
+import Toast from '@/components/ui/Toast'
 
 // JSON 스키마 타입 정의
 interface ThemeColors {
@@ -149,6 +157,14 @@ export default function DesignSystemPage() {
   const [jsonInput, setJsonInput] = useState(JSON.stringify(defaultTheme, null, 2))
   const [jsonError, setJsonError] = useState<string | null>(null)
   const [isDarkMode, setIsDarkMode] = useState(false)
+  
+  // Advanced features state
+  const [showAIRecommendations, setShowAIRecommendations] = useState(false)
+  const [showCollaboration, setShowCollaboration] = useState(false)
+  const [showPerformance, setShowPerformance] = useState(false)
+  const [showTools, setShowTools] = useState(false)
+  
+  const { toast, success, error: showError, hideToast } = useToast()
 
   // JSON 유효성 검증 및 파싱
   const validateAndParseJson = useCallback((jsonString: string) => {
@@ -250,6 +266,61 @@ export default function DesignSystemPage() {
     setTheme(template)
   }, [])
 
+  // Convert v2 theme to main page theme format
+  const convertToThemeData = useCallback((designTheme: DesignTheme) => {
+    return {
+      name: 'V2 Design System',
+      colors: {
+        primary: {
+          '50': '#eff6ff',
+          '100': '#dbeafe',
+          '200': '#bfdbfe',
+          '300': '#93c5fd',
+          '400': '#60a5fa',
+          '500': designTheme.colors.primary,
+          '600': '#2563eb',
+          '700': '#1d4ed8',
+          '800': '#1e40af',
+          '900': '#1e3a8a',
+        },
+        secondary: {
+          '50': '#f8fafc',
+          '100': '#f1f5f9',
+          '200': '#e2e8f0',
+          '300': '#cbd5e1',
+          '400': '#94a3b8',
+          '500': designTheme.colors.secondary,
+          '600': '#475569',
+          '700': '#334155',
+          '800': '#1e293b',
+          '900': '#0f172a',
+        }
+      },
+      typography: {
+        fontFamily: {
+          sans: [designTheme.typography.fontFamily, 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace']
+        },
+        fontSize: designTheme.typography.fontSize
+      },
+      spacing: designTheme.spacing,
+      borderRadius: designTheme.borderRadius
+    }
+  }, [])
+
+  // Advanced features handlers
+  const handleAIThemeUpdate = useCallback((updatedTheme: Partial<any>) => {
+    try {
+      const mergedTheme = { ...theme, ...updatedTheme }
+      setTheme(mergedTheme)
+      setJsonInput(JSON.stringify(mergedTheme, null, 2))
+      success('AI 추천이 적용되었습니다!')
+    } catch (error) {
+      console.error('AI theme update failed:', error)
+      showError('AI 추천 적용 중 오류가 발생했습니다.')
+    }
+  }, [theme, success, showError])
+
   return (
     <ProtectedRoute>
       <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
@@ -273,7 +344,49 @@ export default function DesignSystemPage() {
                 </p>
               </div>
               
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                {/* Advanced Features Buttons */}
+                <button 
+                  onClick={() => setShowAIRecommendations(true)}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    isDarkMode 
+                      ? 'bg-purple-900/50 text-purple-300 hover:bg-purple-800/50' 
+                      : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
+                  }`}
+                >
+                  🤖 AI 추천
+                </button>
+                <button 
+                  onClick={() => setShowCollaboration(true)}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    isDarkMode 
+                      ? 'bg-blue-900/50 text-blue-300 hover:bg-blue-800/50' 
+                      : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                  }`}
+                >
+                  🤝 협업
+                </button>
+                <button 
+                  onClick={() => setShowPerformance(true)}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    isDarkMode 
+                      ? 'bg-green-900/50 text-green-300 hover:bg-green-800/50' 
+                      : 'bg-green-50 text-green-700 hover:bg-green-100'
+                  }`}
+                >
+                  ⚡ 성능
+                </button>
+                <button 
+                  onClick={() => setShowTools(true)}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    isDarkMode 
+                      ? 'bg-orange-900/50 text-orange-300 hover:bg-orange-800/50' 
+                      : 'bg-orange-50 text-orange-700 hover:bg-orange-100'
+                  }`}
+                >
+                  🛠️ 도구
+                </button>
+                
                 {/* 다크 모드 토글 */}
                 <button
                   onClick={() => setIsDarkMode(!isDarkMode)}
@@ -646,6 +759,115 @@ export default function DesignSystemPage() {
           </div>
         </div>
       </div>
+
+      {/* AI Recommendations Modal */}
+      {showAIRecommendations && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowAIRecommendations(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-900">🤖 AI 기반 디자인 추천</h2>
+              <button
+                onClick={() => setShowAIRecommendations(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <AIRecommendations
+                currentTheme={convertToThemeData(theme)}
+                onThemeUpdate={handleAIThemeUpdate}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Collaboration Hub Modal */}
+      {showCollaboration && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowCollaboration(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-900">🤝 팀 협업</h2>
+              <button
+                onClick={() => setShowCollaboration(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <CollaborationHub
+                themeId="v2-temp-theme-id"
+                currentTheme={convertToThemeData(theme)}
+                onThemeUpdate={handleAIThemeUpdate}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Performance Hub Modal */}
+      {showPerformance && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowPerformance(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-900">⚡ 성능 최적화</h2>
+              <button
+                onClick={() => setShowPerformance(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <PerformanceHub
+                components={allComponentTemplates}
+                onOptimizationApply={(suggestion) => {
+                  success(`${suggestion.title} 최적화가 적용되었습니다!`)
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tools Hub Modal */}
+      {showTools && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowTools(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-900">🛠️ 디자인 도구</h2>
+              <button
+                onClick={() => setShowTools(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <ToolsHub
+                theme={convertToThemeData(theme)}
+                onToolAction={(tool, action, data) => {
+                  console.log('Tool action:', tool, action, data)
+                  success(`${tool} 도구에서 ${action} 작업이 완료되었습니다!`)
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Toast 
+        message={toast.message} 
+        type={toast.type} 
+        isVisible={toast.isVisible} 
+        onClose={hideToast} 
+      />
     </ProtectedRoute>
   )
 }

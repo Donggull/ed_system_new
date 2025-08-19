@@ -28,6 +28,10 @@ import SavedDesignSystems from '@/components/design-system/SavedDesignSystems'
 import VersionHistoryModal from '@/components/design-system/VersionHistoryModal'
 import ShareDesignSystemModal from '@/components/design-system/ShareDesignSystemModal'
 import DiscoverDesignSystems from '@/components/design-system/DiscoverDesignSystems'
+import AIRecommendations from '@/components/ai/AIRecommendations'
+import CollaborationHub from '@/components/collaboration/CollaborationHub'
+import PerformanceHub from '@/components/performance/PerformanceHub'
+import ToolsHub from '@/components/tools/ToolsHub'
 import { DesignSystem, DesignSystemVersion } from '@/types/database'
 import { useDesignSystem } from '@/lib/hooks/useDesignSystem'
 
@@ -54,6 +58,10 @@ export default function Home() {
   const [showShareModal, setShowShareModal] = useState(false)
   const [shareDesignSystem, setShareDesignSystem] = useState<DesignSystem | null>(null)
   const [showDiscoverSystems, setShowDiscoverSystems] = useState(false)
+  const [showAIRecommendations, setShowAIRecommendations] = useState(false)
+  const [showCollaboration, setShowCollaboration] = useState(false)
+  const [showPerformance, setShowPerformance] = useState(false)
+  const [showTools, setShowTools] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
   const { toast, success, error: showError, hideToast } = useToast()
@@ -350,6 +358,24 @@ export default function Home() {
     handleLoadDesignSystem(designSystem)
     setShowDiscoverSystems(false)
     success('Design system cloned successfully!')
+  }
+
+  const handleAIThemeUpdate = (themeUpdate: Partial<any>) => {
+    const updatedTheme = { ...currentTheme, ...themeUpdate }
+    setCurrentTheme(updatedTheme)
+    
+    // JSON input 업데이트
+    setJsonInput(JSON.stringify(updatedTheme, null, 2))
+    
+    // CSS 변수 적용
+    try {
+      const cssVariables = generateCssVariables(updatedTheme)
+      applyCssVariables(cssVariables)
+      success('AI 추천이 적용되었습니다!')
+    } catch (error) {
+      console.error('Failed to apply AI recommendation:', error)
+      showError('AI 추천 적용 중 오류가 발생했습니다.')
+    }
   }
 
   const handleViewDiscoveredSystem = (designSystem: DesignSystem) => {
@@ -782,6 +808,30 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setShowAIRecommendations(true)}
+                  className="px-5 py-2.5 text-sm font-semibold text-purple-700 bg-purple-50 border border-purple-200 rounded-xl hover:bg-purple-100 hover:border-purple-300 transition-all shadow-sm"
+                >
+                  🤖 AI 추천
+                </button>
+                <button 
+                  onClick={() => setShowCollaboration(true)}
+                  className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 hover:border-blue-300 transition-all shadow-sm"
+                >
+                  🤝 협업
+                </button>
+                <button 
+                  onClick={() => setShowPerformance(true)}
+                  className="px-5 py-2.5 text-sm font-semibold text-green-700 bg-green-50 border border-green-200 rounded-xl hover:bg-green-100 hover:border-green-300 transition-all shadow-sm"
+                >
+                  ⚡ 성능
+                </button>
+                <button 
+                  onClick={() => setShowTools(true)}
+                  className="px-5 py-2.5 text-sm font-semibold text-orange-700 bg-orange-50 border border-orange-200 rounded-xl hover:bg-orange-100 hover:border-orange-300 transition-all shadow-sm"
+                >
+                  🛠️ 도구
+                </button>
                 <button className="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm">
                   저장
                 </button>
@@ -3370,6 +3420,108 @@ export default function Home() {
         onCloneDesignSystem={handleCloneDesignSystem}
         onViewDesignSystem={handleViewDiscoveredSystem}
       />
+
+      {/* AI Recommendations Modal */}
+      {showAIRecommendations && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowAIRecommendations(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-900">🤖 AI 기반 디자인 추천</h2>
+              <button
+                onClick={() => setShowAIRecommendations(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <AIRecommendations
+                currentTheme={currentTheme}
+                onThemeUpdate={handleAIThemeUpdate}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Collaboration Hub Modal */}
+      {showCollaboration && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowCollaboration(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-900">🤝 팀 협업</h2>
+              <button
+                onClick={() => setShowCollaboration(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <CollaborationHub
+                themeId={currentDesignSystem?.id || 'temp-theme-id'}
+                currentTheme={currentTheme}
+                onThemeUpdate={handleAIThemeUpdate}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Performance Hub Modal */}
+      {showPerformance && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowPerformance(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-900">⚡ 성능 최적화</h2>
+              <button
+                onClick={() => setShowPerformance(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <PerformanceHub
+                components={componentTemplates}
+                onOptimizationApply={(suggestion) => {
+                  success(`${suggestion.title} 최적화가 적용되었습니다!`)
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tools Hub Modal */}
+      {showTools && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowTools(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-900">🛠️ 디자인 도구</h2>
+              <button
+                onClick={() => setShowTools(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <ToolsHub
+                theme={currentTheme}
+                onToolAction={(tool, action, data) => {
+                  console.log('Tool action:', tool, action, data)
+                  success(`${tool} 도구에서 ${action} 작업이 완료되었습니다!`)
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <Toast 
         message={toast.message} 
