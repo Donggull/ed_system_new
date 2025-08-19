@@ -57,19 +57,32 @@ export default function ExportModal({
   }, [copiedFile])
 
   const handleExport = async () => {
-    const result = await exportCode(selectedComponents, theme, options, currentProjectName)
-    
-    if (result.success && exportType === 'zip') {
-      await downloadAsZip(result.files, currentProjectName)
+    try {
+      console.log('Starting export with', selectedComponents.length, 'components')
       
-      // Track download if design system ID is provided
-      if (designSystemId) {
-        try {
-          await incrementDownloadCount(designSystemId)
-        } catch (error) {
-          console.error('Failed to track download:', error)
+      const result = await exportCode(selectedComponents, theme, options, currentProjectName)
+      
+      if (result.success && exportType === 'zip') {
+        console.log('Export successful, starting download...')
+        await downloadAsZip(result.files, currentProjectName)
+        
+        // Track download if design system ID is provided
+        if (designSystemId) {
+          try {
+            await incrementDownloadCount(designSystemId)
+          } catch (error) {
+            console.error('Failed to track download:', error)
+          }
         }
+        
+        console.log('Export and download completed successfully')
+      } else if (!result.success) {
+        console.error('Export failed:', result.error)
+        alert(`Export failed: ${result.error}`)
       }
+    } catch (error) {
+      console.error('Export error:', error)
+      alert(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -87,21 +100,36 @@ export default function ExportModal({
   }
 
   const handleExportAsNPM = async () => {
-    const result = await exportCode(selectedComponents, theme, options, currentProjectName)
-    if (result.success) {
-      const npmResult = await exportAsNPMPackage(result.files, currentProjectName.toLowerCase().replace(/\s+/g, '-'))
-      if (npmResult.success) {
-        await downloadAsZip(npmResult.files, `${currentProjectName}-npm`)
-        
-        // Track download if design system ID is provided
-        if (designSystemId) {
-          try {
-            await incrementDownloadCount(designSystemId)
-          } catch (error) {
-            console.error('Failed to track download:', error)
+    try {
+      console.log('Starting NPM package export...')
+      
+      const result = await exportCode(selectedComponents, theme, options, currentProjectName)
+      if (result.success) {
+        const npmResult = await exportAsNPMPackage(result.files, currentProjectName.toLowerCase().replace(/\s+/g, '-'))
+        if (npmResult.success) {
+          await downloadAsZip(npmResult.files, `${currentProjectName}-npm`)
+          
+          // Track download if design system ID is provided
+          if (designSystemId) {
+            try {
+              await incrementDownloadCount(designSystemId)
+            } catch (error) {
+              console.error('Failed to track download:', error)
+            }
           }
+          
+          console.log('NPM package export completed successfully')
+        } else {
+          console.error('NPM package creation failed')
+          alert('Failed to create NPM package')
         }
+      } else {
+        console.error('Code generation failed:', result.error)
+        alert(`Code generation failed: ${result.error}`)
       }
+    } catch (error) {
+      console.error('NPM export error:', error)
+      alert(`NPM export failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 

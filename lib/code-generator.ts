@@ -564,15 +564,32 @@ Generated with [Claude Code Design System Generator](https://github.com/Donggull
 // ZIP 파일 생성을 위한 유틸리티
 export async function createZipFile(files: GeneratedFile[], fileName: string): Promise<Blob> {
   try {
-    // 동적 import로 JSZip 로드 (클라이언트 사이드에서만 실행)
-    const JSZip = (await import('jszip')).default
+    console.log('Creating ZIP file with', files.length, 'files')
+    
+    // JSZip 동적 import
+    let JSZip: any
+    try {
+      const jsZipModule = await import('jszip')
+      JSZip = jsZipModule.default || jsZipModule
+    } catch (importError) {
+      console.error('Failed to import JSZip:', importError)
+      throw new Error('JSZip library is not available')
+    }
+
+    if (!JSZip) {
+      throw new Error('JSZip constructor not found')
+    }
+
     const zip = new JSZip()
 
     // 각 파일을 ZIP에 추가
     files.forEach(file => {
+      console.log('Adding file to ZIP:', file.path)
       zip.file(file.path, file.content)
     })
 
+    console.log('Generating ZIP blob...')
+    
     // ZIP 파일 생성
     const zipBlob = await zip.generateAsync({ 
       type: 'blob',
@@ -582,14 +599,24 @@ export async function createZipFile(files: GeneratedFile[], fileName: string): P
       }
     })
 
+    console.log('ZIP file created successfully:', zipBlob.size, 'bytes')
     return zipBlob
+    
   } catch (error) {
     console.error('Failed to create ZIP file:', error)
-    // Fallback: 텍스트 파일로 생성
-    const zipContent = files.map(file => 
-      `=== ${file.path} ===\n${file.content}\n\n`
-    ).join('\n')
     
-    return new Blob([zipContent], { type: 'text/plain' })
+    // Fallback: 개별 파일 다운로드를 위한 JSON 형태로 생성
+    const fallbackContent = JSON.stringify({
+      projectFiles: files.map(file => ({
+        path: file.path,
+        content: file.content,
+        type: file.type
+      })),
+      message: 'ZIP creation failed. Please extract files manually.',
+      downloadInstructions: 'Copy each file content and create the files manually in your project.'
+    }, null, 2)
+    
+    console.log('Created fallback file with', files.length, 'files')
+    return new Blob([fallbackContent], { type: 'application/json' })
   }
 }

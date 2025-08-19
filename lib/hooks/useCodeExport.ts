@@ -76,20 +76,37 @@ export function useCodeExport() {
     fileName: string = 'design-system'
   ): Promise<string> => {
     try {
+      console.log('Starting ZIP download with', files.length, 'files')
+      
       const zipBlob = await createZipFile(files, fileName)
       const url = URL.createObjectURL(zipBlob)
+      
+      // 파일 확장자 결정 (ZIP 실패 시 JSON)
+      const fileExtension = zipBlob.type === 'application/json' ? 'json' : 'zip'
+      const downloadFileName = `${fileName}.${fileExtension}`
+      
+      console.log('Downloading file:', downloadFileName, 'Type:', zipBlob.type)
       
       // 자동 다운로드 트리거
       const link = document.createElement('a')
       link.href = url
-      link.download = `${fileName}.zip`
+      link.download = downloadFileName
+      link.style.display = 'none'
       document.body.appendChild(link)
       link.click()
-      document.body.removeChild(link)
       
+      // 약간의 지연 후 링크 제거
+      setTimeout(() => {
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+      }, 100)
+      
+      console.log('Download triggered successfully')
       return url
+      
     } catch (error) {
-      throw new Error('Failed to create ZIP file')
+      console.error('Download failed:', error)
+      throw new Error(`Failed to download files: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }, [])
 
