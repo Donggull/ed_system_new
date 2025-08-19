@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/contexts/ThemeContext'
+import Navigation from '@/components/Navigation'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 const themePages = [
   { href: '/theme/eluo', label: 'Eluo', icon: '✨' },
@@ -18,12 +20,69 @@ export default function ThemePage() {
   const { jsonInput, updateTheme, jsonError, loadSampleTheme } = useTheme()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Theme System</h1>
-          <p className="text-gray-600">Customize your design system with real-time JSON theme editing</p>
-        </div>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50">
+        {/* Navigation */}
+        <Navigation />
+        
+        {/* Theme 페이지 전용 기능 헤더 */}
+        <header className="sticky top-[80px] z-40 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-lg font-bold">🎨</span>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">Theme System</h2>
+                    <p className="text-sm text-gray-600">실시간 JSON 테마 편집 및 컴포넌트 미리보기</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6">
+                {/* 테마 상태 */}
+                <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className={cn(
+                    'w-3 h-3 rounded-full animate-pulse',
+                    !jsonError ? 'bg-green-500' : 'bg-red-500'
+                  )}></div>
+                  <span className={cn(
+                    'text-sm font-medium',
+                    !jsonError ? 'text-green-700' : 'text-red-700'
+                  )}>
+                    {!jsonError ? '테마 정상' : '테마 오류'}
+                  </span>
+                </div>
+                
+                {/* 샘플 테마 로드 버튼들 */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => loadSampleTheme('flat')}
+                    className="px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors shadow-sm"
+                  >
+                    Flat
+                  </button>
+                  <button
+                    onClick={() => loadSampleTheme('modern')}
+                    className="px-3 py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors shadow-sm"
+                  >
+                    Modern
+                  </button>
+                  <button
+                    onClick={() => loadSampleTheme('vibrant')}
+                    className="px-3 py-2 bg-pink-500 text-white text-sm font-medium rounded-lg hover:bg-pink-600 transition-colors shadow-sm"
+                  >
+                    Vibrant
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="max-w-7xl mx-auto p-6">
 
         {/* Theme Navigation */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-6">
@@ -147,7 +206,8 @@ export default function ThemePage() {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   )
 }

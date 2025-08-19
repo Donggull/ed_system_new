@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/contexts/ThemeContext'
+import Navigation from '@/components/Navigation'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 const themePages = [
   { href: '/theme/eluo', label: 'Eluo', icon: '✨' },
@@ -17,12 +19,69 @@ export default function EluoThemePage() {
   const { theme, jsonInput, updateTheme, jsonError, loadSampleTheme } = useTheme()
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Eluo Theme</h1>
-          <p className="text-gray-600">Elegant and modern UI components with sophisticated design</p>
-        </div>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50">
+        {/* Navigation */}
+        <Navigation />
+        
+        {/* Eluo Theme 페이지 전용 기능 헤더 */}
+        <header className="sticky top-[80px] z-40 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-lg font-bold">✨</span>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">Eluo Theme</h2>
+                    <p className="text-sm text-gray-600">엘레간트하고 모던한 UI 컴포넌트 디자인</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6">
+                {/* 테마 상태 */}
+                <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className={cn(
+                    'w-3 h-3 rounded-full animate-pulse',
+                    !jsonError ? 'bg-green-500' : 'bg-red-500'
+                  )}></div>
+                  <span className={cn(
+                    'text-sm font-medium',
+                    !jsonError ? 'text-green-700' : 'text-red-700'
+                  )}>
+                    {!jsonError ? '테마 정상' : '테마 오류'}
+                  </span>
+                </div>
+                
+                {/* 샘플 테마 로드 버튼들 */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => loadSampleTheme('flat')}
+                    className="px-3 py-2 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition-colors shadow-sm"
+                  >
+                    Flat
+                  </button>
+                  <button
+                    onClick={() => loadSampleTheme('modern')}
+                    className="px-3 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors shadow-sm"
+                  >
+                    Modern
+                  </button>
+                  <button
+                    onClick={() => loadSampleTheme('vibrant')}
+                    className="px-3 py-2 bg-yellow-500 text-white text-sm font-medium rounded-lg hover:bg-yellow-600 transition-colors shadow-sm"
+                  >
+                    Vibrant
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="max-w-7xl mx-auto p-6">
 
         {/* Theme Navigation */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-6">
@@ -214,7 +273,8 @@ export default function EluoThemePage() {
 
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   )
 }

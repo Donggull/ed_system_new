@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/contexts/ThemeContext'
+import Navigation from '@/components/Navigation'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 const themePages = [
   { href: '/theme/eluo', label: 'Eluo', icon: '✨' },
@@ -17,12 +19,69 @@ export default function DashboardThemePage() {
   const { theme, jsonInput, updateTheme, jsonError, loadSampleTheme } = useTheme()
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Theme</h1>
-          <p className="text-gray-600">Data visualization and analytics dashboard components</p>
-        </div>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50">
+        {/* Navigation */}
+        <Navigation />
+        
+        {/* Dashboard Theme 페이지 전용 기능 헤더 */}
+        <header className="sticky top-[80px] z-40 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-200">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-lg font-bold">📊</span>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">Dashboard Theme</h2>
+                    <p className="text-sm text-gray-600">데이터 시각화 및 애널리틱스 대시보드</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6">
+                {/* 테마 상태 */}
+                <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className={cn(
+                    'w-3 h-3 rounded-full animate-pulse',
+                    !jsonError ? 'bg-green-500' : 'bg-red-500'
+                  )}></div>
+                  <span className={cn(
+                    'text-sm font-medium',
+                    !jsonError ? 'text-green-700' : 'text-red-700'
+                  )}>
+                    {!jsonError ? '테마 정상' : '테마 오류'}
+                  </span>
+                </div>
+                
+                {/* 샘플 테마 로드 버튼들 */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => loadSampleTheme('flat')}
+                    className="px-3 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors shadow-sm"
+                  >
+                    Flat
+                  </button>
+                  <button
+                    onClick={() => loadSampleTheme('modern')}
+                    className="px-3 py-2 bg-emerald-500 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors shadow-sm"
+                  >
+                    Modern
+                  </button>
+                  <button
+                    onClick={() => loadSampleTheme('vibrant')}
+                    className="px-3 py-2 bg-teal-500 text-white text-sm font-medium rounded-lg hover:bg-teal-600 transition-colors shadow-sm"
+                  >
+                    Vibrant
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="max-w-7xl mx-auto p-6">
 
         {/* Theme Navigation */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-6">
@@ -283,7 +342,8 @@ export default function DashboardThemePage() {
 
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   )
 }
