@@ -645,6 +645,21 @@ export const sampleThemes = {
       }
     }
   },
+  vibrant: {
+    name: "Vibrant Colors",
+    colors: {
+      primary: {
+        "50": "#fdf4ff",
+        "500": "#c026d3",
+        "900": "#701a75"
+      },
+      secondary: {
+        "50": "#fff7ed",
+        "500": "#f97316",
+        "900": "#9a3412"
+      }
+    }
+  },
   // 새로운 Flat 형태 샘플 테마들
   flat: {
     colors: {

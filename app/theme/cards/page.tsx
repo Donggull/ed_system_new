@@ -1,73 +1,79 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { useTheme } from '@/contexts/ThemeContext'
 
-export default function CardThemePage() {
-  const [theme, setTheme] = useState({
-    colors: {
-      primary: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' },
-      secondary: { 50: '#fafafa', 100: '#f4f4f5', 500: '#71717a', 600: '#52525b', 900: '#18181b' },
-      success: { 50: '#f0fdf4', 500: '#22c55e', 600: '#16a34a' },
-      warning: { 50: '#fffbeb', 500: '#f59e0b', 600: '#d97706' },
-      error: { 50: '#fef2f2', 500: '#ef4444', 600: '#dc2626' },
-      background: '#ffffff',
-      surface: '#f8fafc',
-      text: '#1e293b'
-    },
-    borderRadius: '12px',
-    spacing: '16px',
-    shadows: {
-      sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-      md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-      lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
-    }
-  })
+const themePages = [
+  { href: '/theme/eluo', label: 'Eluo', icon: '✨' },
+  { href: '/theme/cards', label: 'Cards', icon: '🎴' },
+  { href: '/theme/dashboard', label: 'Dashboard', icon: '📊' },
+  { href: '/theme/pricing', label: 'Pricing', icon: '💰' },
+]
 
-  const [jsonInput, setJsonInput] = useState(JSON.stringify(theme, null, 2))
-
-  useEffect(() => {
-    try {
-      const parsed = JSON.parse(jsonInput)
-      setTheme(parsed)
-      
-      // Apply CSS variables
-      const root = document.documentElement
-      if (parsed.colors) {
-        Object.entries(parsed.colors).forEach(([key, value]) => {
-          if (typeof value === 'object' && value !== null) {
-            Object.entries(value).forEach(([shade, color]) => {
-              root.style.setProperty(`--color-${key}-${shade}`, color as string)
-            })
-          } else {
-            root.style.setProperty(`--color-${key}`, value as string)
-          }
-        })
-      }
-      if (parsed.borderRadius) {
-        root.style.setProperty('--border-radius', parsed.borderRadius)
-      }
-      if (parsed.spacing) {
-        root.style.setProperty('--spacing', parsed.spacing)
-      }
-    } catch (e) {
-      // Invalid JSON, keep previous theme
-    }
-  }, [jsonInput])
+export default function CardsThemePage() {
+  const pathname = usePathname()
+  const { theme, jsonInput, updateTheme, jsonError, loadSampleTheme } = useTheme()
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Card Theme Generator</h1>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Cards Theme</h1>
+          <p className="text-gray-600">Interactive card components with real-time theme customization</p>
+        </div>
+
+        {/* Theme Navigation */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-6">
+          <div className="flex space-x-1">
+            {themePages.map((page) => (
+              <Link
+                key={page.href}
+                href={page.href}
+                className={cn(
+                  "flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                  pathname === page.href
+                    ? "bg-blue-100 text-blue-700 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                )}
+              >
+                <span className="text-base">{page.icon}</span>
+                <span>{page.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Theme Editor */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
-              <h2 className="text-xl font-semibold mb-4">Theme Configuration</h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Theme Configuration</h2>
+                <button
+                  onClick={() => loadSampleTheme('flat')}
+                  className="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md"
+                >
+                  Sample
+                </button>
+              </div>
+              
+              {jsonError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{jsonError}</p>
+                </div>
+              )}
+              
               <textarea
                 value={jsonInput}
-                onChange={(e) => setJsonInput(e.target.value)}
-                className="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono text-sm"
+                onChange={(e) => updateTheme(e.target.value)}
+                className={cn(
+                  "w-full h-96 p-4 border rounded-lg font-mono text-sm resize-none",
+                  jsonError 
+                    ? "border-red-300 focus:border-red-500 focus:ring-red-200" 
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-200"
+                )}
                 placeholder="Enter your theme JSON..."
               />
             </div>
