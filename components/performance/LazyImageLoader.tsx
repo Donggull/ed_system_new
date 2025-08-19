@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect, useState } from 'react'
+import Image from 'next/image'
 import { PerformanceOptimizationService } from '@/lib/performance/optimization-service'
 import { cn } from '@/lib/utils'
 
@@ -99,7 +100,7 @@ export default function LazyImageLoader({
 
   return (
     <div className="relative">
-      <img
+      <Image
         ref={imgRef}
         alt={alt}
         className={cn(
@@ -107,8 +108,8 @@ export default function LazyImageLoader({
           !isLoaded && 'opacity-0',
           className
         )}
-        width={width}
-        height={height}
+        width={width || 400}
+        height={height || 300}
         src={placeholder || defaultPlaceholder}
         loading="lazy"
       />

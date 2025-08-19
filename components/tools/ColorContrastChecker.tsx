@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { DesignToolsService, ContrastResult } from '@/lib/tools/design-tools-service'
 import { cn } from '@/lib/utils'
 
@@ -15,11 +15,7 @@ export default function ColorContrastChecker({ className, onContrastCheck }: Col
   const [contrastResult, setContrastResult] = useState<ContrastResult | null>(null)
   const [isChecking, setIsChecking] = useState(false)
 
-  useEffect(() => {
-    checkContrast()
-  }, [foregroundColor, backgroundColor])
-
-  const checkContrast = async () => {
+  const checkContrast = useCallback(async () => {
     setIsChecking(true)
     try {
       const result = DesignToolsService.checkColorContrast(foregroundColor, backgroundColor)
@@ -30,7 +26,11 @@ export default function ColorContrastChecker({ className, onContrastCheck }: Col
     } finally {
       setIsChecking(false)
     }
-  }
+  }, [foregroundColor, backgroundColor, onContrastCheck])
+
+  useEffect(() => {
+    checkContrast()
+  }, [checkContrast])
 
   const getGradeColor = (grade: ContrastResult['grade']) => {
     switch (grade) {

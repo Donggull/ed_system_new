@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { DesignToolsService, FigmaPluginConfig, DesignToken } from '@/lib/tools/design-tools-service'
 import { cn } from '@/lib/utils'
 
@@ -178,7 +178,7 @@ export default function FigmaIntegration({ tokens, className, onSync }: FigmaInt
                 <h5 className="font-medium text-blue-900 mb-2">토큰 생성 방법</h5>
                 <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
                   <li>Figma에 로그인한 후 Settings으로 이동</li>
-                  <li>Personal access tokens 섹션에서 "Generate new token" 클릭</li>
+                  <li>Personal access tokens 섹션에서 &ldquo;Generate new token&rdquo; 클릭</li>
                   <li>토큰 이름을 입력하고 적절한 권한 선택</li>
                   <li>생성된 토큰을 복사하여 여기에 입력</li>
                 </ol>

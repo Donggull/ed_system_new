@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { AIRecommendationService, AccessibilityReport, SimilarDesignSystem } from '@/lib/ai-recommendations'
 import { ThemeData, ColorPalette } from '@/types/database'
 import { cn } from '@/lib/utils'
@@ -19,11 +19,7 @@ export default function AIRecommendations({ currentTheme, onThemeUpdate, classNa
   const [similarSystems, setSimilarSystems] = useState<SimilarDesignSystem[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    loadRecommendations()
-  }, [currentTheme])
-
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     setIsLoading(true)
     try {
       // 색상 조합 추천
@@ -47,7 +43,11 @@ export default function AIRecommendations({ currentTheme, onThemeUpdate, classNa
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [currentTheme])
+
+  useEffect(() => {
+    loadRecommendations()
+  }, [loadRecommendations])
 
   const applyColorRecommendation = (palette: ColorPalette, type: 'primary' | 'secondary') => {
     onThemeUpdate({

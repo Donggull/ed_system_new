@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { DesignToolsService, DesignToken } from '@/lib/tools/design-tools-service'
 import { ThemeData } from '@/types/database'
 import { cn } from '@/lib/utils'
@@ -44,32 +44,7 @@ export default function DesignTokenConverter({ theme, className, onExport }: Des
     setFilteredTokens(filtered)
   }, [tokens, selectedCategory, searchTerm])
 
-  useEffect(() => {
-    generateCode()
-  }, [filteredTokens, selectedFormat])
-
-  const generateCode = () => {
-    let code = ''
-    
-    switch (selectedFormat) {
-      case 'json':
-        code = DesignToolsService.exportTokensAsJSON(filteredTokens)
-        break
-      case 'css':
-        code = DesignToolsService.exportTokensAsCSS(filteredTokens)
-        break
-      case 'scss':
-        code = DesignToolsService.exportTokensAsSCSS(filteredTokens)
-        break
-      case 'js':
-        code = generateJavaScript(filteredTokens)
-        break
-    }
-    
-    setGeneratedCode(code)
-  }
-
-  const generateJavaScript = (tokens: DesignToken[]): string => {
+  const generateJavaScript = useCallback((tokens: DesignToken[]): string => {
     const grouped = tokens.reduce((acc, token) => {
       if (!acc[token.category]) {
         acc[token.category] = {}
@@ -90,7 +65,32 @@ export const getToken = (path) => {
 export const getCSSVar = (tokenName) => {
   return \`var(--\${tokenName})\`
 }`
-  }
+  }, [])
+
+  const generateCode = useCallback(() => {
+    let code = ''
+    
+    switch (selectedFormat) {
+      case 'json':
+        code = DesignToolsService.exportTokensAsJSON(filteredTokens)
+        break
+      case 'css':
+        code = DesignToolsService.exportTokensAsCSS(filteredTokens)
+        break
+      case 'scss':
+        code = DesignToolsService.exportTokensAsSCSS(filteredTokens)
+        break
+      case 'js':
+        code = generateJavaScript(filteredTokens)
+        break
+    }
+    
+    setGeneratedCode(code)
+  }, [filteredTokens, selectedFormat, generateJavaScript])
+
+  useEffect(() => {
+    generateCode()
+  }, [generateCode])
 
   const handleExport = () => {
     onExport?.(selectedFormat, generatedCode)
@@ -272,7 +272,7 @@ export const getCSSVar = (tokenName) => {
                 {selectedFormat === 'css' && (
                   <>
                     <div>CSS에서: <code className="bg-blue-100 px-1 rounded">color: var(--color-primary-500);</code></div>
-                    <div>HTML에서: <code className="bg-blue-100 px-1 rounded">style="color: var(--color-primary-500)"</code></div>
+                    <div>HTML에서: <code className="bg-blue-100 px-1 rounded">style=&ldquo;color: var(--color-primary-500)&rdquo;</code></div>
                   </>
                 )}
                 {selectedFormat === 'scss' && (
@@ -283,8 +283,8 @@ export const getCSSVar = (tokenName) => {
                 )}
                 {selectedFormat === 'js' && (
                   <>
-                    <div>Import: <code className="bg-blue-100 px-1 rounded">import {`{ tokens }`} from './tokens'</code></div>
-                    <div>사용: <code className="bg-blue-100 px-1 rounded">tokens.colors['color-primary-500']</code></div>
+                    <div>Import: <code className="bg-blue-100 px-1 rounded">import {`{ tokens }`} from &ldquo;./tokens&rdquo;</code></div>
+                    <div>사용: <code className="bg-blue-100 px-1 rounded">tokens.colors[&lsquo;color-primary-500&rsquo;]</code></div>
                   </>
                 )}
                 {selectedFormat === 'json' && (
