@@ -10,6 +10,7 @@ const navigationItems = [
   { href: '/', label: '메인페이지', icon: '🏠' },
   { href: '/design-system', label: '디자인 시스템 v1', icon: '🎨' },
   { href: '/design-system-v2', label: '디자인 시스템 v2', icon: '✨' },
+  { href: '/card-theme', label: '카드 테마', icon: '🎴' },
 ]
 
 export default function Navigation() {
