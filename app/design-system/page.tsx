@@ -16,17 +16,34 @@ import Toast from '@/components/ui/Toast'
 // JSON 스키마 타입 정의
 interface ThemeColors {
   primary: string
+  primaryDark?: string
   secondary: string
-  success: string
-  warning: string
-  danger: string
-  info: string
-  light: string
-  dark: string
+  secondaryMedium?: string
+  accent?: string
+  background?: string
+  foreground?: string
+  muted?: string
+  mutedForeground?: string
+  border?: string
+  input?: string
+  ring?: string
+  destructive?: string
+  destructiveForeground?: string
+  success?: string
+  warning?: string
+  danger?: string
+  info?: string
+  light?: string
+  dark?: string
 }
 
 interface ThemeTypography {
-  fontFamily: string
+  fontFamily: {
+    primary?: string
+    heading?: string
+    accent?: string
+    display?: string
+  }
   fontSize: {
     xs: string
     sm: string
@@ -37,16 +54,18 @@ interface ThemeTypography {
     '3xl': string
     '4xl': string
   }
-  fontWeight: {
-    normal: number
-    medium: number
-    semibold: number
-    bold: number
+  fontWeight?: {
+    light?: string
+    normal?: string
+    medium?: string
+    semibold?: string
+    bold?: string
+    extrabold?: string
   }
-  lineHeight: {
-    tight: number
-    normal: number
-    relaxed: number
+  lineHeight?: {
+    tight?: string
+    normal?: string
+    relaxed?: string
   }
 }
 
@@ -57,8 +76,8 @@ interface ThemeSpacing {
   lg: string
   xl: string
   '2xl': string
-  '3xl': string
-  '4xl': string
+  '3xl'?: string
+  '4xl'?: string
 }
 
 interface ThemeBorderRadius {
@@ -66,17 +85,20 @@ interface ThemeBorderRadius {
   sm: string
   md: string
   lg: string
-  xl: string
-  '2xl': string
+  xl?: string
+  '2xl'?: string
   full: string
 }
 
 interface ThemeShadows {
-  sm: string
-  md: string
-  lg: string
-  xl: string
-  '2xl': string
+  none?: string
+  soft?: string
+  medium?: string
+  sm?: string
+  md?: string
+  lg?: string
+  xl?: string
+  '2xl'?: string
 }
 
 interface DesignTheme {
@@ -100,7 +122,9 @@ const defaultTheme: DesignTheme = {
     dark: '#1F2937'
   },
   typography: {
-    fontFamily: 'Inter, system-ui, sans-serif',
+    fontFamily: {
+      primary: 'Inter, system-ui, sans-serif'
+    },
     fontSize: {
       xs: '0.75rem',
       sm: '0.875rem',
@@ -112,15 +136,15 @@ const defaultTheme: DesignTheme = {
       '4xl': '2.25rem'
     },
     fontWeight: {
-      normal: 400,
-      medium: 500,
-      semibold: 600,
-      bold: 700
+      normal: '400',
+      medium: '500',
+      semibold: '600',
+      bold: '700'
     },
     lineHeight: {
-      tight: 1.25,
-      normal: 1.5,
-      relaxed: 1.75
+      tight: '1.25',
+      normal: '1.5',
+      relaxed: '1.75'
     }
   },
   spacing: {
@@ -129,25 +153,18 @@ const defaultTheme: DesignTheme = {
     md: '1rem',
     lg: '1.5rem',
     xl: '2rem',
-    '2xl': '3rem',
-    '3xl': '4rem',
-    '4xl': '6rem'
+    '2xl': '3rem'
   },
   borderRadius: {
     none: '0',
     sm: '0.25rem',
     md: '0.375rem',
     lg: '0.5rem',
-    xl: '0.75rem',
-    '2xl': '1rem',
     full: '9999px'
   },
   shadows: {
-    sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-    xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-    '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)'
+    soft: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    medium: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
   }
 }
 
@@ -253,22 +270,81 @@ export default function DesignSystemPage() {
   
   const { toast, success, error: showError, hideToast } = useToast()
 
-  // JSON 유효성 검증 및 파싱
+  // JSON 유효성 검증 및 파싱 - 메인 페이지와 동일한 로직 사용
   const validateAndParseJson = useCallback((jsonString: string) => {
-    try {
-      const parsed = JSON.parse(jsonString)
-      
-      // 기본 구조 검증
-      if (!parsed.colors || !parsed.typography || !parsed.spacing || !parsed.borderRadius || !parsed.shadows) {
-        throw new Error('필수 속성이 누락되었습니다: colors, typography, spacing, borderRadius, shadows')
+    const { theme, error } = parseThemeJson(jsonString)
+    
+    if (error) {
+      setJsonError(error)
+      return null
+    } else if (theme) {
+      setJsonError(null)
+      // ThemeData를 DesignTheme 형식으로 변환
+      const designTheme: DesignTheme = {
+        colors: {
+          primary: theme.colors.primary['500'] || '#3b82f6',
+          primaryDark: theme.colors.primary['700'] || '#1d4ed8',
+          secondary: theme.colors.secondary['500'] || '#64748b',
+          secondaryMedium: theme.colors.secondary['400'] || '#94a3b8',
+          accent: theme.colors.success?.['500'] || '#22c55e',
+          background: '#ffffff',
+          foreground: '#1a202c',
+          muted: '#f5f5f5',
+          mutedForeground: '#6b7280',
+          border: '#e5e7eb',
+          input: '#e5e7eb',
+          ring: theme.colors.primary['500'] || '#3b82f6',
+          destructive: theme.colors.error?.['500'] || '#ef4444',
+          destructiveForeground: '#ffffff'
+        },
+        typography: {
+          fontFamily: {
+            primary: theme.typography.fontFamily.sans.join(', '),
+            heading: theme.typography.fontFamily.sans.join(', '),
+            accent: theme.typography.fontFamily.mono.join(', '),
+            display: theme.typography.fontFamily.sans.join(', ')
+          },
+          fontSize: theme.typography.fontSize,
+          fontWeight: theme.typography.fontWeight || {
+            light: '300',
+            normal: '400',
+            medium: '500',
+            semibold: '600',
+            bold: '700',
+            extrabold: '800'
+          },
+          lineHeight: {
+            tight: '1.25',
+            normal: '1.5',
+            relaxed: '1.625'
+          }
+        },
+        spacing: {
+          xs: theme.spacing.xs,
+          sm: theme.spacing.sm,
+          md: theme.spacing.md,
+          lg: theme.spacing.lg,
+          xl: theme.spacing.xl,
+          '2xl': theme.spacing['2xl']
+        },
+        borderRadius: {
+          none: theme.borderRadius.none,
+          sm: theme.borderRadius.sm,
+          md: theme.borderRadius.md,
+          lg: theme.borderRadius.lg,
+          full: theme.borderRadius.full
+        },
+        shadows: {
+          none: 'none',
+          soft: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
+          medium: '0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06)'
+        }
       }
       
-      setJsonError(null)
-      return parsed as DesignTheme
-    } catch (error) {
-      setJsonError(error instanceof Error ? error.message : '유효하지 않은 JSON 형식입니다.')
-      return null
+      return designTheme
     }
+    
+    return null
   }, [])
 
   // JSON 입력 핸들러
@@ -312,7 +388,9 @@ export default function DesignSystemPage() {
       },
       typography: {
         fontFamily: {
-          sans: [designTheme.typography.fontFamily, 'system-ui', 'sans-serif'],
+          sans: designTheme.typography.fontFamily.primary ? 
+            [designTheme.typography.fontFamily.primary, 'system-ui', 'sans-serif'] :
+            ['Inter', 'system-ui', 'sans-serif'],
           mono: ['JetBrains Mono', 'monospace']
         },
         fontSize: designTheme.typography.fontSize
@@ -586,18 +664,6 @@ export default function DesignSystemPage() {
                 </div>
               </div>
 
-              {/* 컴포넌트 생성하기 버튼 */}
-              <button
-                onClick={handleApplyTheme}
-                disabled={!!jsonError}
-                className={`w-full py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
-                  jsonError
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-                }`}
-              >
-                🎨 컴포넌트 생성하기
-              </button>
 
               {/* 유효성 상태 */}
               <div className="mt-3 text-xs text-center">
@@ -658,7 +724,7 @@ export default function DesignSystemPage() {
                           borderRadius: theme.borderRadius.lg,
                           padding: `${theme.spacing.md} ${theme.spacing.xl}`,
                           fontSize: theme.typography.fontSize.sm,
-                          fontWeight: theme.typography.fontWeight.semibold,
+                          fontWeight: theme.typography.fontWeight?.semibold || '600',
                           boxShadow: theme.shadows.md
                         }}
                         className="text-white hover:opacity-90 transition-opacity"
@@ -680,7 +746,7 @@ export default function DesignSystemPage() {
                           borderRadius: theme.borderRadius.lg,
                           padding: `${theme.spacing.md} ${theme.spacing.xl}`,
                           fontSize: theme.typography.fontSize.sm,
-                          fontWeight: theme.typography.fontWeight.semibold,
+                          fontWeight: theme.typography.fontWeight?.semibold || '600',
                           boxShadow: theme.shadows.md
                         }}
                         className="text-white hover:opacity-90 transition-opacity"
@@ -702,7 +768,7 @@ export default function DesignSystemPage() {
                           borderRadius: theme.borderRadius.lg,
                           padding: `${theme.spacing.md} ${theme.spacing.xl}`,
                           fontSize: theme.typography.fontSize.sm,
-                          fontWeight: theme.typography.fontWeight.semibold,
+                          fontWeight: theme.typography.fontWeight?.semibold || '600',
                           boxShadow: theme.shadows.md
                         }}
                         className="text-white hover:opacity-90 transition-opacity"
@@ -746,7 +812,7 @@ export default function DesignSystemPage() {
                         <h3 
                           style={{
                             fontSize: theme.typography.fontSize.lg,
-                            fontWeight: theme.typography.fontWeight.bold,
+                            fontWeight: theme.typography.fontWeight?.bold || '700',
                             marginBottom: theme.spacing.md
                           }}
                           className={isDarkMode ? 'text-white' : 'text-gray-900'}
@@ -756,7 +822,7 @@ export default function DesignSystemPage() {
                         <p 
                           style={{
                             fontSize: theme.typography.fontSize.sm,
-                            lineHeight: theme.typography.lineHeight.relaxed,
+                            lineHeight: theme.typography.lineHeight?.relaxed || '1.625',
                             marginBottom: theme.spacing.lg
                           }}
                           className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}
@@ -770,7 +836,7 @@ export default function DesignSystemPage() {
                               borderRadius: theme.borderRadius.md,
                               padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
                               fontSize: theme.typography.fontSize.sm,
-                              fontWeight: theme.typography.fontWeight.medium
+                              fontWeight: theme.typography.fontWeight?.medium || '500'
                             }}
                             className="text-white hover:opacity-90 transition-opacity"
                           >
@@ -795,7 +861,7 @@ export default function DesignSystemPage() {
                         <label 
                           style={{
                             fontSize: theme.typography.fontSize.sm,
-                            fontWeight: theme.typography.fontWeight.medium,
+                            fontWeight: theme.typography.fontWeight?.medium || '500',
                             marginBottom: theme.spacing.sm
                           }}
                           className={`block ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
@@ -822,7 +888,7 @@ export default function DesignSystemPage() {
                         <label 
                           style={{
                             fontSize: theme.typography.fontSize.sm,
-                            fontWeight: theme.typography.fontWeight.medium,
+                            fontWeight: theme.typography.fontWeight?.medium || '500',
                             marginBottom: theme.spacing.sm
                           }}
                           className={`block ${isDarkMode ? 'text-white' : 'text-gray-900'}`}

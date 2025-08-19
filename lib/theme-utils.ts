@@ -256,6 +256,8 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
     // Primary 색상 설정
     if (flatTheme.colors.primary) {
       colors.primary = flatColorToPalette(flatTheme.colors.primary)
+    } else {
+      colors.primary = defaultTheme.colors.primary
     }
 
     // Secondary 색상 설정 - secondary 또는 secondaryMedium 사용
@@ -263,20 +265,28 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
       colors.secondary = flatColorToPalette(flatTheme.colors.secondary)
     } else if (flatTheme.colors.secondaryMedium) {
       colors.secondary = flatColorToPalette(flatTheme.colors.secondaryMedium)
+    } else {
+      colors.secondary = defaultTheme.colors.secondary
     }
 
     // 추가 색상들
     if (flatTheme.colors.destructive) {
       colors.error = flatColorToPalette(flatTheme.colors.destructive)
+    } else if (defaultTheme.colors.success) {
+      colors.error = defaultTheme.colors.success
     }
 
     if (flatTheme.colors.accent) {
       colors.success = flatColorToPalette(flatTheme.colors.accent)
+    } else if (defaultTheme.colors.success) {
+      colors.success = defaultTheme.colors.success
     }
 
     // 기타 색상들 매핑
     if (flatTheme.colors.primaryDark) {
       colors.warning = flatColorToPalette(flatTheme.colors.primaryDark)
+    } else if (defaultTheme.colors.success) {
+      colors.warning = defaultTheme.colors.success
     }
   }
 

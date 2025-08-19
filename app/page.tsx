@@ -599,21 +599,6 @@ export default function Home() {
               )}
             </div>
             
-            {/* 컴포넌트 생성하기 버튼 */}
-            <div className="mt-3">
-              <button
-                onClick={() => handleJsonChange(jsonInput)}
-                disabled={!!jsonError}
-                className={cn(
-                  "w-full px-4 py-2 rounded-lg font-medium text-sm transition-colors",
-                  jsonError 
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                )}
-              >
-                🎨 컴포넌트 생성하기
-              </button>
-            </div>
           </div>
 
           {/* 컴포넌트 선택 */}

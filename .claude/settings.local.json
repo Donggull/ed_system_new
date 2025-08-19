@@ -59,7 +59,8 @@
       "mcp__playwright-stealth__playwright_get_visible_text",
       "mcp__playwright-stealth__playwright_console_logs",
       "mcp__github-mcp__git-remove",
-      "mcp__playwright-stealth__playwright_evaluate"
+      "mcp__playwright-stealth__playwright_evaluate",
+      "Bash(del test-json.json)"
     ],
     "deny": [],
     "ask": [],
