@@ -118,7 +118,7 @@ export function mergeThemeWithDefaults(partialTheme: Partial<ThemeData>): ThemeD
   }
 }
 
-// Flat JSON 형태 인터페이스 정의
+// Flat JSON 형태 인터페이스 정의 (사용자 제공 형식 지원)
 interface FlatThemeJSON {
   colors?: {
     primary?: string
@@ -162,8 +162,41 @@ interface FlatThemeJSON {
       medium?: string
       semibold?: string
       bold?: string
+      extrabold?: string
       [key: string]: string | undefined
     }
+    lineHeight?: {
+      tight?: string
+      normal?: string
+      relaxed?: string
+      [key: string]: string | undefined
+    }
+  }
+  spacing?: {
+    xs?: string
+    sm?: string
+    md?: string
+    lg?: string
+    xl?: string
+    '2xl'?: string
+    '3xl'?: string
+    '4xl'?: string
+    [key: string]: string | undefined
+  }
+  borderRadius?: {
+    none?: string
+    sm?: string
+    md?: string
+    lg?: string
+    xl?: string
+    full?: string
+    [key: string]: string | undefined
+  }
+  shadows?: {
+    none?: string
+    soft?: string
+    medium?: string
+    [key: string]: string | undefined
   }
   [key: string]: any
 }
@@ -225,9 +258,11 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
       colors.primary = flatColorToPalette(flatTheme.colors.primary)
     }
 
-    // Secondary 색상 설정
+    // Secondary 색상 설정 - secondary 또는 secondaryMedium 사용
     if (flatTheme.colors.secondary) {
       colors.secondary = flatColorToPalette(flatTheme.colors.secondary)
+    } else if (flatTheme.colors.secondaryMedium) {
+      colors.secondary = flatColorToPalette(flatTheme.colors.secondaryMedium)
     }
 
     // 추가 색상들
@@ -238,6 +273,11 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
     if (flatTheme.colors.accent) {
       colors.success = flatColorToPalette(flatTheme.colors.accent)
     }
+
+    // 기타 색상들 매핑
+    if (flatTheme.colors.primaryDark) {
+      colors.warning = flatColorToPalette(flatTheme.colors.primaryDark)
+    }
   }
 
   const typography: any = {
@@ -246,13 +286,24 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
 
   if (flatTheme.typography) {
     if (flatTheme.typography.fontFamily) {
+      // 폰트 패밀리 매핑 개선
+      const fontFamilies = flatTheme.typography.fontFamily
+      
       typography.fontFamily = {
-        sans: flatTheme.typography.fontFamily.primary ? 
-          [flatTheme.typography.fontFamily.primary, 'ui-sans-serif', 'system-ui', 'sans-serif'] :
+        sans: fontFamilies.primary ? 
+          fontFamilies.primary.split(',').map(f => f.trim()) :
           defaultTheme.typography.fontFamily.sans,
-        mono: flatTheme.typography.fontFamily.accent ? 
-          [flatTheme.typography.fontFamily.accent, 'ui-monospace', 'monospace'] :
+        mono: fontFamilies.accent ? 
+          fontFamilies.accent.split(',').map(f => f.trim()) :
           defaultTheme.typography.fontFamily.mono
+      }
+
+      // heading과 display 폰트가 있다면 추가
+      if (fontFamilies.heading) {
+        typography.fontFamily.heading = fontFamilies.heading.split(',').map(f => f.trim())
+      }
+      if (fontFamilies.display) {
+        typography.fontFamily.display = fontFamilies.display.split(',').map(f => f.trim())
       }
     }
 
@@ -262,7 +313,18 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
         ...flatTheme.typography.fontSize
       }
     }
+
+    if (flatTheme.typography.fontWeight) {
+      typography.fontWeight = {
+        ...defaultTheme.typography.fontWeight,
+        ...flatTheme.typography.fontWeight
+      }
+    }
   }
+
+  // spacing과 borderRadius 처리
+  const spacing = flatTheme.spacing || defaultTheme.spacing
+  const borderRadius = flatTheme.borderRadius || defaultTheme.borderRadius
 
   return {
     name: "Custom Theme",
@@ -271,8 +333,8 @@ function convertFlatToThemeData(flatTheme: FlatThemeJSON): ThemeData {
       ...colors
     },
     typography,
-    spacing: defaultTheme.spacing,
-    borderRadius: defaultTheme.borderRadius
+    spacing,
+    borderRadius
   }
 }
 

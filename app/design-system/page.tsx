@@ -163,6 +163,93 @@ export default function DesignSystemPage() {
   const [showCollaboration, setShowCollaboration] = useState(false)
   const [showPerformance, setShowPerformance] = useState(false)
   const [showTools, setShowTools] = useState(false)
+
+  // 컴포넌트 마운트 시 메인 페이지 데이터 확인
+  useEffect(() => {
+    const checkMainPageTheme = () => {
+      const mainThemeData = localStorage.getItem('main-theme-data')
+      const mainThemeJson = localStorage.getItem('main-theme-json')
+      
+      if (mainThemeData && mainThemeJson) {
+        try {
+          // 메인 페이지 테마를 v2 형식으로 변환
+          const mainTheme = JSON.parse(mainThemeData)
+          const convertedJson = convertMainThemeToV2Format(mainTheme)
+          
+          setJsonInput(convertedJson)
+          const parsed = validateAndParseJson(convertedJson)
+          if (parsed) {
+            setTheme(parsed)
+          }
+          
+          // 사용 후 localStorage 정리
+          localStorage.removeItem('main-theme-data')
+          localStorage.removeItem('main-theme-json')
+          
+          console.log('메인 페이지 테마가 v2 형식으로 변환되어 적용되었습니다!')
+        } catch (error) {
+          console.error('Main theme conversion error:', error)
+        }
+      }
+    }
+
+    checkMainPageTheme()
+    
+    // focus 이벤트에서도 확인
+    const handleFocus = () => checkMainPageTheme()
+    window.addEventListener('focus', handleFocus)
+    
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [])
+
+  // 메인 페이지 테마를 v2 형식으로 변환하는 함수
+  const convertMainThemeToV2Format = (mainTheme: any): string => {
+    const v2Theme = {
+      colors: {
+        primary: mainTheme.colors?.primary?.['500'] || '#6C63FF',
+        primaryDark: mainTheme.colors?.primary?.['700'] || '#4A3FFF',
+        secondary: mainTheme.colors?.secondary?.['200'] || '#E9E6FF',
+        secondaryMedium: mainTheme.colors?.secondary?.['400'] || '#C9C5FF',
+        accent: mainTheme.colors?.success?.['500'] || '#FF6B9D',
+        background: '#FBFAFF',
+        foreground: '#1E1B2E',
+        muted: '#F5F3FF',
+        mutedForeground: '#7C7A99',
+        border: '#E2E0F0',
+        input: '#E2E0F0',
+        ring: mainTheme.colors?.primary?.['500'] || '#6C63FF',
+        destructive: mainTheme.colors?.error?.['500'] || '#E63946',
+        destructiveForeground: '#ffffff'
+      },
+      typography: {
+        fontFamily: {
+          primary: mainTheme.typography?.fontFamily?.sans?.[0] || 'Pretendard Variable, sans-serif',
+          heading: 'Manrope, sans-serif',
+          accent: 'Noto Serif KR, serif',
+          display: 'Custom Brutalist, sans-serif'
+        },
+        fontSize: mainTheme.typography?.fontSize || {
+          xs: '0.75rem',
+          sm: '0.875rem',
+          base: '1rem',
+          lg: '1.125rem',
+          xl: '1.25rem',
+          '2xl': '1.5rem',
+          '3xl': '1.875rem',
+          '4xl': '2.25rem'
+        },
+        fontWeight: {
+          light: '300',
+          normal: '400',
+          medium: '500',
+          semibold: '600',
+          bold: '700'
+        }
+      }
+    }
+    
+    return JSON.stringify(v2Theme, null, 2)
+  }
   
   const { toast, success, error: showError, hideToast } = useToast()
 
@@ -193,15 +280,96 @@ export default function DesignSystemPage() {
     }
   }, [validateAndParseJson])
 
+  // v2 테마를 메인 페이지 형식으로 변환하는 함수
+  const convertToThemeData = useCallback((designTheme: DesignTheme): any => {
+    const convertColorToPalette = (color: string) => {
+      // 간단한 색상 팔레트 생성
+      const base = color
+      return {
+        '50': adjustBrightness(base, 0.95),
+        '100': adjustBrightness(base, 0.9),
+        '200': adjustBrightness(base, 0.8),
+        '300': adjustBrightness(base, 0.6),
+        '400': adjustBrightness(base, 0.4),
+        '500': base,
+        '600': adjustBrightness(base, -0.2),
+        '700': adjustBrightness(base, -0.4),
+        '800': adjustBrightness(base, -0.6),
+        '900': adjustBrightness(base, -0.8),
+      }
+    }
+
+    const adjustBrightness = (hex: string, percent: number) => {
+      const num = parseInt(hex.replace('#', ''), 16)
+      const amt = Math.round(2.55 * percent * 100)
+      const R = (num >> 16) + amt
+      const G = (num >> 8 & 0x00FF) + amt
+      const B = (num & 0x0000FF) + amt
+      return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1)
+    }
+
+    return {
+      name: "Converted Theme",
+      colors: {
+        primary: convertColorToPalette(designTheme.colors.primary || '#6C63FF'),
+        secondary: convertColorToPalette(designTheme.colors.secondary || '#E9E6FF'),
+        success: convertColorToPalette(designTheme.colors.accent || '#FF6B9D'),
+        warning: convertColorToPalette('#F59E0B'),
+        error: convertColorToPalette(designTheme.colors.destructive || '#E63946'),
+        neutral: convertColorToPalette('#6B7280'),
+        gray: convertColorToPalette('#9CA3AF'),
+      },
+      typography: {
+        fontFamily: {
+          sans: designTheme.typography?.fontFamily?.primary?.split(',').map(f => f.trim()) || ['Inter', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace']
+        },
+        fontSize: designTheme.typography?.fontSize || {
+          xs: '0.75rem',
+          sm: '0.875rem',
+          base: '1rem',
+          lg: '1.125rem',
+          xl: '1.25rem',
+          '2xl': '1.5rem',
+          '3xl': '1.875rem',
+          '4xl': '2.25rem'
+        }
+      },
+      spacing: designTheme.spacing || {
+        xs: '0.25rem',
+        sm: '0.5rem',
+        md: '1rem',
+        lg: '1.5rem',
+        xl: '2rem',
+        '2xl': '3rem'
+      },
+      borderRadius: designTheme.borderRadius || {
+        none: '0',
+        sm: '0.125rem',
+        md: '0.375rem',
+        lg: '0.5rem',
+        full: '9999px'
+      }
+    }
+  }, [])
+
   // 테마 적용 핸들러
   const handleApplyTheme = useCallback(() => {
     const parsed = validateAndParseJson(jsonInput)
     if (parsed) {
       setTheme(parsed)
-      // TODO: 테마를 Supabase에 저장하는 로직 추가
+      
+      // 메인 페이지와 연동을 위해 localStorage에 저장
+      const convertedTheme = convertToThemeData(parsed)
+      localStorage.setItem('shared-theme-data', JSON.stringify(convertedTheme))
+      localStorage.setItem('shared-theme-json', jsonInput)
+      
       console.log('테마 적용됨:', parsed)
+      console.log('변환된 테마:', convertedTheme)
     }
-  }, [jsonInput, validateAndParseJson])
+  }, [jsonInput, validateAndParseJson, convertToThemeData])
 
   // 예시 템플릿 로드
   const loadTemplate = useCallback((templateName: string) => {
@@ -493,7 +661,7 @@ export default function DesignSystemPage() {
                 </div>
               </div>
 
-              {/* 적용 버튼 */}
+              {/* 컴포넌트 생성하기 버튼 */}
               <button
                 onClick={handleApplyTheme}
                 disabled={!!jsonError}
@@ -503,7 +671,7 @@ export default function DesignSystemPage() {
                     : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                 }`}
               >
-                테마 적용
+                🎨 컴포넌트 생성하기
               </button>
 
               {/* 유효성 상태 */}

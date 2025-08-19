@@ -119,6 +119,43 @@ export default function Home() {
     loadData()
   }, [user])
 
+  // localStorage에서 공유 테마 확인
+  useEffect(() => {
+    const checkSharedTheme = () => {
+      const sharedThemeData = localStorage.getItem('shared-theme-data')
+      const sharedThemeJson = localStorage.getItem('shared-theme-json')
+      
+      if (sharedThemeData && sharedThemeJson) {
+        try {
+          const parsedTheme = JSON.parse(sharedThemeData)
+          setCurrentTheme(parsedTheme)
+          setJsonInput(sharedThemeJson)
+          setJsonError(null)
+          
+          // CSS 변수 적용
+          const cssVars = generateCssVariables(parsedTheme)
+          applyCssVariables(cssVars)
+          
+          // 사용 후 localStorage 정리
+          localStorage.removeItem('shared-theme-data')
+          localStorage.removeItem('shared-theme-json')
+          
+          success('v2 페이지에서 생성된 테마가 적용되었습니다!')
+        } catch (error) {
+          console.error('Shared theme parsing error:', error)
+        }
+      }
+    }
+
+    // 컴포넌트 마운트 시와 focus 이벤트에 확인
+    checkSharedTheme()
+    
+    const handleFocus = () => checkSharedTheme()
+    window.addEventListener('focus', handleFocus)
+    
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [success])
+
   // JSON 입력 핸들러
   const handleJsonChange = (value: string) => {
     setJsonInput(value)
@@ -133,6 +170,10 @@ export default function Home() {
       // CSS 변수 적용
       const cssVars = generateCssVariables(theme)
       applyCssVariables(cssVars)
+      
+      // v2 페이지와 공유
+      localStorage.setItem('main-theme-data', JSON.stringify(theme))
+      localStorage.setItem('main-theme-json', value)
     }
   }
 
@@ -555,6 +596,22 @@ export default function Home() {
                   ✅ 유효한 JSON
                 </div>
               )}
+            </div>
+            
+            {/* 컴포넌트 생성하기 버튼 */}
+            <div className="mt-3">
+              <button
+                onClick={() => handleJsonChange(jsonInput)}
+                disabled={!!jsonError}
+                className={cn(
+                  "w-full px-4 py-2 rounded-lg font-medium text-sm transition-colors",
+                  jsonError 
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                )}
+              >
+                🎨 컴포넌트 생성하기
+              </button>
             </div>
           </div>
 
