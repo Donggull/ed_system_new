@@ -57,8 +57,8 @@ const createSupabaseClient = () => {
     // In production, try hardcoded values as last resort
     if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV) {
       console.warn('🔄 Production fallback: Using hardcoded credentials')
-      finalUrl = 'https://nktjoldoylvwtkzboyaf.supabase.co'
-      finalKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rdGpvbGRveWx2d3RremJveWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDUyODUsImV4cCI6MjA3MDcyMTI4NX0.ZGX25pgubs4PD8H8zY5wUi5cEKL500fiLjp1TY5PPyo'
+      finalUrl = 'https://yzfxwxbopoeuinvbxuvj.supabase.co'
+      finalKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6Znh3eGJvcG9ldWludmJ4dXZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyOTExOTgsImV4cCI6MjA3MDg2NzE5OH0.hEIFJcE5yZN4nvUWJOIpYM7cIJ6m_pkhHfE0pKNvfF4'
     } else {
       return null
     }

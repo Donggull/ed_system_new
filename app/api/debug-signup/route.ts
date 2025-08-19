@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       email,
       password,
       options: {
-        emailRedirectTo: 'https://ed-system-new.vercel.app/auth/callback',
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ed-system-new.vercel.app'}/auth/callback`,
         data: {
           email: email,
           full_name: email.split('@')[0]
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         needsEmailConfirmation: !data.user?.email_confirmed_at,
         sessionCreated: !!data.session,
         timestamp: new Date().toISOString(),
-        redirectUrl: 'https://ed-system-new.vercel.app/auth/callback'
+        redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ed-system-new.vercel.app'}/auth/callback`
       }
     }
 
