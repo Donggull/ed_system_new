@@ -230,7 +230,7 @@ export default function Home() {
     try {
       const { data, error: saveError } = await saveTheme({
         name: themeName,
-        theme_data: currentTheme,
+        theme_data: currentTheme as any,
         selected_components: selectedComponents,
         component_settings: componentSettings,
         is_template: false
@@ -322,7 +322,7 @@ export default function Home() {
 
     await createVersion(
       versionHistoryDesignSystem.id,
-      currentTheme,
+      currentTheme as any,
       selectedComponents,
       componentSettings,
       changeNotes
@@ -876,7 +876,7 @@ export default function Home() {
                       <div className="flex flex-wrap gap-4">
                         <button 
                           style={{ 
-                            backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                            backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                             color: 'white',
                           }}
                           className={`${sizeClasses[size as keyof typeof sizeClasses]} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5 hover:opacity-90`}
@@ -894,7 +894,7 @@ export default function Home() {
                         </button>
                         <button 
                           style={{ 
-                            backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                            backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                             color: 'white',
                           }}
                           className={`${sizeClasses[size as keyof typeof sizeClasses]} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5 hover:opacity-90`}
@@ -906,8 +906,8 @@ export default function Home() {
                         </button>
                         <button 
                           style={{ 
-                            borderColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
-                            color: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                            borderColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
+                            color: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                           }}
                           className={`${sizeClasses[size as keyof typeof sizeClasses]} border-2 rounded-xl hover:bg-blue-50 font-semibold transition-all transform hover:-translate-y-0.5`}
                         >
@@ -987,7 +987,7 @@ export default function Home() {
                           <p className="text-sm text-gray-600 leading-relaxed mb-4">버튼이 포함된 카드입니다.</p>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
@@ -1018,7 +1018,7 @@ export default function Home() {
                             <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors">취소</button>
                             <button 
                               style={{ 
-                                backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                                 color: 'white',
                               }}
                               className="px-4 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity"
@@ -1067,7 +1067,7 @@ export default function Home() {
                             <p className="text-gray-600 text-sm mb-6">모든 작업이 성공적으로 완료되었습니다.</p>
                             <button 
                               style={{ 
-                                backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                                 color: 'white',
                               }}
                               className="w-full px-4 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity"
@@ -1121,7 +1121,7 @@ export default function Home() {
                             <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors">취소</button>
                             <button 
                               style={{ 
-                                backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                                 color: 'white',
                               }}
                               className="px-4 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity"
@@ -1470,7 +1470,7 @@ export default function Home() {
                             <div className="flex gap-2">
                               <button 
                                 style={{ 
-                                  backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                  backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                                   color: 'white',
                                 }}
                                 className="px-3 py-1 text-xs rounded-full hover:opacity-90 transition-opacity"
@@ -1973,7 +1973,7 @@ export default function Home() {
                         <div className="flex flex-wrap gap-3">
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-6 py-3 text-sm font-medium rounded-lg transition-all transform hover:scale-105 shadow-lg hover:opacity-90"
@@ -1982,8 +1982,8 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              color: currentTheme.colors.primary?.['500'] || '#3b82f6',
-                              borderColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: currentTheme.colors!.primary?.['500'] || '#3b82f6',
+                              borderColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               backgroundColor: 'transparent'
                             }}
                             className="px-6 py-3 text-sm font-medium border-2 hover:bg-gray-50 rounded-lg transition-all"
@@ -2005,7 +2005,7 @@ export default function Home() {
                         <div className="flex items-center flex-wrap gap-3">
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-3 py-1.5 text-xs font-medium rounded-md hover:opacity-90 transition-opacity"
@@ -2014,7 +2014,7 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
@@ -2023,7 +2023,7 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-6 py-3 text-base font-medium rounded-lg hover:opacity-90 transition-opacity"
@@ -2032,7 +2032,7 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-8 py-4 text-lg font-medium rounded-xl hover:opacity-90 transition-opacity"
@@ -2048,7 +2048,7 @@ export default function Home() {
                         <div className="flex flex-wrap gap-3">
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all hover:opacity-90"
@@ -2080,7 +2080,7 @@ export default function Home() {
                         <div className="flex items-center gap-3">
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="p-2 rounded-lg transition-all hover:opacity-90"
@@ -2111,7 +2111,7 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
@@ -2137,7 +2137,7 @@ export default function Home() {
                         <div className="flex items-center gap-4">
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 flex items-center justify-center"
@@ -2674,16 +2674,16 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">제목 스타일</h4>
                         <div className="space-y-3">
-                          <h1 className="text-4xl font-bold text-gray-900 leading-tight" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <h1 className="text-4xl font-bold text-gray-900 leading-tight" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             Heading 1 - 주요 제목
                           </h1>
-                          <h2 className="text-3xl font-bold text-gray-800 leading-tight" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <h2 className="text-3xl font-bold text-gray-800 leading-tight" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             Heading 2 - 부제목
                           </h2>
-                          <h3 className="text-2xl font-semibold text-gray-700 leading-tight" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <h3 className="text-2xl font-semibold text-gray-700 leading-tight" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             Heading 3 - 섹션 제목
                           </h3>
-                          <h4 className="text-xl font-medium text-gray-700 leading-tight" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <h4 className="text-xl font-medium text-gray-700 leading-tight" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             Heading 4 - 소제목
                           </h4>
                         </div>
@@ -2693,13 +2693,13 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">본문 텍스트</h4>
                         <div className="space-y-3">
-                          <p className="text-lg text-gray-700 leading-relaxed" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <p className="text-lg text-gray-700 leading-relaxed" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             대형 본문 텍스트 - 이것은 큰 본문 텍스트 예시입니다. 읽기 편한 크기와 줄 간격을 가지고 있습니다.
                           </p>
-                          <p className="text-base text-gray-600 leading-relaxed" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <p className="text-base text-gray-600 leading-relaxed" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             일반 본문 텍스트 - 가장 많이 사용되는 기본 텍스트 크기입니다. 대부분의 콘텐츠에 적합합니다.
                           </p>
-                          <p className="text-sm text-gray-500 leading-relaxed" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <p className="text-sm text-gray-500 leading-relaxed" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             소형 본문 텍스트 - 부가 정보나 설명에 사용되는 작은 텍스트입니다.
                           </p>
                         </div>
@@ -2709,10 +2709,10 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">코드 텍스트</h4>
                         <div className="space-y-3">
-                          <code className="px-2 py-1 text-sm bg-gray-100 text-gray-800 rounded" style={{ fontFamily: currentTheme.typography.fontFamily.mono.join(', ') }}>
+                          <code className="px-2 py-1 text-sm bg-gray-100 text-gray-800 rounded" style={{ fontFamily: currentTheme.typography!.fontFamily!.mono!.join(', ') }}>
                             const example = &apos;inline code&apos;
                           </code>
-                          <pre className="p-4 bg-gray-900 text-green-400 rounded-lg text-sm overflow-x-auto" style={{ fontFamily: currentTheme.typography.fontFamily.mono.join(', ') }}>
+                          <pre className="p-4 bg-gray-900 text-green-400 rounded-lg text-sm overflow-x-auto" style={{ fontFamily: currentTheme.typography!.fontFamily!.mono!.join(', ') }}>
 {`function generateComponent() {
   return {
     name: 'Button',
@@ -2728,13 +2728,13 @@ export default function Home() {
                       <div>
                         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">텍스트 스타일</h4>
                         <div className="space-y-2">
-                          <p className="text-base" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <p className="text-base" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             <span className="font-bold">굵은 텍스트</span>, 
                             <span className="italic ml-2">기울임 텍스트</span>, 
                             <span className="underline ml-2">밑줄 텍스트</span>, 
                             <span className="line-through ml-2">취소선 텍스트</span>
                           </p>
-                          <p className="text-base" style={{ fontFamily: currentTheme.typography.fontFamily.sans.join(', ') }}>
+                          <p className="text-base" style={{ fontFamily: currentTheme.typography!.fontFamily!.sans!.join(', ') }}>
                             <span className="text-[hsl(var(--color-primary-500))] font-medium">컬러 텍스트</span>, 
                             <span className="text-gray-500 ml-2">회색 텍스트</span>, 
                             <span className="text-red-500 ml-2">빨간 텍스트</span>
@@ -2753,7 +2753,7 @@ export default function Home() {
                         <div className="flex flex-wrap gap-3">
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-6 py-3 text-sm font-medium rounded-lg transition-all transform hover:scale-105 shadow-lg hover:opacity-90"
@@ -2762,8 +2762,8 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              color: currentTheme.colors.primary?.['500'] || '#3b82f6',
-                              borderColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              color: currentTheme.colors!.primary?.['500'] || '#3b82f6',
+                              borderColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               backgroundColor: 'transparent'
                             }}
                             className="px-6 py-3 text-sm font-medium border-2 hover:bg-gray-50 rounded-lg transition-all"
@@ -2782,7 +2782,7 @@ export default function Home() {
                         <div className="flex items-center flex-wrap gap-3">
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-3 py-1.5 text-xs font-medium rounded-md hover:opacity-90 transition-opacity"
@@ -2791,7 +2791,7 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
@@ -2800,7 +2800,7 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-6 py-3 text-base font-medium rounded-lg hover:opacity-90 transition-opacity">
@@ -2808,7 +2808,7 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="px-8 py-4 text-lg font-medium rounded-xl hover:opacity-90 transition-opacity"
@@ -2861,7 +2861,7 @@ export default function Home() {
                           </button>
                           <button 
                             style={{ 
-                              backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                              backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                               color: 'white',
                             }}
                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
@@ -3257,7 +3257,7 @@ export default function Home() {
                               </div>
                               <button 
                                 style={{ 
-                                  backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                                  backgroundColor: currentTheme.colors!.primary?.['500'] || '#3b82f6',
                                   color: 'white',
                                 }}
                                 className="px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
@@ -3543,7 +3543,7 @@ export default function Home() {
           setShowSaveDesignSystemModal(false)
           setCurrentDesignSystem(null)
         }}
-        themeData={currentTheme}
+        themeData={currentTheme as any}
         selectedComponents={selectedComponents}
         componentSettings={componentSettings}
         existingDesignSystem={currentDesignSystem ? {
@@ -3615,7 +3615,7 @@ export default function Home() {
             </div>
             <div className="p-6">
               <AIRecommendations
-                currentTheme={currentTheme}
+                currentTheme={currentTheme as any}
                 onThemeUpdate={handleAIThemeUpdate}
               />
             </div>
@@ -3640,7 +3640,7 @@ export default function Home() {
             <div className="p-6">
               <CollaborationHub
                 themeId={currentDesignSystem?.id || 'temp-theme-id'}
-                currentTheme={currentTheme}
+                currentTheme={currentTheme as any}
                 onThemeUpdate={handleAIThemeUpdate}
               />
             </div>
@@ -3690,7 +3690,7 @@ export default function Home() {
             </div>
             <div className="p-6">
               <ToolsHub
-                theme={currentTheme}
+                theme={currentTheme as any}
                 onToolAction={(tool, action, data) => {
                   console.log('Tool action:', tool, action, data)
                   success(`${tool} 도구에서 ${action} 작업이 완료되었습니다!`)
