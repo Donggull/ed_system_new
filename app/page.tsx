@@ -916,8 +916,26 @@ export default function Home() {
                     
                     return (
                       <div className="flex flex-wrap gap-4">
-                        <button className={`${sizeClasses[size as keyof typeof sizeClasses]} bg-[hsl(var(--color-primary-500))] text-white rounded-xl hover:bg-[hsl(var(--color-primary-600))] font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
-                          Primary Button
+                        <button 
+                          style={{ 
+                            backgroundColor: currentTheme.colors.primary?.['500'] || '#3b82f6',
+                            color: 'white',
+                          }}
+                          className={`${sizeClasses[size as keyof typeof sizeClasses]} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5 hover:opacity-90`}
+                        >
+                          Primary Button (Direct)
+                        </button>
+                        <button 
+                          style={{ 
+                            backgroundColor: `var(--color-primary-500)`,
+                            color: 'white',
+                          }}
+                          className={`${sizeClasses[size as keyof typeof sizeClasses]} rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5 hover:opacity-90`}
+                        >
+                          Primary Button (CSS Var Direct)
+                        </button>
+                        <button className={`${sizeClasses[size as keyof typeof sizeClasses]} bg-[hsl(var(--color-primary-500-rgb))] text-white rounded-xl hover:bg-[hsl(var(--color-primary-600-rgb))] font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
+                          Primary Button (CSS Var RGB)
                         </button>
                         <button className={`${sizeClasses[size as keyof typeof sizeClasses]} bg-[hsl(var(--color-secondary-500))] text-white rounded-xl hover:bg-[hsl(var(--color-secondary-600))] font-semibold shadow-lg transition-all transform hover:-translate-y-0.5`}>
                           Secondary Button

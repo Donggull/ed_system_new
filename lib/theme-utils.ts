@@ -425,6 +425,8 @@ export function parseThemeJson(jsonString: string): { theme: ThemeData | null, e
   try {
     const parsed = JSON.parse(jsonString)
     
+    console.log('🔍 Parsing JSON input:', parsed)
+    
     // 기본 구조 검증
     if (!parsed || typeof parsed !== 'object') {
       return { theme: null, error: '유효하지 않은 JSON 객체입니다.' }
@@ -437,9 +439,14 @@ export function parseThemeJson(jsonString: string): { theme: ThemeData | null, e
         typeof value === 'string' && (value.startsWith('#') || value.startsWith('rgb'))
       )
 
+      console.log('🎨 Color values found:', colorValues)
+      console.log('📊 Has direct color values:', hasDirectColorValues)
+
       if (hasDirectColorValues) {
+        console.log('✅ Processing as flat JSON format')
         // Flat 형태로 처리
         const theme = convertFlatToThemeData(parsed as FlatThemeJSON)
+        console.log('🎯 Final converted theme:', theme)
         return { theme, error: null }
       }
     }
@@ -496,20 +503,25 @@ export function generateCssVariables(theme: ThemeData): Record<string, string> {
   
   console.log('🔄 Generating CSS variables from theme:', theme)
   
-  // 컬러 변수 생성
+  // 컬러 변수 생성 - HEX 값을 직접 사용
   Object.entries(theme.colors).forEach(([colorName, colorPalette]) => {
     if (colorPalette && typeof colorPalette === 'object') {
       Object.entries(colorPalette).forEach(([shade, value]) => {
         if (typeof value === 'string') {
-          // #ffffff -> 255 255 255 형태로 변환
+          // 직접 HEX 값 사용 (RGB 변환 없이)
+          const varName = `--color-${colorName}-${shade}`
+          variables[varName] = value
+          
+          // RGB 형태도 함께 생성 (기존 호환성을 위해)
           const rgb = hexToRgb(value)
           if (rgb) {
-            const varName = `--color-${colorName}-${shade}`
-            const varValue = `${rgb.r} ${rgb.g} ${rgb.b}`
-            variables[varName] = varValue
-            if (colorName === 'primary' && shade === '500') {
-              console.log(`🎯 Primary-500 CSS variable: ${varName} = ${varValue}`)
-            }
+            variables[`--color-${colorName}-${shade}-rgb`] = `${rgb.r} ${rgb.g} ${rgb.b}`
+          }
+          
+          if (colorName === 'primary' && shade === '500') {
+            console.log(`🎯 Primary-500 CSS variables:`)
+            console.log(`  ${varName} = ${value}`)
+            console.log(`  ${varName}-rgb = ${rgb ? `${rgb.r} ${rgb.g} ${rgb.b}` : 'N/A'}`)
           }
         }
       })
