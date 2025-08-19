@@ -219,32 +219,34 @@ function flatColorToPalette(color: string): ColorPalette {
     }
   }
 
-  // 색상 변형 생성 (간단한 밝기 조절)
-  const generateShade = (factor: number) => {
-    const r = Math.round(Math.min(255, Math.max(0, base.r + (255 - base.r) * factor)))
-    const g = Math.round(Math.min(255, Math.max(0, base.g + (255 - base.g) * factor)))
-    const b = Math.round(Math.min(255, Math.max(0, base.b + (255 - base.b) * factor)))
+  // 색상 변형 생성 (올바른 밝기/어둡기 조절)
+  const generateLightShade = (factor: number) => {
+    // factor가 클수록 더 밝아짐 (0에 가까우면 원본 색상, 1에 가까우면 흰색)
+    const r = Math.round(base.r + (255 - base.r) * factor)
+    const g = Math.round(base.g + (255 - base.g) * factor)
+    const b = Math.round(base.b + (255 - base.b) * factor)
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
   }
 
   const generateDarkShade = (factor: number) => {
-    const r = Math.round(Math.max(0, base.r * factor))
-    const g = Math.round(Math.max(0, base.g * factor))
-    const b = Math.round(Math.max(0, base.b * factor))
+    // factor가 클수록 더 어두워짐 (0에 가까우면 원본 색상, 1에 가까우면 검정색)
+    const r = Math.round(base.r * (1 - factor))
+    const g = Math.round(base.g * (1 - factor))
+    const b = Math.round(base.b * (1 - factor))
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
   }
 
   return {
-    '50': generateShade(0.95),
-    '100': generateShade(0.9),
-    '200': generateShade(0.8),
-    '300': generateShade(0.6),
-    '400': generateShade(0.3),
-    '500': color,
-    '600': generateDarkShade(0.8),
-    '700': generateDarkShade(0.6),
-    '800': generateDarkShade(0.4),
-    '900': generateDarkShade(0.2)
+    '50': generateLightShade(0.9),   // 매우 밝음
+    '100': generateLightShade(0.8),  // 밝음
+    '200': generateLightShade(0.6),  // 조금 밝음
+    '300': generateLightShade(0.4),  // 살짝 밝음
+    '400': generateLightShade(0.2),  // 약간 밝음
+    '500': color,                    // 원본 색상
+    '600': generateDarkShade(0.1),   // 약간 어둠
+    '700': generateDarkShade(0.2),   // 조금 어둠
+    '800': generateDarkShade(0.4),   // 어둠
+    '900': generateDarkShade(0.6)    // 매우 어둠
   }
 }
 
